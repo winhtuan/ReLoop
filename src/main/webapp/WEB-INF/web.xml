@@ -2,27 +2,27 @@
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>s_regisGoogle</servlet-name>
-        <servlet-class>Controller.s_regisGoogle</servlet-class>
+        <servlet-class>Controller.Auth.s_regisGoogle</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>s_logout</servlet-name>
-        <servlet-class>Controller.s_logout</servlet-class>
+        <servlet-class>Controller.Auth.s_logout</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>Controller.RegisterServlet</servlet-class>
+        <servlet-class>Controller.Auth.RegisterServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>Controller.LoginServlet</servlet-class>
+        <servlet-class>Controller.Auth.LoginServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ForgotPasswordServlet</servlet-name>
-        <servlet-class>Controller.ForgotPasswordServlet</servlet-class>
+        <servlet-class>Controller.Password.ForgotPasswordServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ConfirmServlet</servlet-name>
-        <servlet-class>Controller.ConfirmServlet</servlet-class>
+        <servlet-class>Controller.Password.ConfirmServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>s_regisGoogle</servlet-name>

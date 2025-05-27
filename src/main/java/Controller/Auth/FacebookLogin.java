@@ -1,4 +1,4 @@
-package Controller;
+package Controller.Auth;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -7,18 +7,18 @@ import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import Utils.AppConfig;
 
-public class GoogleLogin {
+public class FacebookLogin {
 
     private static AppConfig config = new AppConfig();
 
+    // Lấy access token từ Facebook
     public static String getToken(final String code) throws IOException {
-        String response = Request.Post(config.get("google.link_get_token"))
+        String response = Request.Post(config.get("facebook.link_get_token"))
                 .bodyForm(Form.form()
-                        .add("client_id", config.get("google.client_id"))
-                        .add("client_secret", config.get("google.client_secret"))
-                        .add("redirect_uri", config.get("google.redirect_uri"))
+                        .add("client_id", config.get("facebook.app_id"))
+                        .add("client_secret", config.get("facebook.app_secret"))
+                        .add("redirect_uri", config.get("facebook.redirect_uri"))
                         .add("code", code)
-                        .add("grant_type", config.get("google.grant_type"))
                         .build())
                 .execute().returnContent().asString();
 
@@ -32,8 +32,9 @@ public class GoogleLogin {
         return jobj.get("access_token").getAsString();
     }
 
+    // Lấy thông tin người dùng từ Facebook
     public static JsonObject getUserInfo(final String accessToken) throws IOException {
-        String response = Request.Get(config.get("google.link_get_user_info") + accessToken)
+        String response = Request.Get(config.get("facebook.link_get_user_info") + accessToken + "&fields=id,name,email")
                 .execute().returnContent().asString();
 
         // Phân tích phản hồi JSON

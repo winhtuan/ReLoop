@@ -1,4 +1,4 @@
-package Controller;
+package Controller.Auth;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
