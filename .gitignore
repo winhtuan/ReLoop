@@ -1,0 +1,39 @@
+# Maven build output
+/target/
+
+# NetBeans specific files
+nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/build/
+
+# IDE
+*.iml
+.idea/
+*.ipr
+*.iws
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Class files
+*.class
+
+# Environment and secrets
+.env
+*.env
+*.properties.local
+secret.properties
+config.properties
+
+# Ignore backup files
+*~
+*.bak
+*.swp
+*.tmp
