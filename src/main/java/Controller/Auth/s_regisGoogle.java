@@ -20,7 +20,7 @@ public class s_regisGoogle extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getAttribute("erormess") != null) {
-            request.getRequestDispatcher("registerGoogle.jsp").forward(request, response);
+            request.getRequestDispatcher("Authenticate/registerGoogle.jsp").forward(request, response);
             return;
         }
 
@@ -47,7 +47,8 @@ public class s_regisGoogle extends HttpServlet {
             request.getSession().removeAttribute("redirectUrl");
             response.sendRedirect(redirectUrl);
         } else {
-            response.sendRedirect("s_Car");
+            response.sendRedirect("index.html");
+            
         }
     }
 }

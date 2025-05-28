@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     private void handleGoogleLogin(HttpServletRequest request, HttpServletResponse response, String code)
-            throws IOException {
+            throws IOException, ServletException {
         GoogleLogin gg = new GoogleLogin();
         String accessToken = gg.getToken(code);
 
@@ -64,7 +64,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     private void handleFacebookLogin(HttpServletRequest request, HttpServletResponse response, String code)
-            throws IOException {
+            throws IOException, ServletException {
         FacebookLogin fb = new FacebookLogin();
         String accessToken = fb.getToken(code);
 
@@ -87,12 +87,12 @@ public class LoginServlet extends HttpServlet {
     }
 
     private void processSocialLogin(HttpServletRequest request, HttpServletResponse response, String email, String name)
-            throws IOException {
+            throws IOException, ServletException {
         Account acc = new Account(email);
 
         if (!AccountRep.isEmailExist(email)) {
             request.getSession().setAttribute("user", acc);
-            response.sendRedirect("registerGoogle.jsp");
+            request.getRequestDispatcher("Authenticate/registerGoogle.jsp").forward(request, response);
         } else {
             acc = AccountRep.getAccountByEmail(email);
             if (acc != null) {

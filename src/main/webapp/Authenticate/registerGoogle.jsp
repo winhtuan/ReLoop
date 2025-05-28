@@ -105,7 +105,7 @@
     </style>
 </head>
 <body>
-    <a href="login.jsp" class="signin-button">Sign In</a>
+    <a href="Authenticate/login.jsp" class="signin-button">Sign In</a>
     <div class="register-card">
         <section class="text-center">
             <div class="mb-5">
@@ -129,7 +129,7 @@
                 <button type="submit" class="submit-button">Submit</button>
             </form>
             <div class="back-to-login">
-                <a href="login.jsp" class="text-blue-600 hover:underline font-medium">Back to Login</a>
+                <a href="Authenticate/login.jsp" class="text-blue-600 hover:underline font-medium">Back to Login</a>
             </div>
         </section>
     </div>
