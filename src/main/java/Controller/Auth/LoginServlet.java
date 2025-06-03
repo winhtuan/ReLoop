@@ -1,7 +1,6 @@
 package Controller.Auth;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,9 +8,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import Model.Account;
-import Repository.AccountRep;
+import Model.Entity.Account;
+import Model.DAO.AccountDao;
+import Utils.AppConfig;
 import com.google.gson.JsonObject;
+import java.util.HashMap;
 
 public class LoginServlet extends HttpServlet {
 
@@ -27,7 +28,6 @@ public class LoginServlet extends HttpServlet {
             response.getWriter().println("No code found in the request.");
             return;
         }
-
         try {
             if (state == null || "google".equals(state)) {
                 handleGoogleLogin(request, response, code);
@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     private void handleGoogleLogin(HttpServletRequest request, HttpServletResponse response, String code)
-            throws IOException {
+            throws IOException, ServletException {
         GoogleLogin gg = new GoogleLogin();
         String accessToken = gg.getToken(code);
 
@@ -64,7 +64,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     private void handleFacebookLogin(HttpServletRequest request, HttpServletResponse response, String code)
-            throws IOException {
+            throws IOException, ServletException {
         FacebookLogin fb = new FacebookLogin();
         String accessToken = fb.getToken(code);
 
@@ -79,22 +79,22 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        String email = userInfo.has("email") ?
-            userInfo.get("email").getAsString() :
-            "no-email@" + userInfo.get("id").getAsString() + ".com";
+        String email = userInfo.has("email")
+                ? userInfo.get("email").getAsString()
+                : "no-email@" + userInfo.get("id").getAsString() + ".com";
         String name = userInfo.get("name").getAsString();
         processSocialLogin(request, response, email, name);
     }
 
     private void processSocialLogin(HttpServletRequest request, HttpServletResponse response, String email, String name)
-            throws IOException {
+            throws IOException, ServletException {
         Account acc = new Account(email);
 
-        if (!AccountRep.isEmailExist(email)) {
+        if (!AccountDao.isEmailExist(email)) {
             request.getSession().setAttribute("user", acc);
-            response.sendRedirect("registerGoogle.jsp");
+            request.getRequestDispatcher("JSP/Authenticate/registerGoogle.jsp").forward(request, response);
         } else {
-            acc = AccountRep.getAccountByEmail(email);
+            acc = AccountDao.getAccountByEmail(email);
             if (acc != null) {
                 request.getSession().setAttribute("user", acc);
                 redirectUser(request, response);
@@ -109,63 +109,30 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        String rememberMe = request.getParameter("remember_me");
-
         try {
-            Account acc = AccountRep.checkLogin(email, password);
+            Account acc = AccountDao.checkLogin(email, password);
             if (acc != null) {
-                handleRememberMe(request, response, email, password, rememberMe);
                 request.getSession().setAttribute("user", acc);
-                redirectUser(request, response);
+                request.getRequestDispatcher("JSP/Home/HomePage.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Please check email, password or verify your account to login!");
-                request.getRequestDispatcher("Authenticate/login.jsp").forward(request, response);
+                request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Database error during login", ex);
             request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
-            request.getRequestDispatcher("Authenticate/login.jsp").forward(request, response);
-        }
-    }
-
-    private void handleRememberMe(HttpServletRequest request, HttpServletResponse response,
-            String email, String password, String rememberMe) {
-        if ("on".equals(rememberMe)) {
-            Cookie emailCookie = new Cookie("userEmail", email);
-            emailCookie.setMaxAge(7 * 24 * 60 * 60);
-            emailCookie.setPath("/");
-            Cookie passCookie = new Cookie("pw", password);
-            passCookie.setMaxAge(7 * 24 * 60 * 60);
-            passCookie.setPath("/");
-            response.addCookie(emailCookie);
-            response.addCookie(passCookie);
-            LOGGER.info("Remember Me selected - Cookies set: userEmail=" + email);
-        } else {
-            Cookie emailCookie = new Cookie("userEmail", "");
-            emailCookie.setMaxAge(0);
-            emailCookie.setPath("/");
-            Cookie passCookie = new Cookie("pw", "");
-            passCookie.setMaxAge(0);
-            passCookie.setPath("/");
-            response.addCookie(emailCookie);
-            response.addCookie(passCookie);
-            LOGGER.info("Remember Me not selected - Cookies cleared");
+            request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
         }
     }
 
     private void redirectUser(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+            throws IOException, ServletException {
         String redirectUrl = (String) request.getSession().getAttribute("redirectUrl");
         if (redirectUrl != null) {
             request.getSession().removeAttribute("redirectUrl");
             response.sendRedirect(redirectUrl);
         } else {
-            response.sendRedirect("index.html");
+            request.getRequestDispatcher("JSP/Home/HomePage.jsp").forward(request, response);
         }
-    }
-
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
     }
 }

@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import Repository.AccountRep;
+import Model.DAO.AccountDao;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,9 +36,9 @@ public class ForgotPasswordServlet extends HttpServlet {
 
         try {
             // Kiểm tra email có tồn tại trong hệ thống
-            if (!AccountRep.isEmailExist(email)) {
+            if (!AccountDao.isEmailExist(email)) {
                 request.setAttribute("errorMessage", "Email not found!");
-                request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+                request.getRequestDispatcher("JSP/Authenticate/forgotPassword.jsp").forward(request, response);
                 return;
             }
 
@@ -48,7 +48,7 @@ public class ForgotPasswordServlet extends HttpServlet {
             Date expiryDate = new Date(expiryTime);
 
             // Lưu token reset password vào CSDL
-            AccountRep.savePasswordResetToken(email, token, expiryDate);
+            AccountDao.savePasswordResetToken(email, token, expiryDate);
 
             // Tạo liên kết reset password
             String resetLink = "http://localhost:8080/ReLoop/resetPassword?token=" + token;
@@ -57,16 +57,16 @@ public class ForgotPasswordServlet extends HttpServlet {
             sendResetEmail(email, resetLink);
 
             request.setAttribute("message", "A password reset link has been sent to your email.");
-            request.getRequestDispatcher("Authenticate/forgotPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/forgotPassword.jsp").forward(request, response);
 
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "SQL error during forgot password", ex);
             request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
-            request.getRequestDispatcher("Authenticate/forgotPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/forgotPassword.jsp").forward(request, response);
         } catch (MessagingException ex) {
             LOGGER.log(Level.SEVERE, "Email sending error", ex);
             request.setAttribute("errorMessage", "Failed to send email: " + ex.getMessage());
-            request.getRequestDispatcher("Authenticate/forgotPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/forgotPassword.jsp").forward(request, response);
         }
     }
 

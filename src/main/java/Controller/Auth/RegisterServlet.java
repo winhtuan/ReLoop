@@ -1,12 +1,12 @@
 package Controller.Auth;
 
-import Model.Account;
+import Model.Entity.Account;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mindrot.jbcrypt.BCrypt;
-import Repository.AccountRep;
+import Model.DAO.AccountDao;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,7 +20,7 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
-import Repository.CustomerRep;
+import Model.DAO.CustomerDao;
 import Utils.DBUtils;
 import java.time.LocalDate;
 
@@ -35,24 +35,14 @@ public class RegisterServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         // Lấy dữ liệu từ form
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
+        String firstName = request.getParameter("name");
+        String lastName = request.getParameter("surname");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        String address = request.getParameter("address");
-        String phone = request.getParameter("phone");
-        String agree = request.getParameter("iAgree");
-
-        // Kiểm tra dữ liệu đầu vào
-        if (firstName == null || lastName == null || email == null || password == null || agree == null
-                || firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            printError(out, "Please fill in all required fields!", "Authenticate/signup.jsp");
-            return;
-        }
 
         try (Connection conn = DBUtils.getConnect()) {
             if (conn == null) {
-                printError(out, "Unable to connect to the database!", "Authenticate/signup.jsp");
+                printError(out, "Unable to connect to the database!", "JSP/Authenticate/signup.jsp");
                 return;
             }
 
@@ -63,7 +53,7 @@ public class RegisterServlet extends HttpServlet {
             ResultSet emailRs = checkEmailStmt.executeQuery();
             emailRs.next();
             if (emailRs.getInt(1) > 0) {
-                printError(out, "This email is already in use!", "Authenticate/signup.jsp");
+                printError(out, "This email is already in use!", "JSP/Authenticate/signup.jsp");
                 return;
             }
 
@@ -71,8 +61,8 @@ public class RegisterServlet extends HttpServlet {
             String baseUsername = firstName + " " + lastName;
             String username = baseUsername;
 
-            if (AccountRep.isEmailExist(email)) {
-                printError(out, "This email is already in use!", "Authenticate/signup.jsp");
+            if (AccountDao.isEmailExist(email)) {
+                printError(out, "This email is already in use!", "JSP/Authenticate/signup.jsp");
                 return;
             }
 
@@ -82,25 +72,25 @@ public class RegisterServlet extends HttpServlet {
             // Tạo token xác nhận
             String token = UUID.randomUUID().toString();
 
-            int cusid = CustomerRep.addCustomer(username, address, phone, email);
+            int cusid = CustomerDao.addCustomer(username,email);
             Account account= new Account(cusid, hashedPassword, email, token, LocalDate.now(), cusid, token, false, 0);
             // Lưu vào bảng Account
-            int newAccId = AccountRep.newAccount(account);
+            int newAccId = AccountDao.newAccount(account);
             if (newAccId > 0) {
                 // Gửi email xác nhận
                 boolean emailSent = sendConfirmationEmail(email, token);
                 if (emailSent) {
-                    printSuccess(out, "Registration Successful!", "Please check your email (" + email + ") to verify your account.", "login.jsp");
+                    printSuccess(out, "Registration Successful!", "Please check your email (" + email + ") to verify your account.", "/JSP/Authenticate/JoinIn.jsp");
                 } else {
                     printError(out, "Unable to send verification email!", "signup.jsp");
                 }
             } else {
-                printError(out, "Registration failed!", "Authenticate/signup.jsp");
+                printError(out, "Registration failed!", "JSP/Authenticate/signup.jsp");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            printError(out, "Error: " + e.getMessage(), "Authenticate/signup.jsp");
+            printError(out, "Error: " + e.getMessage(), "JSP/Authenticate/signup.jsp");
         }
     }
 

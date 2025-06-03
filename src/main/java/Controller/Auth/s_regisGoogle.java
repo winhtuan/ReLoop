@@ -5,9 +5,9 @@ import java.io.IOException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import Model.Account;
-import Repository.AccountRep;
-import Repository.CustomerRep;
+import Model.Entity.Account;
+import Model.DAO.AccountDao;
+import Model.DAO.CustomerDao;
 
 public class s_regisGoogle extends HttpServlet {
 
@@ -20,7 +20,7 @@ public class s_regisGoogle extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getAttribute("erormess") != null) {
-            request.getRequestDispatcher("registerGoogle.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/registerGoogle.jsp").forward(request, response);
             return;
         }
 
@@ -29,10 +29,10 @@ public class s_regisGoogle extends HttpServlet {
         Account user = (Account) request.getSession().getAttribute("user");
 
         // Tạo customer và lấy userId (trước là customerId)
-        int userId = CustomerRep.addCustomer(address, phone, user.getEmail());
+        int userId = CustomerDao.addCustomer(address, phone, user.getEmail());
 
         // Thêm vào bảng Account (userId mới)
-        AccountRep.addAccount(
+        AccountDao.addAccount(
                 user.getEmail(),
                 "user",
                 userId
@@ -40,14 +40,15 @@ public class s_regisGoogle extends HttpServlet {
 
         user.setRole("user");
         user.setUserId(userId);  // sửa setCustomerId thành setUserId
-        user = AccountRep.getAccountByEmail(user.getEmail());
+        user = AccountDao.getAccountByEmail(user.getEmail());
 
         String redirectUrl = (String) request.getSession().getAttribute("redirectUrl");
         if (redirectUrl != null) {
             request.getSession().removeAttribute("redirectUrl");
             response.sendRedirect(redirectUrl);
         } else {
-            response.sendRedirect("s_Car");
+            response.sendRedirect("index.html");
+            
         }
     }
 }
