@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Filter.java to edit this template
- */
 package Controller.Auth;
 
 import jakarta.servlet.Filter;
@@ -16,18 +12,11 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-/**
- *
- * @author phuc2
- */
 @WebFilter(servletNames = {"s_regisGoogle"})
 public class f_regisGoogle implements Filter {
     
     private static final boolean debug = true;
 
-    // The filter configuration object we are associated with.  If
-    // this value is null, this filter instance is not currently
-    // configured. 
     private FilterConfig filterConfig = null;
     
     public f_regisGoogle() {
@@ -48,24 +37,6 @@ public class f_regisGoogle implements Filter {
         if (debug) {
             log("f_regisGoogle:DoAfterProcessing");
         }
-
-        // Write code here to process the request and/or response after
-        // the rest of the filter chain is invoked.
-        // For example, a logging filter might log the attributes on the
-        // request object after the request has been processed. 
-        /*
-	for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
-	    String name = (String)en.nextElement();
-	    Object value = request.getAttribute(name);
-	    log("attribute: " + name + "=" + value.toString());
-
-	}
-         */
-        // For example, a filter might append something to the response.
-        /*
-	PrintWriter respOut = new PrintWriter(response.getWriter());
-	respOut.println("<P><B>This has been appended by an intrusive filter.</B>");
-         */
     }
 
     public void doFilter(ServletRequest request, ServletResponse response,

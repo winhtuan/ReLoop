@@ -1,12 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package Controller.Auth;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,17 +18,8 @@ public class s_logout extends HttpServlet {
             session.invalidate();
         }
 
-        // Xóa cookie "Remember Me"
-        Cookie emailCookie = new Cookie("userEmail", "");
-        emailCookie.setMaxAge(0);
-        response.addCookie(emailCookie);
-        
-        Cookie passCookie = new Cookie("pw", "");
-        passCookie.setMaxAge(0);
-        response.addCookie(passCookie);
-
         // Chuyển hướng về trang login
-        response.sendRedirect("s_Car");
+        request.getRequestDispatcher("JSP/Home/HomePage.jsp").forward(request, response);
     }
 
     @Override
