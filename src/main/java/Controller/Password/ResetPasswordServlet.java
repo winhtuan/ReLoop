@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import Repository.AccountRep;
+import Model.DAO.AccountDao;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -22,27 +22,27 @@ public class ResetPasswordServlet extends HttpServlet {
 
         if (token == null || token.isEmpty()) {
             request.setAttribute("errorMessage", "Invalid or missing token!");
-            request.getRequestDispatcher("Authenticate/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
             return;
         }
 
         try {
             // Xác minh token
-            String email = AccountRep.verifyResetToken(token);
+            String email = AccountDao.verifyResetToken(token);
             if (email == null) {
                 request.setAttribute("errorMessage", "Invalid or expired token!");
-                request.getRequestDispatcher("Authenticate/resetPassword.jsp").forward(request, response);
+                request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
                 return;
             }
 
             // Token hợp lệ, hiển thị form đặt lại mật khẩu
             request.setAttribute("showForm", true);
-            request.getRequestDispatcher("Authenticate/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
 
         } catch (SQLException ex) {
             Logger.getLogger(ResetPasswordServlet.class.getName()).log(Level.SEVERE, null, ex);
             request.setAttribute("errorMessage", "Error: " + ex.getMessage());
-            request.getRequestDispatcher("Authenticate/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
         }
     }
 
@@ -56,30 +56,30 @@ public class ResetPasswordServlet extends HttpServlet {
         if (!newPassword.equals(confirmPassword)) {
             request.setAttribute("errorMessage", "Passwords do not match!");
             request.setAttribute("showForm", true);
-            request.getRequestDispatcher("Authenticate/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
             return;
         }
 
         try {
             // Xác minh token
-            String email = AccountRep.verifyResetToken(token);
+            String email = AccountDao.verifyResetToken(token);
             if (email == null) {
                 request.setAttribute("errorMessage", "Invalid or expired token!");
-                request.getRequestDispatcher("Authenticate/resetPassword.jsp").forward(request, response);
+                request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
                 return;
             }
 
             // Cập nhật mật khẩu mới
-            AccountRep.updatePassword(email, newPassword);
+            AccountDao.updatePassword(email, newPassword);
 
             request.setAttribute("message", "Password reset successfully! Please login with your new password.");
-            request.getRequestDispatcher("Authenticate/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
 
         } catch (SQLException ex) {
             Logger.getLogger(ResetPasswordServlet.class.getName()).log(Level.SEVERE, null, ex);
             request.setAttribute("errorMessage", "Error: " + ex.getMessage());
             request.setAttribute("showForm", true);
-            request.getRequestDispatcher("Authenticate/resetPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
         }
     }
 }
