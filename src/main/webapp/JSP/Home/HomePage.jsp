@@ -11,6 +11,7 @@
         <title>Reloop</title>
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon.ico">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
@@ -22,7 +23,7 @@
         </div>
 
         <!-- Search Wrapper Area Start -->
-        <div class="search-wrapper section-padding-100">
+<!--        <div class="search-wrapper section-padding-100">
             <div class="search-close">
                 <i class="fa fa-close" aria-hidden="true"></i>
             </div>
@@ -38,7 +39,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
         <!-- Search Wrapper Area End -->
         <!-- ##### Main Content Wrapper Start ##### -->
         <div class="main-content-wrapper d-flex clearfix">
