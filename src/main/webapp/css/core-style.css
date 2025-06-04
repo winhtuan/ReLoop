@@ -427,8 +427,6 @@ img {
   top: 0;
   left: 0;
   border: none;
-  width: 50px;
-  height: 55px;
   z-index: 10;
   cursor: pointer;
   background-color: transparent;
@@ -2208,5 +2206,27 @@ img {
   border-radius: 0;
   background-color: #f5f7fa;
 }
+#productResults {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-between;
+}
 
+.single-product-wrapper {
+    flex: 0 0 calc(33.333% - 20px); /* 3 mục trên mỗi hàng với khoảng cách */
+    margin-bottom: 30px;
+}
+
+@media only screen and (max-width: 991px) {
+    .single-product-wrapper {
+        flex: 0 0 calc(50% - 20px); /* 2 mục trên mỗi hàng ở màn hình trung bình */
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .single-product-wrapper {
+        flex: 0 0 100%; /* 1 mục trên mỗi hàng ở màn hình nhỏ */
+    }
+}
 /* ##### The End ##### */

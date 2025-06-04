@@ -68,10 +68,14 @@
         <servlet-name>ConfirmServlet</servlet-name>
         <url-pattern>/ConfirmServlet</url-pattern>
     </servlet-mapping>
-    
-    
-    
-    
+        <servlet>
+        <servlet-name>s_search</servlet-name>
+        <servlet-class>Controller.s_search</servlet-class>
+    </servlet>
+        <servlet-mapping>
+        <servlet-name>s_search</servlet-name>
+        <url-pattern>/s_search</url-pattern>
+    </servlet-mapping>
     
     <session-config>
         <session-timeout>
