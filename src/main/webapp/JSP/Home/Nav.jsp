@@ -128,7 +128,7 @@
     </div>
     <!-- Button Group -->
     <div class="amado-btn-group mt-15 mb-100">
-        <a href="#" class="amado-btn-custom">
+        <a href="#" class="item-btn-custom">
             <ion-icon name="document-text-outline" class="btn-icon"></ion-icon>
             <span>Up Post</span>
         </a>
