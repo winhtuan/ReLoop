@@ -33,7 +33,11 @@
 
     // Close search on click of close button
     searchClose.on("click", function () {
+        const resultContainer = document.getElementById("productResults");
         $("body").removeClass("search-wrapper-on");
+        $("#search").val("");
+        resultContainer.innerHTML = "";
+        resultContainer.style.display = "none";
     });
 
     // Close search when clicking outside of it
