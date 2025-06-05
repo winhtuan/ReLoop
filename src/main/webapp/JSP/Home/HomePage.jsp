@@ -11,6 +11,7 @@
         <title>Reloop</title>
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon.ico">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
