@@ -6,24 +6,21 @@ package Controller;
 
 import Model.DAO.ProductDao;
 import Model.Entity.Product;
-import com.google.gson.Gson;
-import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.sql.*;
-import java.util.List;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
- * @author phuc2
+ * @author Thanh Loc
  */
-public class s_search extends HttpServlet {
+public class s_productDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +39,10 @@ public class s_search extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet s_search</title>");
+            out.println("<title>Servlet s_productDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet s_search at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet s_productDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,35 +57,18 @@ public class s_search extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        String keyword = request.getParameter("query");
-        List<Product> productList = new ArrayList<>();
-        if (keyword == null || keyword.trim().isEmpty()) {
-            response.getWriter().print("[]");
-            return;
-        }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id=Integer.parseInt(request.getParameter("productId"));
+        Product p=null;
         try {
-            productList = ProductDao.getProductSearch(keyword);
+            p=ProductDao.getProductById(id);
         } catch (SQLException ex) {
-            Logger.getLogger(s_search.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(s_productDetail.class.getName()).log(Level.SEVERE, null, ex);
         }
-        List<Object> simpleProducts = new ArrayList<>();
-        for (Product p : productList) {
-            String firstImage = (p.getImages() != null && !p.getImages().isEmpty())
-                    ? p.getImages().get(0).getImageUrl()
-                    : "default.jpg";
-            simpleProducts.add(new Object() {
-                public final int id = p.getId();
-                public final String title = p.getTitle();
-                public final Object price = p.getPrice();
-                public final String imageUrl = firstImage;
-            });
-        }
-        PrintWriter out = response.getWriter();
-        out.print(new Gson().toJson(productList));
-        out.flush();
+        request.getSession().setAttribute("product", p);
+        request.getRequestDispatcher("JSP/Home/productDetail.jsp").forward(request, response);
     }
 
     /**
@@ -102,20 +82,7 @@ public class s_search extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = (String) request.getParameter("search");
-        List<Product> productList = new ArrayList<>();
-        if (keyword == null || keyword.trim().isEmpty()) {
-            response.getWriter().print("[key word empty]");
-            return;
-        }
-        try {
-            productList = ProductDao.getProductSearch(keyword);
-        } catch (SQLException ex) {
-            Logger.getLogger(s_search.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        request.getSession().setAttribute("listProduct", productList);
-        request.getRequestDispatcher("JSP/Home/listProduct.jsp").forward(request, response);
-        //response.sendRedirect("JSP/Home/shop.html");
+        processRequest(request, response);
     }
 
     /**

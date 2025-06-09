@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
-    <!--Home--> 
+    <!--Home-->
     <servlet>
         <servlet-name>Home</servlet-name>
         <servlet-class>Controller.Home</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_productDetail</servlet-name>
+        <servlet-class>Controller.s_productDetail</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Home</servlet-name>
@@ -68,19 +70,49 @@
         <servlet-name>ConfirmServlet</servlet-name>
         <url-pattern>/ConfirmServlet</url-pattern>
     </servlet-mapping>
-        <servlet>
+    <servlet>
         <servlet-name>s_search</servlet-name>
         <servlet-class>Controller.s_search</servlet-class>
     </servlet>
-        <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>s_search</servlet-name>
         <url-pattern>/s_search</url-pattern>
     </servlet-mapping>
-    
+
+
+    <servlet-mapping>
+        <servlet-name>s_productDetail</servlet-name>
+        <url-pattern>/s_productDetail</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UsersServlet</servlet-name>
+        <servlet-class>Controller.Conversation.UsersServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <servlet-class>Controller.Conversation.UploadImageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ImageServlet</servlet-name>
+        <servlet-class>Controller.Conversation.ImageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UsersServlet</servlet-name>
+        <url-pattern>/UsersServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <url-pattern>/uploadImage</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ImageServlet</servlet-name>
+        <url-pattern>/images/*</url-pattern>
+    </servlet-mapping>
+
+
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-    
 </web-app>

@@ -104,11 +104,20 @@
             </div>
         </div>
 
+        <!-- Message Icon Button -->
+        <c:choose>
+            <c:when test="${sessionScope.user != null}">
+                <a href="${pageContext.request.contextPath}/UsersServlet" class="search-nav">
+                    <ion-icon name="chatbubble-outline"></ion-icon> Message
+                </a>
+            </c:when>
+        </c:choose>
+
         <c:choose>
             <c:when test="${sessionScope.user != null}">
                 <div class="nav-brand" id="join-in-btn">
                     <a href="#">
-                        <ion-icon name="bug-outline"></ion-icon> User Name
+                        <ion-icon name="bug-outline"></ion-icon> ${sessionScope.cus.fullName}
                     </a>
                     <ul id="menu" class="menu">
                         <li><a href="#" id="menu-item"><ion-icon name="bag-handle-outline"></ion-icon>Order History</a></li>

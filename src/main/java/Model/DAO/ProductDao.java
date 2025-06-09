@@ -70,12 +70,11 @@ public class ProductDao {
 
     public static List<Product> getProductSearch(String kw) throws SQLException {
     List<Product> products = new ArrayList<>();
-    String sql = "SELECT * FROM product WHERE title LIKE ? OR description LIKE ?";
+    String sql = "SELECT * FROM product WHERE title LIKE ?";
     
     try (PreparedStatement stmt = DBUtils.getConnect().prepareStatement(sql)) {
         String keywordPattern = "%" + kw + "%";
         stmt.setString(1, keywordPattern);
-        stmt.setString(2, keywordPattern);
 
         try (ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
