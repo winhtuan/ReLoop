@@ -49,7 +49,7 @@ function loadMoreProducts() {
                 </div>
             </div>
             <div class="search-actions">
-                <ion-icon name="arrow-forward-outline" class="btn-icon"></ion-icon><a href="productDetail.jsp">View More</a>
+                <ion-icon name="arrow-forward-outline" class="btn-icon"></ion-icon><a href="s_productDetail?productId=${product.id}">View More</a>
             </div>
         `;
 

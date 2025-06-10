@@ -5,8 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import Model.Entity.Customer;
 import Utils.DBUtils;
+import java.util.List;
 
-public class CustomerDao{
+public class CustomerDao {
 
     public static Customer getCustomerByID(int customerID) {
         Customer customer = null;
@@ -53,7 +54,7 @@ public class CustomerDao{
 
         return customerID;
     }
-    
+
     public static int addCustomer(String address, String phoneNumber, String email) {
         String query = "INSERT INTO users (FullName, Address, PhoneNumber, email) VALUES (?,?, ?, ?)";
         int customerID = -1; // Giá trị mặc định nếu không lấy được ID
@@ -80,7 +81,7 @@ public class CustomerDao{
 
         return customerID;
     }
-    
+
     public boolean updateCustomer(Customer customer) {
         String sql = "UPDATE users SET FullName=?, Address=?, PhoneNumber=?, email=? WHERE id=?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -97,7 +98,8 @@ public class CustomerDao{
         }
         return false;
     }
-     public static ArrayList<Customer> listAllCustomers() {
+
+    public static ArrayList<Customer> listAllCustomers() {
         ArrayList<Customer> list = new ArrayList<>();
         try (Connection con = DBUtils.getConnect()) {
             PreparedStatement stmt = con.prepareStatement("SELECT * FROM users");
@@ -115,6 +117,35 @@ public class CustomerDao{
             System.out.println(ex);
         }
         return list;
+    }
+
+    public static ArrayList<Customer> listAllCustomers(int uid) {
+        ArrayList<Customer> customers = new ArrayList<>();
+        String sql = "SELECT u.id, u.FullName, u.Address, u.PhoneNumber, u.email "
+                + "FROM conversation c "
+                + "JOIN users u ON ((c.sender_id = ? AND u.id = c.receiver_id) OR "
+                + "                 (c.receiver_id = ? AND u.id = c.sender_id))";
+
+        try (PreparedStatement stmt = DBUtils.getConnect().prepareStatement(sql)) {
+            stmt.setInt(1, uid);
+            stmt.setInt(2, uid);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Customer customer = new Customer();
+                    customer.setCustomerId(rs.getInt("id"));
+                    customer.setFullName(rs.getString("FullName"));
+                    customer.setAddress(rs.getString("Address"));
+                    customer.setPhoneNumber(rs.getString("PhoneNumber"));
+                    customer.setEmail(rs.getString("email"));
+
+                    customers.add(customer);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return customers;
     }
 
     public static int newCustomer(Customer c) {
@@ -151,7 +182,6 @@ public class CustomerDao{
         }
     }
 
-
     public Customer getCustomerById(int customerID) {
         Customer customer = null;
 
@@ -173,5 +203,11 @@ public class CustomerDao{
             e.printStackTrace(); // Ghi log lỗi ra console
         }
         return customer;
+    }
+
+    public static void main(String[] args) {
+        for (Customer i : listAllCustomers(17)) {
+            System.out.println(i);
+        }
     }
 }

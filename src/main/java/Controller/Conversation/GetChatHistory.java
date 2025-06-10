@@ -30,7 +30,6 @@ public class GetChatHistory extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     int user1 = Integer.parseInt(request.getParameter("user1"));
     int user2 = Integer.parseInt(request.getParameter("user2"));
-
     int conID = ConversationDAO.getOrCreateConversation(user1, user2);
     List<Message> messages = MessageDAO.getMessagesByconversationId(conID);
 

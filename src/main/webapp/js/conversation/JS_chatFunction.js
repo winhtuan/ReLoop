@@ -187,7 +187,6 @@ function addMessageToChatBox(msg) {
 
 
 function addImageToChatBox(msg) {
-            console.log("ahsgdjahsgd1");
 
     const chatBox = document.getElementById("chatBox");
     const msID = msg.messageId;
@@ -201,7 +200,6 @@ function addImageToChatBox(msg) {
             (msg.senderId !== undefined && msg.senderId === currentUserId);
 
     const isRecalled = msg.is_recall === true || msg.type === "recall";
-        console.log("ahsgdjahsgd2");
 
     let timeText = "";
     if (msg.timestamp) {
