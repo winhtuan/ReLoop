@@ -1,0 +1,228 @@
+/* ===============================
+   4.0 Search Wrapper Area CSS
+   =============================== */
+.search-wrapper {
+    position: fixed;
+    top: -300px; /* Ẩn khỏi màn hình ban đầu */
+    left: 0;
+    width: 100%;
+    height: 230px;
+    z-index: 5000;
+    background-color: rgba(245, 247, 250, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: top 0.5s ease;
+}
+
+/* Khi body có class search-wrapper-on thì đẩy thanh tìm kiếm xuống */
+body.search-wrapper-on .search-wrapper {
+    top: 0;
+}
+
+/* Nút đóng */
+.search-wrapper .search-close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: #fbb710;
+    color: #fff;
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.search-wrapper .search-close:hover {
+    background-color: #131212;
+}
+
+/* Search box */
+.search-wrapper .search_box {
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.position-relative input[type="search"] {
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 25px;
+    padding: 0 45px 0 45px; /* đủ chỗ cho icon trái/phải */
+    font-size: 15px;
+    color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+.search-btn ion-icon,
+.clear-btn ion-icon {
+    font-size: 20px;       /* Kích thước icon vừa phải */
+    color: #555;
+}
+
+.search-btn,
+.clear-btn {
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    padding: 0;
+}
+
+.search-btn {
+    left: 10px; /* Khoảng cách bên trái */
+}
+
+.clear-btn {
+    right: 10px; /* Khoảng cách bên phải */
+}
+
+.search-btn:hover ion-icon,
+.clear-btn:hover ion-icon {
+    color: #fbb710;
+}
+
+
+.search_box {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+#productResults {
+    width: 100%;
+    max-width: 700px;
+    height: 100%; /* Đảm bảo phần tử có chiều cao đầy đủ */
+    max-height: 550px; /* Hoặc giá trị khác tùy theo nhu cầu */
+    gap: 0;
+    border-radius: 5px;
+    overflow-y: auto; /* Quan trọng */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    border: 1px solid #ccc;
+    padding-right: 10px; /* Tạo khoảng trống để không che nội dung khi thanh cuộn xuất hiện */
+}
+
+#productResults::-webkit-scrollbar {
+    width: 8px;
+}
+
+#productResults::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#productResults::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+#productResults::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.search-item {
+    max-width: 700px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #ffffff;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    border-radius: 0;
+    box-shadow: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.search-item:last-child {
+    border-bottom: none;
+}
+
+
+.search-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.search-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-right: 16px;
+}
+
+/* Thông tin bên trái */
+.search-left-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Tiêu đề trên, giá dưới */
+.search-left-content .fav-tittle {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 0;
+}
+
+.search-left-content .fav-tittle span {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #222;
+    display: block;
+}
+
+.search-left-content .fav-tittle p {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0;
+}
+
+.search-left-content .fav-tittle p b {
+    color: #000;
+}
+
+/* Nút View More */
+.search-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #fbb710;
+    transition: color 0.3s ease;
+}
+
+.search-actions .btn-icon {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.search-item:hover .btn-icon {
+    transform: translateX(4px) scale(1.1);
+}

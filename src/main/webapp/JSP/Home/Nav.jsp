@@ -5,7 +5,7 @@
 <div class="mobile-nav">
     <!-- Navbar Brand -->
     <div class="amado-navbar-brand">
-        <a href="index.html"><img src="img/core-img/logo.png" alt=""></a>
+        <a href="home"><img src="img/core-img/logo.png" alt=""></a>
     </div>
     <!-- Navbar Toggler -->
     <div class="amado-navbar-toggler">
@@ -21,17 +21,17 @@
     </div>
     <!-- Logo -->
     <div class="logo">
-        <a href="index.html"><img src="img/core-img/logo.png" alt=""></a>
+        <a href="home"><img src="img/core-img/logo.png" alt=""></a>
     </div>
 
     <!-- Amado Nav -->
     <nav class="amado-nav mt-30 mb-15">
         <ul>
-            <li class="active"><a href="index.html">Home</a></li>
+            <li class="active"><a href="home">Home</a></li>
             <li><a href="#">About us</a></li>
-            <li><a href="shop.html">Post</a></li>
+            <li><a href="#">Post</a></li>
             <li><a href="#">Shop</a></li>
-            <li><a href="checkout.html">Premium</a></li>
+            <li><a href="premium?user_id=${sessionScope.cus.userId}">Premium</a></li>
         </ul>
     </nav>
     <!-- Cart Menu -->
@@ -104,11 +104,20 @@
             </div>
         </div>
 
+        <!-- Message Icon Button -->
+        <c:choose>
+            <c:when test="${sessionScope.user != null}">
+                <a href="${pageContext.request.contextPath}/UsersServlet" class="search-nav">
+                    <ion-icon name="chatbubble-outline"></ion-icon> Message
+                </a>
+            </c:when>
+        </c:choose>
+
         <c:choose>
             <c:when test="${sessionScope.user != null}">
                 <div class="nav-brand" id="join-in-btn">
                     <a href="#">
-                        <ion-icon name="bug-outline"></ion-icon> User Name
+                        <ion-icon name="bug-outline"></ion-icon> ${sessionScope.cus.fullName}
                     </a>
                     <ul id="menu" class="menu">
                         <li><a href="#" id="menu-item"><ion-icon name="bag-handle-outline"></ion-icon>Order History</a></li>
@@ -128,7 +137,7 @@
     </div>
     <!-- Button Group -->
     <div class="amado-btn-group mt-15 mb-100">
-        <a href="#" class="amado-btn-custom">
+        <a href="#" class="item-btn-custom">
             <ion-icon name="document-text-outline" class="btn-icon"></ion-icon>
             <span>Up Post</span>
         </a>

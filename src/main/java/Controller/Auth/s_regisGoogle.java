@@ -5,15 +5,17 @@ import java.io.IOException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import Model.Entity.Account;
-import Model.DAO.AccountDao;
-import Model.DAO.CustomerDao;
+import Model.entity.auth.Account;
+import Model.DAO.auth.AccountDao;
+import Model.DAO.auth.UserDao;
 
 public class s_regisGoogle extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Typically not used for registration, but could forward to a registration page if needed
+        response.sendRedirect("JSP/Authenticate/registerGoogle.jsp");
     }
 
     @Override
@@ -25,30 +27,29 @@ public class s_regisGoogle extends HttpServlet {
         }
 
         String address = request.getParameter("address");
-        String phone = request.getParameter("Phone");
         Account user = (Account) request.getSession().getAttribute("user");
 
-        // Tạo customer và lấy userId (trước là customerId)
-        int userId = CustomerDao.addCustomer(address, phone, user.getEmail());
+        // Insert new user in users table and get user_id
+        String userId = new UserDao().addUser(address, user.getEmail());
 
-        // Thêm vào bảng Account (userId mới)
-        AccountDao.addAccount(
+        // Add account for this user
+        new AccountDao().addAccount(
                 user.getEmail(),
                 "user",
                 userId
         );
 
-        user.setRole("user");
-        user.setUserId(userId);  // sửa setCustomerId thành setUserId
-        user = AccountDao.getAccountByEmail(user.getEmail());
+        user.setUserId(userId);
+        user = new AccountDao().getAccountByEmail(user.getEmail());
+        request.getSession().setAttribute("user", user);
 
+        // Redirect logic
         String redirectUrl = (String) request.getSession().getAttribute("redirectUrl");
         if (redirectUrl != null) {
             request.getSession().removeAttribute("redirectUrl");
             response.sendRedirect(redirectUrl);
         } else {
-            response.sendRedirect("index.html");
-            
+            response.sendRedirect("home");
         }
     }
 }

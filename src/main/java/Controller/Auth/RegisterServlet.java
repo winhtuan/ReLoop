@@ -1,12 +1,12 @@
 package Controller.Auth;
 
-import Model.Entity.Account;
+import Model.entity.auth.Account;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.mindrot.jbcrypt.BCrypt;
-import Model.DAO.AccountDao;
+import Model.DAO.auth.AccountDao;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,7 +20,7 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
-import Model.DAO.CustomerDao;
+import Model.DAO.auth.UserDao;
 import Utils.DBUtils;
 import java.time.LocalDate;
 
@@ -34,7 +34,6 @@ public class RegisterServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
-        // Lấy dữ liệu từ form
         String firstName = request.getParameter("name");
         String lastName = request.getParameter("surname");
         String email = request.getParameter("email");
@@ -46,7 +45,6 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            // Kiểm tra email đã tồn tại
             String checkEmailQuery = "SELECT COUNT(*) FROM Account WHERE email = ?";
             PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailQuery);
             checkEmailStmt.setString(1, email);
@@ -57,27 +55,40 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            // Tạo username từ firstName và lastName
             String baseUsername = firstName + " " + lastName;
             String username = baseUsername;
 
-            if (AccountDao.isEmailExist(email)) {
+            if (new AccountDao().isEmailExist(email)) {
                 printError(out, "This email is already in use!", "JSP/Authenticate/signup.jsp");
                 return;
             }
 
-            // Mã hóa mật khẩu
+            // Hash the password
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-            // Tạo token xác nhận
+            // Create verification token
             String token = UUID.randomUUID().toString();
 
-            int cusid = CustomerDao.addCustomer(username,email);
-            Account account= new Account(cusid, hashedPassword, email, token, LocalDate.now(), cusid, token, false, 0);
-            // Lưu vào bảng Account
-            int newAccId = AccountDao.newAccount(account);
-            if (newAccId > 0) {
-                // Gửi email xác nhận
+            // Insert new user into users table
+            String user_id = new UserDao().addUser(username, email);
+
+            // Generate account ID
+            String accId = new AccountDao().generateAccountId();
+
+            // Create Account object with updated constructor
+            Account account = new Account(
+                    accId,
+                    hashedPassword,
+                    email,
+                    LocalDate.now(),
+                    String.valueOf(user_id),
+                    token,
+                    false
+            );
+
+            // Insert Account
+            String newAccId = new AccountDao().newAccount(account);
+            if (newAccId != null) {
                 boolean emailSent = sendConfirmationEmail(email, token);
                 if (emailSent) {
                     printSuccess(out, "Registration Successful!", "Please check your email (" + email + ") to verify your account.", "/JSP/Authenticate/JoinIn.jsp");

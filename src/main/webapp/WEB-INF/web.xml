@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
-    <!--Home--> 
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <!--Home-->
     <servlet>
         <servlet-name>Home</servlet-name>
         <servlet-class>Controller.Home</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_productDetail</servlet-name>
+        <servlet-class>Controller.s_productDetail</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Home</servlet-name>
@@ -68,15 +75,73 @@
         <servlet-name>ConfirmServlet</servlet-name>
         <url-pattern>/ConfirmServlet</url-pattern>
     </servlet-mapping>
-    
-    
-    
-    
-    
-    <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
-    </session-config>
-    
+    <servlet>
+        <servlet-name>s_search</servlet-name>
+        <servlet-class>Controller.s_search</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_search</servlet-name>
+        <url-pattern>/s_search</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_productDetail</servlet-name>
+        <url-pattern>/s_productDetail</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UsersServlet</servlet-name>
+        <servlet-class>Controller.Conversation.UsersServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <servlet-class>Controller.Conversation.UploadImageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ImageServlet</servlet-name>
+        <servlet-class>Controller.Conversation.ImageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UsersServlet</servlet-name>
+        <url-pattern>/UsersServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <url-pattern>/uploadImage</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ImageServlet</servlet-name>
+        <url-pattern>/images/*</url-pattern>
+    </servlet-mapping>
+    <!--paid-->
+    <servlet>
+        <servlet-name>Payment</servlet-name>
+        <servlet-class>Controller.Paid.Payment</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Premium</servlet-name>
+        <servlet-class>Controller.Paid.Premium</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Payment</servlet-name>
+        <url-pattern>/pay</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Premium</servlet-name>
+        <url-pattern>/premium</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateQRPaymentServlet</servlet-name>
+        <url-pattern>/createQR</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>CreateQRPaymentServlet</servlet-name>
+        <servlet-class>Controller.Paid.CreateQRPaymentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PayOSCallbackServlet</servlet-name>
+        <url-pattern>/PayOSCallback</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>PayOSCallbackServlet</servlet-name>
+        <servlet-class>Controller.Paid.PayOSCallbackServlet</servlet-class>
+    </servlet>
 </web-app>

@@ -23,14 +23,30 @@
     // :: 2.1 Search Active Code
     var amadoSearch = $(".search-nav");
     var searchClose = $(".search-close");
+    var searchWrapper = $(".search-wrapper");
 
-    amadoSearch.on("click", function () {
+    // Toggle search wrapper
+    amadoSearch.on("click", function (e) {
+        e.stopPropagation(); // Ngăn chặn sự kiện lan truyền lên phần tử cha
         $("body").toggleClass("search-wrapper-on");
     });
 
+    // Close search on click of close button
     searchClose.on("click", function () {
+        const resultContainer = document.getElementById("productResults");
         $("body").removeClass("search-wrapper-on");
+        $("#search").val("");
+        resultContainer.innerHTML = "";
+        resultContainer.style.display = "none";
     });
+
+    // Close search when clicking outside of it
+    $(document).on("click", function (e) {
+        if (!searchWrapper.is(e.target) && searchWrapper.has(e.target).length === 0) {
+            $("body").removeClass("search-wrapper-on");
+        }
+    });
+
 
     // :: 2.2 Mobile Nav Active Code
     var amadoMobNav = $(".amado-navbar-toggler");

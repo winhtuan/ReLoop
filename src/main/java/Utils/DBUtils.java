@@ -2,7 +2,6 @@ package Utils;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import Utils.AppConfig;
 
 public class DBUtils {
 

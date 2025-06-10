@@ -11,9 +11,11 @@
         <title>Reloop</title>
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon.ico">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
+
     </head>
     <body>
         <!-- Page Preloder -->
@@ -21,31 +23,14 @@
             <div class="loader"></div>
         </div>
 
-        <!-- Search Wrapper Area Start -->
-        <div class="search-wrapper section-padding-100">
-            <div class="search-close">
-                <i class="fa fa-close" aria-hidden="true"></i>
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="search-content d-flex justify-content-center">
-                            <form action="#" method="get" class="position-relative w-100" style="max-width: 700px;">
-                                <input type="search" name="search" id="search" placeholder="Type your keyword...">
-                                <button type="submit"><ion-icon name="search-outline"></ion-icon></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Search Wrapper Area End -->
+        <c:import url="/JSP/Home/Search.jsp" />
+
         <!-- ##### Main Content Wrapper Start ##### -->
         <div class="main-content-wrapper d-flex clearfix">
             <c:import url="/JSP/Home/Nav.jsp" />
             <c:import url="/JSP/Home/Catagory.jsp" />
         </div>
-                
+
         <c:import url="/JSP/Home/Footer.jsp" />
 
         <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
@@ -62,6 +47,7 @@
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>
+            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
             window.addEventListener("load", function () {
                 const preloader = document.getElementById("preloader");
                 preloader.style.opacity = "0";
