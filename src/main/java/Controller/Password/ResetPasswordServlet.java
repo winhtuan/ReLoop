@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import Model.DAO.AccountDao;
+import Model.DAO.auth.AccountDao;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -28,7 +28,7 @@ public class ResetPasswordServlet extends HttpServlet {
 
         try {
             // Xác minh token
-            String email = AccountDao.verifyResetToken(token);
+            String email = new AccountDao().verifyResetToken(token);
             if (email == null) {
                 request.setAttribute("errorMessage", "Invalid or expired token!");
                 request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
@@ -62,7 +62,7 @@ public class ResetPasswordServlet extends HttpServlet {
 
         try {
             // Xác minh token
-            String email = AccountDao.verifyResetToken(token);
+            String email = new AccountDao().verifyResetToken(token);
             if (email == null) {
                 request.setAttribute("errorMessage", "Invalid or expired token!");
                 request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);
@@ -70,7 +70,7 @@ public class ResetPasswordServlet extends HttpServlet {
             }
 
             // Cập nhật mật khẩu mới
-            AccountDao.updatePassword(email, newPassword);
+            new AccountDao().updatePassword(email, newPassword);
 
             request.setAttribute("message", "Password reset successfully! Please login with your new password.");
             request.getRequestDispatcher("JSP/Authenticate/resetPassword.jsp").forward(request, response);

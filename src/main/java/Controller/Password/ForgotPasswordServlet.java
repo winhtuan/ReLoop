@@ -1,66 +1,58 @@
 package Controller.Password;
 
+import Model.DAO.auth.AccountDao;
+import Utils.AppConfig;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import Model.DAO.AccountDao;
-
+import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.UUID;
-import java.util.Date;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-import Utils.AppConfig;
+import java.sql.Date;
 
 @WebServlet("/forgotPassword")
 public class ForgotPasswordServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(ForgotPasswordServlet.class.getName());
-    private static AppConfig config = new AppConfig();
+    private static final AppConfig config = new AppConfig();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String email = request.getParameter("email");
 
         try {
-            // Kiểm tra email có tồn tại trong hệ thống
-            if (!AccountDao.isEmailExist(email)) {
+            // Check if email exists
+            if (!new AccountDao().isEmailExist(email)) {
                 request.setAttribute("errorMessage", "Email not found!");
                 request.getRequestDispatcher("JSP/Authenticate/forgotPassword.jsp").forward(request, response);
                 return;
             }
 
-            // Tạo token đặt lại mật khẩu
+            // Generate reset token & expiry
             String token = UUID.randomUUID().toString();
-            long expiryTime = System.currentTimeMillis() + 60 * 60 * 1000; // 1 giờ
-            Date expiryDate = new Date(expiryTime);
+            long expiryMillis = System.currentTimeMillis() + 60 * 60 * 1000; // 1 hour
+            Date expiryDate = new Date(expiryMillis);
 
-            // Lưu token reset password vào CSDL
-            AccountDao.savePasswordResetToken(email, token, expiryDate);
+            // Save token to DB
+            new AccountDao().savePasswordResetToken(email, token, expiryDate);
 
-            // Tạo liên kết reset password
+            // Build reset link
             String resetLink = "http://localhost:8080/ReLoop/resetPassword?token=" + token;
 
-            // Gửi email reset password
+            // Send reset email
             sendResetEmail(email, resetLink);
 
             request.setAttribute("message", "A password reset link has been sent to your email.");
             request.getRequestDispatcher("JSP/Authenticate/forgotPassword.jsp").forward(request, response);
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "SQL error during forgot password", ex);
+            LOGGER.log(Level.SEVERE, "Database error during password reset", ex);
             request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
             request.getRequestDispatcher("JSP/Authenticate/forgotPassword.jsp").forward(request, response);
         } catch (MessagingException ex) {
@@ -71,8 +63,8 @@ public class ForgotPasswordServlet extends HttpServlet {
     }
 
     private void sendResetEmail(String toEmail, String resetLink) throws MessagingException {
-        String fromEmail = config.get("email.from"); // Thay bằng email của bạn
-        String password = config.get("email.password"); // App Password Gmail
+        String fromEmail = config.get("email.from");
+        String password = config.get("email.password");
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -80,7 +72,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
 
-        Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
+        Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(fromEmail, password);
@@ -91,7 +83,8 @@ public class ForgotPasswordServlet extends HttpServlet {
         message.setFrom(new InternetAddress(fromEmail));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         message.setSubject("Password Reset Request");
-        message.setText("Click the link below to reset your password:\n\n" + resetLink + "\n\nThis link will expire in 1 hour.");
+        message.setText("Click the link below to reset your password:\n\n" + resetLink +
+                "\n\nThis link will expire in 1 hour.");
 
         Transport.send(message);
     }

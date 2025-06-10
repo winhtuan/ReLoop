@@ -4,7 +4,7 @@
  */
 package Controller.Conversation;
 
-import Model.DAO.blockDAO;
+import Model.DAO.conversation.blockDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -37,10 +37,7 @@ public class unBlock extends HttpServlet {
                 return;
             }
 
-            int blockerId = Integer.parseInt(blockerStr);
-            int blockedId = Integer.parseInt(blockedStr);
-
-            boolean success = blockDAO.unblockUser(blockerId, blockedId);
+            boolean success = new blockDAO().unblockUser(blockerStr, blockedStr);
 
             if (success) {
                 out.write("{\"status\": \"success\"}");

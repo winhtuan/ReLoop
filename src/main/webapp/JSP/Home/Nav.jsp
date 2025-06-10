@@ -21,17 +21,17 @@
     </div>
     <!-- Logo -->
     <div class="logo">
-        <a href="index.html"><img src="img/core-img/logo.png" alt=""></a>
+        <a href="home"><img src="img/core-img/logo.png" alt=""></a>
     </div>
 
     <!-- Amado Nav -->
     <nav class="amado-nav mt-30 mb-15">
         <ul>
-            <li class="active"><a href="index.html">Home</a></li>
+            <li class="active"><a href="home">Home</a></li>
             <li><a href="#">About us</a></li>
-            <li><a href="shop.html">Post</a></li>
+            <li><a href="#">Post</a></li>
             <li><a href="#">Shop</a></li>
-            <li><a href="checkout.html">Premium</a></li>
+            <li><a href="premium?user_id=${sessionScope.cus.userId}">Premium</a></li>
         </ul>
     </nav>
     <!-- Cart Menu -->

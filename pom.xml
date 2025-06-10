@@ -12,87 +12,89 @@
         <jakartaee>10.0.0</jakartaee>
     </properties>
     
-<dependencies>
-<dependency>
-    <groupId>com.sun.mail</groupId>
-    <artifactId>jakarta.mail</artifactId>
-    <version>2.0.1</version> <!-- Phiên bản mới nhất tính đến 2025 -->
-</dependency>
-    <!-- Jakarta EE 10 API (scope provided vì server có sẵn) -->
-    <dependency>
-        <groupId>jakarta.platform</groupId>
-        <artifactId>jakarta.jakartaee-api</artifactId>
-        <version>10.0.0</version>
-        <scope>provided</scope>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version> <!-- Phiên bản mới nhất tính đến 2025 -->
+        </dependency>
+        <!-- Jakarta EE 10 API (scope provided vì server có sẵn) -->
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>10.0.0</version>
+            <scope>provided</scope>
+        </dependency>
     
-    <!-- Jakarta Mail API -->
-    <dependency>
-        <groupId>jakarta.mail</groupId>
-        <artifactId>jakarta.mail-api</artifactId>
-        <version>2.1.1</version>
-    </dependency>
+        <!-- Jakarta Mail API -->
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
     
-    <!-- JSTL API -->
-    <dependency>
-        <groupId>jakarta.servlet.jsp.jstl</groupId>
-        <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-        <version>3.0.0</version>
-    </dependency>
-    <dependency>
-        <groupId>org.glassfish.web</groupId>
-        <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-        <version>3.0.1</version>
-    </dependency>
+        <!-- JSTL API -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>3.0.1</version>
+        </dependency>
 
-    <!-- Gson JSON -->
-    <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>2.10.1</version>
-    </dependency>
+        <!-- Gson JSON -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
 
-    <!-- Apache HTTP Components Fluent API -->
-    <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>fluent-hc</artifactId>
-        <version>4.5.14</version>
-        <type>jar</type>
-    </dependency>
+        <!-- Apache HTTP Components Fluent API -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>4.5.14</version>
+            <type>jar</type>
+        </dependency>
     
-    <!-- SQL Server JDBC Driver -->
-    <dependency>
-        <groupId>com.microsoft.sqlserver</groupId>
-        <artifactId>mssql-jdbc</artifactId>
-        <version>10.2.0.jre11</version>
-    </dependency>
-    
-    <!-- JSON Processing API và implementation -->
-    <dependency>
-        <groupId>jakarta.json</groupId>
-        <artifactId>jakarta.json-api</artifactId>
-        <version>2.1.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.glassfish</groupId>
-        <artifactId>jakarta.json</artifactId>
-        <version>2.0.1</version>
-    </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
 
-    <!-- BCrypt thư viện mã hóa mật khẩu (phiên bản có sẵn) -->
-    <dependency>
-        <groupId>org.mindrot</groupId>
-        <artifactId>jbcrypt</artifactId>
-        <version>0.4</version>
-    </dependency>
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.json</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
     
-    <!-- Thư viện bcrypt thay thế (nếu cần) -->
-    <dependency>
-        <groupId>org.sazabi</groupId>
-        <artifactId>bcrypt4z_2.10</artifactId>
-        <version>0.0.1</version>
-        <type>jar</type>
-    </dependency>
+        <dependency>
+            <groupId>org.sazabi</groupId>
+            <artifactId>bcrypt4z_2.10</artifactId>
+            <version>0.0.1</version>
+            <type>jar</type>
+        </dependency>
+    
+        <dependency>
+            <groupId>vn.payos</groupId>
+            <artifactId>payos-java</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     
     <build>

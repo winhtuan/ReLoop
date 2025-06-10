@@ -4,7 +4,7 @@
  */
 package Controller.Conversation;
 
-import Model.DAO.blockDAO;
+import Model.DAO.conversation.blockDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -38,11 +38,8 @@ public class CheckBlock extends HttpServlet {
                 return;
             }
 
-            int user1 = Integer.parseInt(user1Str);
-            int user2 = Integer.parseInt(user2Str);
-
-            boolean blockedByUser1 = blockDAO.isBlocked(user1, user2); // user1 chặn user2
-            boolean blockedByUser2 = blockDAO.isBlocked(user2, user1); // user2 chặn user1
+            boolean blockedByUser1 = blockDAO.isBlocked(user1Str, user2Str); // user1 chặn user2
+            boolean blockedByUser2 = blockDAO.isBlocked(user2Str, user1Str); // user2 chặn user1
 
             String jsonResponse = String.format(
                 "{\"blockedByMe\": %b, \"blockedMe\": %b}",

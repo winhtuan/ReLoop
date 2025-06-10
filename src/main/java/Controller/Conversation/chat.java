@@ -1,26 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Controller.Conversation;
 
-import Model.DAO.blockDAO;
-import Model.DAO.ConversationDAO;
-import Model.DAO.MessageDAO;
-import Model.DAO.CustomerDao;
-import Model.Entity.Account;
-import Model.Entity.Customer;
+import Model.DAO.auth.UserDao;
+import Model.DAO.conversation.ConversationDAO;
+import Model.DAO.conversation.MessageDAO;
+import Model.DAO.conversation.blockDAO;
+import Model.entity.auth.Account;
+import Model.entity.auth.User;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.EndpointConfig;
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnError;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.Session;
+import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import java.io.StringReader;
 import java.time.LocalDateTime;
@@ -28,40 +19,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- *
- * @author Thanh Loc
- */
 @ServerEndpoint(value = "/chat", configurator = HttpSessionConfigurator.class)
 public class chat {
 
-    private static final String IMAGE_DIR = "D:\\SQLServer_Store_Image";
-    // Map userId -> session WebSocket
-    private static final Map<Integer, Session> sessions = new ConcurrentHashMap<>();
+    private static final Map<String, Session> sessions = new ConcurrentHashMap<>();
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        // Lấy userId từ HttpSession (phải cấu hình EndpointConfig để truy cập)
         HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
-        Account id=(Account)httpSession.getAttribute("user");
-        Customer user = CustomerDao.getCustomerByID(id.getUserId());
-        if (user != null) {
-            sessions.put(user.getCustomerId(), session);
+        Account account = (Account) httpSession.getAttribute("user");
+        if (account != null) {
+            String userId = account.getUserId();
+            User user = new UserDao().getUserById(userId);
+            sessions.put(userId, session);
             System.out.println("User connected: " + user.getFullName());
+
+            List<String> unreadSenders = MessageDAO.getUsersWithUnreadMessages(userId);
+
+            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            for (String senderId : unreadSenders) {
+                arrayBuilder.add(senderId);
+            }
+
+            JsonObject unreadNotice = Json.createObjectBuilder()
+                    .add("type", "unread_list")
+                    .add("senders", arrayBuilder)
+                    .build();
+
+            session.getAsyncRemote().sendText(unreadNotice.toString());
         }
-        List<Integer> unreadSenders = MessageDAO.getUsersWithUnreadMessages(user.getCustomerId());
-
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (Integer senderId : unreadSenders) {
-            arrayBuilder.add(senderId);
-        }
-
-        JsonObject unreadNotice = Json.createObjectBuilder()
-                .add("type", "unread_list")
-                .add("senders", arrayBuilder)
-                .build();
-
-        session.getAsyncRemote().sendText(unreadNotice.toString());
     }
 
     @OnMessage
@@ -70,12 +56,13 @@ public class chat {
             JsonObject json = reader.readObject();
             String type = json.containsKey("type") ? json.getString("type") : "message";
 
-            Integer fromUserId = null;
+            // Xác định user gửi
+            String fromUserId = null;
             String fromUsername = null;
-            for (Map.Entry<Integer, Session> entry : sessions.entrySet()) {
+            for (Map.Entry<String, Session> entry : sessions.entrySet()) {
                 if (entry.getValue().equals(session)) {
                     fromUserId = entry.getKey();
-                    fromUsername = CustomerDao.getCustomerByID(fromUserId).getFullName();
+                    fromUsername = new UserDao().getUserById(fromUserId).getFullName();
                     break;
                 }
             }
@@ -85,19 +72,17 @@ public class chat {
 
             switch (type) {
                 case "image": {
-                    int toUserId = json.getInt("toUserId");
+                    String toUserId = json.getString("toUserId");
                     String imageUrl = json.getString("imageUrl");
-                    if (blockDAO.isBlocked(toUserId, fromUserId) || blockDAO.isBlocked(fromUserId, toUserId)) {
-                        JsonObject blockNotify = Json.createObjectBuilder()
-                                .add("type", "block")
-                                .add("message", "Blocked user")
-                                .build();
-                        session.getAsyncRemote().sendText(blockNotify.toString());
+                    String productId = json.getString("productId");
+
+                    if (new blockDAO().isBlocked(toUserId, fromUserId) || new blockDAO().isBlocked(fromUserId, toUserId)) {
+                        sendBlockNotice(session);
                         return;
                     }
 
-                    int conversationId = ConversationDAO.getOrCreateConversation(fromUserId, toUserId);
-                    int messageId = MessageDAO.saveMessage(conversationId, fromUserId, imageUrl, "image");
+                    String conversationId = new ConversationDAO().getOrCreateConversation(fromUserId, toUserId, productId);
+                    String messageId = MessageDAO.saveMessage(conversationId, fromUserId, imageUrl, "img");
                     String timestamp = LocalDateTime.now().toString();
 
                     JsonObject imageMessage = Json.createObjectBuilder()
@@ -119,22 +104,17 @@ public class chat {
                     break;
                 }
                 case "message": {
-                    int toUserId = json.getInt("toUserId");
+                    String toUserId = json.getString("toUserId");
                     String content = json.getString("content");
+                    String productId = json.getString("productId");
 
-                    // Kiểm tra chặn
-                    if (blockDAO.isBlocked(toUserId, fromUserId) || blockDAO.isBlocked(fromUserId, toUserId)) {
-                        JsonObject blockNotify = Json.createObjectBuilder()
-                                .add("type", "block")
-                                .add("message", "You cannot send messages because one of you has blocked the other.")
-                                .build();
-                        session.getAsyncRemote().sendText(blockNotify.toString());
+                    if (new blockDAO().isBlocked(toUserId, fromUserId) || new blockDAO().isBlocked(fromUserId, toUserId)) {
+                        sendBlockNotice(session);
                         return;
                     }
 
-                    // Gửi và lưu tin nhắn
-                    int conversationId = ConversationDAO.getOrCreateConversation(fromUserId, toUserId);
-                    int messageId = MessageDAO.saveMessage(conversationId, fromUserId, content);
+                    String conversationId = new ConversationDAO().getOrCreateConversation(fromUserId, toUserId, productId);
+                    String messageId = MessageDAO.saveMessage(conversationId, fromUserId, content);
                     String timestamp = LocalDateTime.now().toString();
 
                     JsonObject sendMessage = Json.createObjectBuilder()
@@ -155,42 +135,27 @@ public class chat {
                     session.getAsyncRemote().sendText(sendMessage.toString());
                     break;
                 }
-
                 case "recall": {
-                    int toUserId = json.getInt("toUserId");
-                    int messageId = json.getInt("messageId");
+                    String toUserId = json.getString("toUserId");
+                    String messageId = json.getString("messageId");
 
-                    // 1. Update database để đánh dấu tin nhắn này là đã thu hồi (optional nhưng nên có)
                     MessageDAO.recallMessage(messageId, fromUserId);
 
-                    // 2. Tạo JSON thông báo recall
                     JsonObject recallNotify = Json.createObjectBuilder()
                             .add("type", "recall")
                             .add("messageId", messageId)
                             .add("fromUserId", fromUserId)
                             .add("toUserId", toUserId)
-                            .add("timestamp", LocalDateTime.now().toString()) // hoặc timestamp gốc nếu có
+                            .add("timestamp", LocalDateTime.now().toString())
                             .build();
 
-                    // 3. Gửi đến cả 2 phía (người gửi và người nhận)
-                    Session fromSession = sessions.get(fromUserId);
-                    Session toSession = sessions.get(toUserId);
-
-                    if (fromSession != null && fromSession.isOpen()) {
-                        fromSession.getAsyncRemote().sendText(recallNotify.toString());
-                    }
-                    if (toSession != null && toSession.isOpen()) {
-                        toSession.getAsyncRemote().sendText(recallNotify.toString());
-                    }
+                    sendToBoth(fromUserId, toUserId, recallNotify);
                     break;
                 }
                 case "block": {
-                    int blockedId = json.getInt("blockedId");
+                    String blockedId = json.getString("blockedId");
+                    new blockDAO().blockUser(fromUserId, blockedId);
 
-                    // Lưu trạng thái block vào DB
-                    blockDAO.blockUser(fromUserId, blockedId);
-
-                    // Tạo JSON thông báo block
                     JsonObject notifyBlocker = Json.createObjectBuilder()
                             .add("type", "block_status")
                             .add("blockedId", blockedId)
@@ -203,23 +168,13 @@ public class chat {
                             .add("status", "blocked_me")
                             .build();
 
-                    // Gửi thông báo đến blocker (người gửi lệnh block)
                     session.getAsyncRemote().sendText(notifyBlocker.toString());
-
-                    // Gửi thông báo đến người bị block (nếu đang online)
-                    Session blockedSession = sessions.get(blockedId);
-                    if (blockedSession != null && blockedSession.isOpen()) {
-                        blockedSession.getAsyncRemote().sendText(notifyBlocked.toString());
-                    }
+                    sendTo(blockedId, notifyBlocked);
                     break;
                 }
-
-                // Xử lý unblock
                 case "unblock": {
-                    int blockedId = json.getInt("blockedId");
-
-                    // Xóa trạng thái block trong DB
-                    blockDAO.unblockUser(fromUserId, blockedId);
+                    String blockedId = json.getString("blockedId");
+                    new blockDAO().unblockUser(fromUserId, blockedId);
 
                     JsonObject notifyBlocker = Json.createObjectBuilder()
                             .add("type", "block_status")
@@ -234,17 +189,14 @@ public class chat {
                             .build();
 
                     session.getAsyncRemote().sendText(notifyBlocker.toString());
-
-                    Session blockedSession = sessions.get(blockedId);
-                    if (blockedSession != null && blockedSession.isOpen()) {
-                        blockedSession.getAsyncRemote().sendText(notifyBlocked.toString());
-                    }
+                    sendTo(blockedId, notifyBlocked);
                     break;
                 }
                 case "read": {
-                    int senderId = json.getInt("fromUserId"); // người gửi tin nhắn
-                    int receiverId = fromUserId; // chính là người đang mở đoạn chat
+                    String senderId = json.getString("fromUserId");
+                    String receiverId = fromUserId;
                     MessageDAO.markMessagesAsRead(senderId, receiverId);
+                    break;
                 }
             }
         } catch (Exception e) {
@@ -253,14 +205,35 @@ public class chat {
     }
 
     @OnClose
-    public void onClose(Session session
-    ) {
+    public void onClose(Session session) {
         sessions.values().remove(session);
     }
 
     @OnError
-    public void onError(Session session, Throwable throwable
-    ) {
+    public void onError(Session session, Throwable throwable) {
         throwable.printStackTrace();
+    }
+
+    // Gửi thông báo "block" khi người dùng bị block
+    private void sendBlockNotice(Session session) {
+        JsonObject blockNotify = Json.createObjectBuilder()
+                .add("type", "block")
+                .add("message", "You cannot send messages because one of you has blocked the other.")
+                .build();
+        session.getAsyncRemote().sendText(blockNotify.toString());
+    }
+
+    // Gửi tin nhắn đến cả 2 người
+    private void sendToBoth(String userA, String userB, JsonObject message) {
+        sendTo(userA, message);
+        sendTo(userB, message);
+    }
+
+    // Gửi tin nhắn đến 1 người
+    private void sendTo(String userId, JsonObject message) {
+        Session toSession = sessions.get(userId);
+        if (toSession != null && toSession.isOpen()) {
+            toSession.getAsyncRemote().sendText(message.toString());
+        }
     }
 }

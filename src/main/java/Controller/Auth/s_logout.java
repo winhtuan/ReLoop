@@ -19,7 +19,7 @@ public class s_logout extends HttpServlet {
         }
 
         // Chuyển hướng về trang login
-        request.getRequestDispatcher("JSP/Home/HomePage.jsp").forward(request, response);
+        response.sendRedirect("home");
     }
 
     @Override

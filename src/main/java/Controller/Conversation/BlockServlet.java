@@ -4,7 +4,7 @@
  */
 package Controller.Conversation;
 
-import Model.DAO.blockDAO;
+import Model.DAO.conversation.blockDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -34,7 +34,7 @@ public class BlockServlet extends HttpServlet {
 
         try {
             // Giả sử bạn có BlockDAO với hàm blockUser()
-            boolean success = blockDAO.blockUser(Integer.parseInt(blockerId), Integer.parseInt(blockedId));
+            boolean success = new blockDAO().blockUser(blockerId, blockedId);
             if (success) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 resp.getWriter().write("Block successful");
@@ -64,7 +64,7 @@ public class BlockServlet extends HttpServlet {
         }
 
         try {
-            boolean success = blockDAO.unblockUser(Integer.parseInt(blockerId), Integer.parseInt(blockedId));
+            boolean success = new blockDAO().unblockUser(blockerId, blockedId);
             if (success) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 resp.getWriter().write("Unblock successful");
