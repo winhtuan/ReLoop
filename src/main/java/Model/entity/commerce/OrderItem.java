@@ -1,16 +1,14 @@
 package Model.entity.commerce;
 
-import java.math.BigDecimal;
-
 public class OrderItem {
     private String orderId;
     private String productId;
     private int quantity;
-    private BigDecimal price;
+    private int price;
 
     public OrderItem() {}
 
-    public OrderItem(String orderId, String productId, int quantity, BigDecimal price) {
+    public OrderItem(String orderId, String productId, int quantity, int price) {
         this.orderId = orderId;
         this.productId = productId;
         this.quantity = quantity;
@@ -26,6 +24,6 @@ public class OrderItem {
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public int getPrice() { return price; }
+    public void setPrice(int price) { this.price = price; }
 }

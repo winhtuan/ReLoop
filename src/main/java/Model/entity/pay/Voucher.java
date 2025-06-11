@@ -1,6 +1,5 @@
 package Model.entity.pay;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class Voucher {
@@ -8,9 +7,9 @@ public class Voucher {
     private String code;
     private String description;
     private String discountType;
-    private BigDecimal discountValue;
-    private BigDecimal maxDiscount;
-    private BigDecimal minOrderAmount;
+    private int discountValue;
+    private int maxDiscount;
+    private int minOrderAmount;
     private Date startDate;
     private Date endDate;
     private int usageLimit;
@@ -19,8 +18,8 @@ public class Voucher {
 
     public Voucher() {}
 
-    public Voucher(String voucherId, String code, String description, String discountType, BigDecimal discountValue,
-                    BigDecimal maxDiscount, BigDecimal minOrderAmount, Date startDate, Date endDate,
+    public Voucher(String voucherId, String code, String description, String discountType, int discountValue,
+                    int maxDiscount, int minOrderAmount, Date startDate, Date endDate,
                     int usageLimit, int usedCount, boolean isActive) {
         this.voucherId = voucherId;
         this.code = code;
@@ -49,14 +48,14 @@ public class Voucher {
     public String getDiscountType() { return discountType; }
     public void setDiscountType(String discountType) { this.discountType = discountType; }
 
-    public BigDecimal getDiscountValue() { return discountValue; }
-    public void setDiscountValue(BigDecimal discountValue) { this.discountValue = discountValue; }
+    public int getDiscountValue() { return discountValue; }
+    public void setDiscountValue(int discountValue) { this.discountValue = discountValue; }
 
-    public BigDecimal getMaxDiscount() { return maxDiscount; }
-    public void setMaxDiscount(BigDecimal maxDiscount) { this.maxDiscount = maxDiscount; }
+    public int getMaxDiscount() { return maxDiscount; }
+    public void setMaxDiscount(int maxDiscount) { this.maxDiscount = maxDiscount; }
 
-    public BigDecimal getMinOrderAmount() { return minOrderAmount; }
-    public void setMinOrderAmount(BigDecimal minOrderAmount) { this.minOrderAmount = minOrderAmount; }
+    public int getMinOrderAmount() { return minOrderAmount; }
+    public void setMinOrderAmount(int minOrderAmount) { this.minOrderAmount = minOrderAmount; }
 
     public Date getStartDate() { return startDate; }
     public void setStartDate(Date startDate) { this.startDate = startDate; }

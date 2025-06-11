@@ -5,7 +5,7 @@ import java.util.Date;
 public class ProductReport {
     private String reportId;
     private String productId;
-    private String reporterId;
+    private String userId;
     private String reason;
     private String description;
     private Date reportedAt;
@@ -13,11 +13,11 @@ public class ProductReport {
 
     public ProductReport() {}
 
-    public ProductReport(String reportId, String productId, String reporterId, String reason,
+    public ProductReport(String reportId, String productId, String userId, String reason,
                          String description, Date reportedAt, String status) {
         this.reportId = reportId;
         this.productId = productId;
-        this.reporterId = reporterId;
+        userId = userId;
         this.reason = reason;
         this.description = description;
         this.reportedAt = reportedAt;
@@ -30,8 +30,8 @@ public class ProductReport {
     public String getProductId() { return productId; }
     public void setProductId(String productId) { this.productId = productId; }
 
-    public String getReporterId() { return reporterId; }
-    public void setReporterId(String reporterId) { this.reporterId = reporterId; }
+    public String userId() { return userId; }
+    public void userId(String userId) { userId = userId; }
 
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }

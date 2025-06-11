@@ -1,12 +1,11 @@
 package Model.entity.pay;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class Payment {
     private String payId;
-    private String userId;
-    private BigDecimal amount;
+    private String orderId;
+    private int amount;
     private String status;
     private Date paidAt;
     private Date createdAt;
@@ -14,10 +13,10 @@ public class Payment {
 
     public Payment() {}
 
-    public Payment(String payId, String userId, BigDecimal amount, String status,
+    public Payment(String payId, String userId, int amount, String status,
                     Date paidAt, Date createdAt, Date updatedAt) {
         this.payId = payId;
-        this.userId = userId;
+        this.orderId = userId;
         this.amount = amount;
         this.status = status;
         this.paidAt = paidAt;
@@ -28,11 +27,11 @@ public class Payment {
     public String getPayId() { return payId; }
     public void setPayId(String payId) { this.payId = payId; }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public String getOrderId() { return orderId; }
+    public void setOrderId(String orderId) { this.orderId = orderId; }
 
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public int getAmount() { return amount; }
+    public void setAmount(int amount) { this.amount = amount; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

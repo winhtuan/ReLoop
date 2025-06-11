@@ -1,11 +1,31 @@
 package Model.DAO.conversation;
 
 import Model.entity.conversation.Message;
+import Utils.DBUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessageDAO {
+
+    public static String generateMessageId() {
+        String sql = "SELECT message_id FROM Messages ORDER BY message_id DESC LIMIT 1"; // MySQL dùng LIMIT 1
+        String prefix = "MSG";
+        int nextId = 1;
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                String lastId = rs.getString("conversation_id");
+                int num = Integer.parseInt(lastId.substring(2));
+                nextId = num + 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US00000X'
+    }
 
     // 1️⃣ Thêm tin nhắn (text) - ID là CHAR(7)
     public static String saveMessage(String conversationId, String senderId, String message) {
@@ -139,12 +159,6 @@ public class MessageDAO {
             e.printStackTrace();
         }
         return null; // không tìm thấy
-    }
-
-    // 8️⃣ Giả sử hàm generateMessageId
-    private static String generateMessageId() {
-        // Tạo ID theo chuẩn "MSG____" (ví dụ ngẫu nhiên)
-        return "MSG" + String.format("%04d", (int) (Math.random() * 10000));
     }
 
     public static void main(String[] args) throws SQLException {
