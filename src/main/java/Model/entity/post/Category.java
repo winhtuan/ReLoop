@@ -1,24 +1,52 @@
 package Model.entity.post;
 
 public class Category {
+
     private int categoryId;
     private String name;
-    private Integer parentId;
+    private String slug;
+    private int level;
 
-    public Category() {}
-
-    public Category(int categoryId, String name, Integer parentId) {
-        this.categoryId = categoryId;
-        this.name = name;
-        this.parentId = parentId;
+    public Category() {
     }
 
-    public int getCategoryId() { return categoryId; }
-    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
+    public Category(int categoryId, String name, String slug, int level) {
+        this.categoryId = categoryId;
+        this.name = name;
+        this.slug = slug;
+        this.level = level;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public int getCategoryId() {
+        return categoryId;
+    }
 
-    public Integer getParentId() { return parentId; }
-    public void setParentId(Integer parentId) { this.parentId = parentId; }
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
 }

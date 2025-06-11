@@ -10,7 +10,7 @@ public class UserDao {
 
     public String generateUserId() {
         String sql = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1"; // MySQL dùng LIMIT 1
-        String prefix = "US";
+        String prefix = "CUS";
         int nextId = 1; // Giá trị mặc định nếu bảng trống
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -24,7 +24,7 @@ public class UserDao {
             e.printStackTrace();
         }
 
-        return String.format("%s%05d", prefix, nextId); // Định dạng thành 'US00000X'
+        return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US00000X'
     }
 
     public User getUserById(String userId) {
