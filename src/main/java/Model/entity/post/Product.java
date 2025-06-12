@@ -1,6 +1,5 @@
 package Model.entity.post;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +9,7 @@ public class Product {
     private Integer categoryId;
     private String title;
     private String description;
-    private BigDecimal price;
+    private int price;
     private String location;
     private String status;
     private boolean isPriority;
@@ -20,7 +19,7 @@ public class Product {
 
     public Product() {}
 
-    public Product(String productId, String userId, Integer categoryId, String title, String description, BigDecimal price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
+    public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
         this.productId = productId;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -36,7 +35,7 @@ public class Product {
     }
 
     public Product(String productId, String userId, Integer categoryId, String title, String description,
-                    BigDecimal price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt) {
+                    int price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt) {
         this.productId = productId;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -81,8 +80,8 @@ public class Product {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public int getPrice() { return price; }
+    public void setPrice(int price) { this.price = price; }
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }

@@ -11,7 +11,7 @@ public class ProductDao {
 
     public String generateProductId() {
         String sql = "SELECT product_id FROM product ORDER BY product_id DESC LIMIT 1"; // MySQL dùng LIMIT 1
-        String prefix = "PROD";
+        String prefix = "PRD";
         int nextId = 1;
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -25,7 +25,7 @@ public class ProductDao {
             e.printStackTrace();
         }
 
-        return String.format("%s%03d", prefix, nextId);
+        return String.format("%s%04d", prefix, nextId);
     }
 
     public Product getProductById(String productId) {
@@ -40,7 +40,7 @@ public class ProductDao {
                         rs.getInt("category_id"),
                         rs.getString("title"),
                         rs.getString("description"),
-                        rs.getBigDecimal("price"),
+                        rs.getInt("price"),
                         rs.getString("location"),
                         rs.getString("status"),
                         rs.getBoolean("is_priority"),
@@ -70,7 +70,7 @@ public class ProductDao {
                         rs.getInt("category_id"),
                         rs.getString("title"),
                         rs.getString("description"),
-                        rs.getBigDecimal("price"),
+                        rs.getInt("price"),
                         rs.getString("location"),
                         rs.getString("status"),
                         rs.getBoolean("is_priority"),
@@ -102,7 +102,7 @@ public class ProductDao {
                         rs.getInt("category_id"),
                         rs.getString("title"),
                         rs.getString("description"),
-                        rs.getBigDecimal("price"),
+                        rs.getInt("price"),
                         rs.getString("location"),
                         rs.getString("status"),
                         rs.getBoolean("is_priority"),
@@ -132,7 +132,7 @@ public class ProductDao {
             }
             stmt.setString(4, product.getTitle());
             stmt.setString(5, product.getDescription());
-            stmt.setBigDecimal(6, product.getPrice());
+            stmt.setInt(6, product.getPrice());
             stmt.setString(7, product.getLocation());
             stmt.setString(8, product.getStatus());
             stmt.setBoolean(9, product.isPriority());
@@ -155,7 +155,7 @@ public class ProductDao {
             }
             stmt.setString(3, product.getTitle());
             stmt.setString(4, product.getDescription());
-            stmt.setBigDecimal(5, product.getPrice());
+            stmt.setInt(5, product.getPrice());
             stmt.setString(6, product.getLocation());
             stmt.setString(7, product.getStatus());
             stmt.setBoolean(8, product.isPriority());

@@ -10,7 +10,7 @@ public class ConversationDAO {
 
     public String generateConversationId() {
         String sql = "SELECT conversation_id FROM conversation ORDER BY conversation_id DESC LIMIT 1"; // MySQL dùng LIMIT 1
-        String prefix = "CONV";
+        String prefix = "CON";
         int nextId = 1;
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -24,7 +24,7 @@ public class ConversationDAO {
             e.printStackTrace();
         }
 
-        return String.format("%s%03d", prefix, nextId); // Định dạng thành 'US00000X'
+        return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US00000X'
     }
 
     public String getOrCreateConversation(String user1Id, String user2Id, String productId) {

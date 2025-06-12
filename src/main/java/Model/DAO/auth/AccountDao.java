@@ -267,8 +267,8 @@ public class AccountDao {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(BCrypt.hashpw("12345", BCrypt.gensalt()));
+    public static void main(String[] args) throws SQLException {
+        System.out.println(new AccountDao().checkLogin("thanhloc20092004@gmail.com", "12345"));
     }
 
 }

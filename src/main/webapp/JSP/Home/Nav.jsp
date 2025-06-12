@@ -104,15 +104,6 @@
             </div>
         </div>
 
-        <!-- Message Icon Button -->
-        <c:choose>
-            <c:when test="${sessionScope.user != null}">
-                <a href="${pageContext.request.contextPath}/UsersServlet" class="search-nav">
-                    <ion-icon name="chatbubble-outline"></ion-icon> Message
-                </a>
-            </c:when>
-        </c:choose>
-
         <c:choose>
             <c:when test="${sessionScope.user != null}">
                 <div class="nav-brand" id="join-in-btn">
@@ -122,7 +113,7 @@
                     <ul id="menu" class="menu">
                         <li><a href="#" id="menu-item"><ion-icon name="bag-handle-outline"></ion-icon>Order History</a></li>
                         <li><a href="#" id="menu-item"><ion-icon name="newspaper-outline"></ion-icon>Manager Post</a></li>
-                        <li><a href="#" id="menu-item"><ion-icon name="chatbubble-ellipses-outline"></ion-icon>Message</a></li>
+                        <li><a href="${pageContext.request.contextPath}/UsersServlet" id="menu-item"><ion-icon name="chatbubble-ellipses-outline"></ion-icon>Message</a></li>
                         <li><a href="#" id="menu-item"><ion-icon name="document-text-outline"></ion-icon>Profile</a></li>
                         <li><a href="s_logout" id="menu-item" class="text-danger"><ion-icon name="log-out"></ion-icon> Log Out</a></li>
                     </ul>
