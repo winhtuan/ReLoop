@@ -109,7 +109,7 @@ public class RegisterServlet extends HttpServlet {
     private boolean sendConfirmationEmail(String email, String token) {
         String host = "smtp.gmail.com";
         String from = "tindtde180794@fpt.edu.vn";
-        String pass = "lxhp ujyd bxqc iqyi";
+        String pass = "";
 
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
