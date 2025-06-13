@@ -21,6 +21,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
 import Model.DAO.auth.UserDao;
+import Utils.AppConfig;
 import Utils.DBUtils;
 import java.time.LocalDate;
 
@@ -108,8 +109,8 @@ public class RegisterServlet extends HttpServlet {
     // Phương thức gửi email xác nhận
     private boolean sendConfirmationEmail(String email, String token) {
         String host = "smtp.gmail.com";
-        String from = "tindtde180794@fpt.edu.vn";
-        String pass = "";
+        String from = new AppConfig().get("email.from");
+        String pass = new AppConfig().get("email.password");
 
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
