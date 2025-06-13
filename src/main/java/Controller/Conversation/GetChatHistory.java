@@ -25,20 +25,19 @@ public class GetChatHistory extends HttpServlet {
         // Lấy tham số từ request
         String user1 = request.getParameter("user1");
         String user2 = request.getParameter("user2");
-        String productId = request.getParameter("productId"); // Lấy productId nếu cần
+//        String productId = request.getParameter("productId"); // Lấy productId nếu cần
 
         // Kiểm tra đầu vào
-        if (user1 == null || user2 == null || productId == null) {
+        if (user1 == null || user2 == null ) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu tham số!");
             return;
         }
 
         // Tạo hoặc lấy conversation_id (String)
-        String conversationId = new ConversationDAO().getOrCreateConversation(user1, user2, productId);
+        String conversationId = new ConversationDAO().getOrCreateConversation(user1, user2);
 
         // Lấy danh sách tin nhắn
         List<Message> messages = MessageDAO.getMessagesByconversationId(conversationId);
-
         // Thiết lập response JSON
         response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();

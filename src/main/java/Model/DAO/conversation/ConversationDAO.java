@@ -17,14 +17,14 @@ public class ConversationDAO {
 
             if (rs.next()) {
                 String lastId = rs.getString("conversation_id");
-                int num = Integer.parseInt(lastId.substring(2));
+                int num = Integer.parseInt(lastId.substring(3));
                 nextId = num + 1;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US00000X'
+        return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US0000X'
     }
 
     public String getOrCreateConversation(String user1Id, String user2Id, String productId) {
@@ -53,6 +53,37 @@ public class ConversationDAO {
             ps.setString(2, user1Id);
             ps.setString(3, user2Id);
             ps.setString(4, productId);
+            ps.executeUpdate();
+
+            return conversationId;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public String getOrCreateConversation(String user1Id, String user2Id) {
+        try (Connection conn = Utils.DBUtils.getConnect()) {
+            String sql = "SELECT conversation_id FROM conversation WHERE "
+                    + "(sender_id = ? AND receiver_id = ? ) OR "
+                    + "(sender_id = ? AND receiver_id = ? )";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user1Id);
+            ps.setString(2, user2Id);
+            ps.setString(3, user2Id);
+            ps.setString(4, user1Id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("conversation_id");
+            }
+
+            // Nếu chưa tồn tại, tạo mới
+            String conversationId = generateConversationId(); // Hàm sinh "CONV___"
+            sql = "INSERT INTO conversation (conversation_id, sender_id, receiver_id) "
+                    + "VALUES (?, ?, ?, ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, conversationId);
+            ps.setString(2, user1Id);
+            ps.setString(3, user2Id);
             ps.executeUpdate();
 
             return conversationId;

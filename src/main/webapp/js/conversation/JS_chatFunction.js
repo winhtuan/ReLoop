@@ -112,7 +112,7 @@ function selectChatUser(userId, username) {
 }
 
 function addMessageToChatBox(msg) {
-    if (msg.type === "image") {
+    if (msg.type === "img") {
         addImageToChatBox(msg);
         return;
     }
@@ -124,14 +124,13 @@ function addMessageToChatBox(msg) {
     const content = msg.content;
     const msID = msg.messageId;
     let timeText = "";
-
-    if (msg.timestamp) {
-        const time = new Date(msg.timestamp);
+    if (msg.sentAt) {
+        const time = new Date(msg.sentAt);
         if (!isNaN(time)) {
             timeText = '<small style="color:gray">' + time.toString().substring(0, 24) + '</small>';
         } else {
             timeText = '<small style="color:red">Invalid Date</small>';
-            console.error("Invalid timestamp received:", msg.timestamp);
+            console.error("Invalid timestamp received:", msg.sentAt);
         }
     }
 
@@ -160,7 +159,8 @@ function addMessageToChatBox(msg) {
     `;
     if (isSentByMe && msID !== undefined && msID !== null && (typeof msID === "string" || typeof msID === "number")) {
         const validMsID = (typeof msID === "string") ? msID.trim() : msID.toString();
-        if (validMsID && !isNaN(Number(validMsID)) && Number(validMsID) > 0) {
+
+        if (validMsID) {
             dropdownHTML += `<button onclick="recallMessage('${msID}')">Recall</button>`;
         } else {
             console.warn("messageId không hợp lệ, không thêm nút Recall:", msID);
@@ -187,11 +187,10 @@ function addMessageToChatBox(msg) {
 
 
 function addImageToChatBox(msg) {
-
     const chatBox = document.getElementById("chatBox");
     const msID = msg.messageId;
 
-    if (msg.type !== "image") {
+    if (msg.type !== "img") {
         console.warn("Message type is not image, ignoring:", msg);
         return;
     }
@@ -202,16 +201,16 @@ function addImageToChatBox(msg) {
     const isRecalled = msg.is_recall === true || msg.type === "recall";
 
     let timeText = "";
-    if (msg.timestamp) {
-        const time = new Date(msg.timestamp);
+    if (msg.sentAt) {
+        const time = new Date(msg.sentAt);
         if (!isNaN(time)) {
             timeText = '<small style="color:gray">' + time.toString().substring(0, 24) + '</small>';
         } else {
             timeText = '<small style="color:red">Invalid Date</small>';
-            console.error("Invalid timestamp received:", msg.timestamp);
+            console.error("Invalid timestamp received:", msg.sentAt);
         }
     }
-        
+
 
     const p = document.createElement("p");
     p.className = isSentByMe ? "msg-sent" : "msg-received";
@@ -219,6 +218,7 @@ function addImageToChatBox(msg) {
     p.style.position = "relative"; // To position the dropdown
 
     if (isRecalled) {
+
         p.className = isSentByMe ? "msg-sent msg-recalled" : "msg-received msg-recalled";
         const senderName = isSentByMe ? "" : currentChatUserName + ":";
         p.innerHTML = "<b>" + senderName + "</b>Message has been recalled<br><small style=\"color:gray\">" + timeText + "</small>";
@@ -244,7 +244,7 @@ function addImageToChatBox(msg) {
     `;
         if (isSentByMe && msID !== undefined && msID !== null && (typeof msID === "string" || typeof msID === "number")) {
             const validMsID = (typeof msID === "string") ? msID.trim() : msID.toString();
-            if (validMsID && !isNaN(Number(validMsID)) && Number(validMsID) > 0) {
+            if (validMsID) {
                 dropdownHTML += `<button onclick="recallMessage('${msID}')">Recall</button>`;
             } else {
                 console.warn("messageId không hợp lệ, không thêm nút Recall:", msID);
@@ -299,7 +299,7 @@ function handleRecallMessage(msg) {
 
         const senderName = isSentByMe ? "" : currentChatUserName + ":";
 
-        const time = new Date(msg.timestamp);
+        const time = new Date(msg.sentAt);
 
         const timeText = isNaN(time) ? "Invalid Date" : time.toString().substring(0, 24);
 
@@ -341,7 +341,7 @@ function sendMessages() {
 
         content: content,
 
-        timestamp: new Date()
+        sentAt: new Date()
 
     };
 
@@ -437,15 +437,17 @@ function showBrowserNotification(username, content) {
 }
 
 
-
 function markUserAsUnread(userId) {
+    console.log("userId:", userId);
+    document.querySelectorAll("#userList li").forEach(li => {
+        console.log("Found:", li.dataset.userId);
+    });
 
-    const li = [...document.querySelectorAll("#userList li")].find(li => li.dataset.userid === userId.toString());
-
+    const li = [...document.querySelectorAll("#userList li")].find(li => li.dataset.userId === userId);
+    console.log("ajsdkajd" + li);
     if (li && !li.classList.contains("user-unread")) {
 
         li.classList.add("user-unread");
-
     }
 
 }
@@ -472,7 +474,7 @@ function markMessagesAsRead(fromUserId) {
 
 function clearUnreadMark(userId) {
 
-    const li = [...document.querySelectorAll("#userList li")].find(li => li.dataset.userid === userId.toString());
+    const li = [...document.querySelectorAll("#userList li")].find(li => li.dataset.userId === userId.toString());
 
     if (li) {
 
@@ -524,6 +526,7 @@ function blockUser() {
     document.getElementById("imageUploadLabel").style.display = "none";
 
     document.getElementById("imageUpload").style.display = "none";
+    document.getElementById("emojiBtn").style.display = "none";
 
 }
 
@@ -548,11 +551,7 @@ function unblockUser() {
 
     };
 
-
-
     ws.send(JSON.stringify(message));
-
-
 
     document.getElementById("blockBtn").style.display = "inline-block";
 
@@ -567,6 +566,7 @@ function unblockUser() {
     document.getElementById("imageUploadLabel").style.display = "inline-block";
 
     document.getElementById("imageUpload").style.display = "none";
+    document.getElementById("emojiBtn").style.display = "inline-block";
 
 }
 
@@ -576,7 +576,7 @@ function recallMessage(meId) {
 //
 //    const messageId = rawId ? Number(rawId.trim()) : NaN;
 
-    let messageId = parseInt(meId);
+    let messageId = meId;
 
     if (!currentChatUserId) {
 
@@ -586,15 +586,15 @@ function recallMessage(meId) {
 
     }
 
-    if (isNaN(messageId) || messageId <= 0) {
+    if (!messageId) {
 
-        alert("ID tin nh뿯ẽn kh뿯½ng h뿯ẽp l뿯ẽ");
+        alert("ID message er");
 
         return;
 
     }
 
-    if (confirm("Bạn có chắc muốn gở tin nhắn này ?")) {
+    if (confirm("Bạn có chắc muốn gỡ tin nhắn này ?")) {
 
         const recallMsg = {
 

@@ -129,8 +129,8 @@ public class LoginServlet extends HttpServlet {
         try {
             // Kiểm tra đăng nhập
             Account acc = accountDao.checkLogin(email.trim(), password.trim()); // hoặc hashedPassword nếu đã hash
-            User user = new UserDao().getUserById(acc.getUserId());
-            if (user != null) {
+            if (acc != null) {
+                User user = new UserDao().getUserById(acc.getUserId());
                 // Đăng nhập thành công, lưu vào session
                 request.getSession().setAttribute("cus", user);
                 request.getSession().setAttribute("user", acc);
@@ -138,12 +138,13 @@ public class LoginServlet extends HttpServlet {
             } else {
                 // Đăng nhập thất bại
                 request.setAttribute("errorMessage", "Please check email, password or verify your account to login!");
-                request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
+                request.getSession().setAttribute("openLogin", true);
+                redirectUser(request, response);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Database error during login", ex);
             request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
-            request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
+            redirectUser(request, response);
         }
     }
 

@@ -36,13 +36,13 @@ public class UsersServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String sellerId = req.getParameter("sellerId");
         String productId = req.getParameter("productId");
-
+        System.out.println("ádjlaksd"+sellerId);
+        System.out.println("kkkssdkd"+productId);
         Account currentUser = (Account) req.getSession().getAttribute("user");
         if (currentUser == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
         // Lấy Customer hiện tại
         User user = new UserDao().getUserById(currentUser.getUserId());
 
@@ -58,7 +58,10 @@ public class UsersServlet extends HttpServlet {
             users.remove(c);
             users.add(0, c);
         }
-
+        for(User a:users)
+        {
+            System.out.println(a);
+        }
         req.setAttribute("sellid", sellerId);
         req.setAttribute("cus", user);
         req.setAttribute("userList", users);

@@ -140,7 +140,7 @@ public class UserDao {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     User user = new User();
-                    user.setUserId(rs.getString("id"));
+                    user.setUserId(rs.getString("user_id"));
                     user.setFullName(rs.getString("FullName"));
                     user.setAddress(rs.getString("Address"));
                     user.setPhoneNumber(rs.getString("PhoneNumber"));

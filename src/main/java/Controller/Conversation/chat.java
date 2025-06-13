@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import java.io.StringReader;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,26 +76,26 @@ public class chat {
                 case "image": {
                     String toUserId = json.getString("toUserId");
                     String imageUrl = json.getString("imageUrl");
-                    String productId = json.getString("productId");
+//                    String productId = json.getString("productId");
 
                     if (new blockDAO().isBlocked(toUserId, fromUserId) || new blockDAO().isBlocked(fromUserId, toUserId)) {
                         sendBlockNotice(session);
                         return;
                     }
 
-                    String conversationId = new ConversationDAO().getOrCreateConversation(fromUserId, toUserId, productId);
+                    String conversationId = new ConversationDAO().getOrCreateConversation(fromUserId, toUserId);
                     String messageId = MessageDAO.saveMessage(conversationId, fromUserId, imageUrl, "img");
                     String timestamp = LocalDateTime.now().toString();
 
                     JsonObject imageMessage = Json.createObjectBuilder()
-                            .add("type", "image")
+                            .add("type", "img")
                             .add("fromUserId", fromUserId)
                             .add("fromUsername", fromUsername)
                             .add("toUserId", toUserId)
                             .add("content", imageUrl)
                             .add("messageId", messageId)
                             .add("conversationId", conversationId)
-                            .add("timestamp", timestamp)
+                            .add("sentAt", timestamp)
                             .build();
 
                     Session toSession = sessions.get(toUserId);
@@ -106,14 +108,14 @@ public class chat {
                 case "message": {
                     String toUserId = json.getString("toUserId");
                     String content = json.getString("content");
-                    String productId = json.getString("productId");
+                    //String productId = json.getString("productId");
 
                     if (new blockDAO().isBlocked(toUserId, fromUserId) || new blockDAO().isBlocked(fromUserId, toUserId)) {
                         sendBlockNotice(session);
                         return;
                     }
 
-                    String conversationId = new ConversationDAO().getOrCreateConversation(fromUserId, toUserId, productId);
+                    String conversationId = new ConversationDAO().getOrCreateConversation(fromUserId, toUserId);
                     String messageId = MessageDAO.saveMessage(conversationId, fromUserId, content);
                     String timestamp = LocalDateTime.now().toString();
 
@@ -125,7 +127,7 @@ public class chat {
                             .add("content", content)
                             .add("messageId", messageId)
                             .add("conversationId", conversationId)
-                            .add("timestamp", timestamp)
+                            .add("sentAt", timestamp)
                             .build();
 
                     Session toSession = sessions.get(toUserId);
@@ -138,7 +140,6 @@ public class chat {
                 case "recall": {
                     String toUserId = json.getString("toUserId");
                     String messageId = json.getString("messageId");
-
                     MessageDAO.recallMessage(messageId, fromUserId);
 
                     JsonObject recallNotify = Json.createObjectBuilder()
@@ -146,7 +147,7 @@ public class chat {
                             .add("messageId", messageId)
                             .add("fromUserId", fromUserId)
                             .add("toUserId", toUserId)
-                            .add("timestamp", LocalDateTime.now().toString())
+                            .add("sentAt", LocalDateTime.now().toString())
                             .build();
 
                     sendToBoth(fromUserId, toUserId, recallNotify);
