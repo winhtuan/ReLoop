@@ -1,7 +1,22 @@
 function toggleChat() {
     let chatContainer = document.getElementById("chatContainer");
     chatContainer.style.display = (chatContainer.style.display === "none" || chatContainer.style.display === "") ? "block" : "none";
+
+    let chatBox = document.getElementById("chatBoxAI");
+
+    if (!chatBox.dataset.initialized) {
+        chatBox.innerHTML += `
+            <div class="chat-bubble bot">
+                <b>Chào mừng bạn đến với ReLoop!</b>
+            </div>
+            <div class="chat-bubble bot">
+                <b>Bạn muốn mua gì hôm nay nào?</b>
+            </div>
+        `;
+        chatBox.dataset.initialized = "true";
+    }
 }
+
 
 async function sendMessage() {
     let userInput = document.getElementById("userInputAI").value.trim();
@@ -14,7 +29,7 @@ async function sendMessage() {
     };
 
     let chatBox = document.getElementById("chatBoxAI");
-    chatBox.innerHTML += `<div><b>Bạn:</b> ${userInput}</div>`;
+    chatBox.innerHTML += `<div class=\"messageAI\"><b>Bạn:</b> ${userInput}</div>`;
     document.getElementById("userInputAI").value = "";
 
     try {
@@ -26,7 +41,7 @@ async function sendMessage() {
 
         let data = await response.json();
         let botResponse = data.response || "Không có phản hồi từ AI.";
-        chatBox.innerHTML += `<div><b>ReLoop:</b> ${botResponse}</div>`;
+        chatBox.innerHTML += `<div class=\"messageAI\"><b>ReLoop:</b> ${botResponse}</div>`;
     } catch (error) {
         console.error("Lỗi kết nối AI:", error);
         chatBox.innerHTML += `<div style="color:red;"><b>Lỗi:</b> Không thể kết nối AI!</div>`;

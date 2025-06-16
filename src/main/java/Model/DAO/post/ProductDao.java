@@ -65,34 +65,66 @@ public class ProductDao {
     }
 
     public List<Product> getAllProducts() {
-        List<Product> products = new ArrayList<>();
+        // Nếu bạn vẫn muốn cache, giữ đoạn dưới (tuỳ chọn):
         if (productList != null) {
             return productList;
         }
-        String sql = "SELECT * FROM product";
-        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+
+        List<Product> products = new ArrayList<>();
+
+        // JOIN luôn sang bảng product_images để gom ảnh trong một truy vấn duy nhất
+        String sql = "SELECT p.*, pi.img_id, pi.image_url, pi.is_primary "
+                + "FROM product p "
+                + "LEFT JOIN product_images pi ON p.product_id = pi.product_id";
+
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+
+            // Sử dụng LinkedHashMap để giữ nguyên thứ tự insert
+            Map<String, Product> productMap = new LinkedHashMap<>();
+
             while (rs.next()) {
-                Product product = new Product(
-                        rs.getString("product_id"),
-                        rs.getString("user_id"),
-                        rs.getInt("category_id"),
-                        rs.getString("title"),
-                        rs.getString("description"),
-                        rs.getInt("price"),
-                        rs.getString("location"),
-                        rs.getString("status"),
-                        rs.getBoolean("is_priority"),
-                        rs.getTimestamp("created_at"),
-                        rs.getTimestamp("updated_at")
-                );
-                ProductImageDao imageDAO = new ProductImageDao();
-                product.setImages(imageDAO.getImagesByProductId(product.getProductId()));
-                products.add(product);
+                String pid = rs.getString("product_id");
+
+                // Nếu sản phẩm chưa có trong map thì tạo mới
+                Product product = productMap.get(pid);
+                if (product == null) {
+                    product = new Product(
+                            pid,
+                            rs.getString("user_id"),
+                            rs.getInt("category_id"),
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getInt("price"),
+                            rs.getString("location"),
+                            rs.getString("status"),
+                            rs.getBoolean("is_priority"),
+                            rs.getTimestamp("created_at"),
+                            rs.getTimestamp("updated_at")
+                    );
+                    product.setImages(new ArrayList<>()); // chuẩn bị list ảnh
+                    productMap.put(pid, product);
+                }
+
+                // Thêm ảnh (nếu có) vào danh sách ảnh của sản phẩm
+                String imageUrl = rs.getString("image_url");
+                if (imageUrl != null) {
+                    ProductImage img = new ProductImage();
+                    img.setImgId(rs.getInt("img_id"));
+                    img.setProductId(pid);
+                    img.setImageUrl(imageUrl);
+                    img.setPrimary(rs.getBoolean("is_primary"));
+                    product.getImages().add(img);
+                }
             }
+
+            products.addAll(productMap.values());
+            // Lưu vào cache nếu cần
+            productList = products;
+
         } catch (SQLException e) {
             System.out.println("Error retrieving products: " + e.getMessage());
         }
+
         return products;
     }
 
