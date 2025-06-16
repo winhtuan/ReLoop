@@ -1,5 +1,6 @@
 package Controller.Paid;
 
+import Model.DAO.auth.UserDao;
 import Model.DAO.commerce.OrderDao;
 import Model.DAO.pay.PaidServiceDAO;
 import Model.entity.pay.PaidService;
@@ -26,7 +27,7 @@ public class CreateQRPaymentServlet extends HttpServlet {
 
         // Retrieve the paid service details
         PaidService premium = new PaidServiceDAO().getPaidServiceById(id);
-        String description = String.format("purchases %s", premium.getServiceName());
+        String description = String.format("Purchases %s", premium.getServiceName());
         int amount = (int) premium.getPrice();
 
         // Generate orderID using the OrderDao method

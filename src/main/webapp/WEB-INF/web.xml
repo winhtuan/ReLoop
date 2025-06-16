@@ -8,13 +8,10 @@
             30
         </session-timeout>
     </session-config>
-    <listener>
-        <listener-class>Utils.MySQLContextListener</listener-class>
-    </listener>
     <!--Home-->
     <listener>
         <description>ServletContextListener</description>
-        <listener-class>Model.DAO.CleanupListener</listener-class>
+        <listener-class>Utils.CleanupListener</listener-class>
     </listener>
     <servlet>
         <servlet-name>Home</servlet-name>
