@@ -9,7 +9,7 @@ BEGIN
         UPDATE vouchers SET is_active = 0 WHERE voucher_id = NEW.voucher_id;
     END IF;
 END$$
-
+-- post
 CREATE TRIGGER set_priority_on_insert
 BEFORE INSERT ON product
 FOR EACH ROW
