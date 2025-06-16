@@ -1,5 +1,6 @@
 package Controller.Conversation;
 
+import Utils.AppConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +17,9 @@ import com.google.gson.*;
 
 public class s_chatBox extends HttpServlet {
 
-    private static final String API_URL = "https://router.huggingface.co/fireworks-ai/inference/v1/chat/completions";
+    private static final String API_URL = new AppConfig().get("url_chatBox");
     // Thay bằng API key thật của bạn, kèm "Bearer "
-    private static final String API_KEY = "Bearer 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";
+    private static final String API_KEY = new AppConfig().get("key_chatBox");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
