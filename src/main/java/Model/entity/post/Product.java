@@ -22,6 +22,11 @@ public class Product {
     public Product() {
     }
 
+    @Override
+    public String toString() {
+        return "Product{" + "productId=" + productId + ", categoryId=" + categoryId + ", title=" + title + ", images=" + images + '}';
+    }
+
     public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, String moderationStatus, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
         this.productId = productId;
         this.userId = userId;

@@ -33,7 +33,7 @@ public class s_search extends HttpServlet {
             simpleProduct.put("title", p.getTitle());
             simpleProduct.put("price", p.getPrice());
             // No images loaded here; you can add them later with a join or additional call
-            simpleProduct.put("imageUrl", p.getImages().getFirst().getImageUrl());
+            simpleProduct.put("imageUrl", p.getImages().get(0).getImageUrl());
             simpleProducts.add(simpleProduct);
         }
         PrintWriter out = response.getWriter();
