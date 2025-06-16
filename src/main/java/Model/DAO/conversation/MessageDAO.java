@@ -26,7 +26,7 @@ public class MessageDAO {
 
         return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US00000X'
     }
-    
+
     // 1️⃣ Thêm tin nhắn (text) - ID là CHAR(7)
     public static String saveMessage(String conversationId, String senderId, String message) {
         String messageId = generateMessageId(); // giả sử có hàm sinh ID

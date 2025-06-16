@@ -1,6 +1,8 @@
 //package Controller.Paid;
 //
 //import Model.DAO.commerce.OrderDao;
+//import Model.DAO.pay.payServiceDao;
+//import Model.entity.pay.PaidService;
 //import Utils.AppConfig;
 //import java.io.IOException;
 //import jakarta.servlet.ServletException;
@@ -29,7 +31,7 @@
 //            throws ServletException, IOException {
 //        String id = request.getParameter("paidService_id"); 
 //        String user_id = request.getParameter("user_id"); 
-//        Transcation paidService = new payServiceDao().findById(id);
+//        PaidService paidService = new payServiceDao().findById(id);
 //        String description = paidService.getServiceName();
 //        int amount = (int) paidService.getPrice() / 100;
 //        Long orderCode = System.currentTimeMillis() / 1000;

@@ -24,7 +24,7 @@ public class ConversationDAO {
             e.printStackTrace();
         }
 
-        return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US0000X'
+        return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US00000X'
     }
 
     public String getOrCreateConversation(String user1Id, String user2Id, String productId) {
