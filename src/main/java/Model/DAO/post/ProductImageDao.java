@@ -9,17 +9,11 @@ import java.util.List;
 
 public class ProductImageDao {
 
-    private final Connection conn;
-
-    public ProductImageDao(Connection conn) {
-        this.conn = conn;
-    }
-
     // Get all images of a product
     public List<ProductImage> getImagesByProductId(String productId) throws SQLException {
         List<ProductImage> images = new ArrayList<>();
         String sql = "SELECT * FROM product_images WHERE product_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = DBUtils.getConnect().prepareStatement(sql)) {
             stmt.setString(1, productId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -38,7 +32,7 @@ public class ProductImageDao {
     // Get primary image of a product
     public ProductImage getPrimaryImage(String productId) throws SQLException {
         String sql = "SELECT * FROM product_images WHERE product_id = ? AND is_primary = 1";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = DBUtils.getConnect().prepareStatement(sql)) {
             stmt.setString(1, productId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -56,7 +50,7 @@ public class ProductImageDao {
     // Insert new image
     public boolean insertImage(ProductImage image) throws SQLException {
         String sql = "INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = DBUtils.getConnect().prepareStatement(sql)) {
             stmt.setString(1, image.getProductId());
             stmt.setString(2, image.getImageUrl());
             stmt.setBoolean(3, image.isPrimary());
@@ -67,7 +61,7 @@ public class ProductImageDao {
     // Delete image by ID
     public boolean deleteImageById(int imgId) throws SQLException {
         String sql = "DELETE FROM product_images WHERE img_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = DBUtils.getConnect().prepareStatement(sql)) {
             stmt.setInt(1, imgId);
             return stmt.executeUpdate() > 0;
         }
@@ -76,7 +70,7 @@ public class ProductImageDao {
     // Delete all images of a product
     public boolean deleteImagesByProductId(String productId) throws SQLException {
         String sql = "DELETE FROM product_images WHERE product_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = DBUtils.getConnect().prepareStatement(sql)) {
             stmt.setString(1, productId);
             return stmt.executeUpdate() > 0;
         }
@@ -85,7 +79,7 @@ public class ProductImageDao {
     // Example main method for testing
     public static void main(String[] args) throws SQLException {
         try (Connection conn = DBUtils.getConnect()) {
-            ProductImageDao dao = new ProductImageDao(conn);
+            ProductImageDao dao = new ProductImageDao();
             List<ProductImage> images = dao.getImagesByProductId("PROD001");
             for (ProductImage img : images) {
                 System.out.println(img);

@@ -77,7 +77,7 @@
                 <!-- Amado Nav -->
                 <nav class="amado-nav">
                     <ul>
-                        <li><a href="${pageContext.request.contextPath}/HomePage.jsp">Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/home">Home</a></li>
                         <li><a href="${pageContext.request.contextPath}/listProduct.jsp">Shop</a></li>
                         <li class="active"><a href="#">Product</a></li>
                         <li><a href="${pageContext.request.contextPath}/cart.jsp">Cart</a></li>
@@ -128,14 +128,14 @@
                                 <div id="product_details_slider" class="carousel slide" data-ride="carousel">
                                     <ol class="carousel-indicators">
                                         <c:forEach var="image" items="${sessionScope.product.images}" varStatus="status">
-                                            <li class="${status.first ? 'active' : ''}" data-target="#product_details_slider" data-slide-to="${status.index}" style="background-image: url(${pageContext.request.contextPath}/${image.imageUrl});"></li>
-                                            </c:forEach>
+                                            <li class="${status.first ? 'active' : ''}" data-target="#product_details_slider" data-slide-to="${status.index}" style="background-image: url(${image.imageUrl});"></li>
+                                        </c:forEach>
                                     </ol>
                                     <div class="carousel-inner">
                                         <c:forEach var="image" items="${sessionScope.product.images}" varStatus="status">
                                             <div class="carousel-item ${status.first ? 'active' : ''}">
-                                                <a class="gallery_img" href="${pageContext.request.contextPath}/${image.imageUrl}">
-                                                    <img class="d-block w-100" src="${pageContext.request.contextPath}/${image.imageUrl}" alt="Slide ${status.index + 1}">
+                                                <a class="gallery_img" href="${image.imageUrl}">
+                                                    <img class="d-block w-100" src="${image.imageUrl}" alt="Slide ${status.index + 1}">
                                                 </a>
                                             </div>
                                         </c:forEach>
@@ -175,7 +175,7 @@
 
                                 <!-- Add to Cart Form -->
                                 <form class="cart clearfix" method="post" action="${pageContext.request.contextPath}/addToCart">
-                                    <input type="hidden" name="productId" value="${sessionScope.product.id}">
+                                    <input type="hidden" name="productId" value="${sessionScope.product.productId}">
                                     <div class="cart-btn d-flex mb-50">
                                         <p>Qty</p>
                                         <div class="quantity">
@@ -198,7 +198,7 @@
                                 <c:if test="${not empty sessionScope.user}">
                                     <form method="post" action="${pageContext.request.contextPath}/UsersServlet">
                                         <input type="hidden" name="sellerId" value="${sessionScope.product.userId}" />
-                                        <input type="hidden" name="productId" value="${sessionScope.product.id}" />
+                                        <input type="hidden" name="productId" value="${sessionScope.product.productId}" />
                                         <button type="submit" class="btn amado-btn active" style="margin-top: 55px;">Message Seller</button>
                                     </form>
                                 </c:if>
@@ -208,6 +208,7 @@
                 </div>
             </div>
             <!-- Product Details Area End -->
+            
         </div>
         <!-- ##### Main Content Wrapper End ##### -->
 

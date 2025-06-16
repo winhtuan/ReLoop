@@ -9,6 +9,10 @@
         </session-timeout>
     </session-config>
     <!--Home-->
+    <listener>
+        <description>ServletContextListener</description>
+        <listener-class>Model.DAO.CleanupListener</listener-class>
+    </listener>
     <servlet>
         <servlet-name>Home</servlet-name>
         <servlet-class>Controller.Home</servlet-class>
