@@ -50,6 +50,7 @@
                         
                         <form action="createQR" method="post" style="width: 100%;">
                             <input type="hidden" name="paidService_id" value="PRO0001" />
+                            <input type="hidden" name="cus" value=${sessionScope.cus} />
                             <input type="hidden" name="user_id" value=${sessionScope.cus.userId} />
                             <button type="submit" class="amado-btn-custom mt-auto" style="width: 100%; border: none;">
                                 UPGRADE NOW
