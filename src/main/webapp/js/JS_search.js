@@ -1,6 +1,13 @@
 let allProducts = [];
 let productsPerLoad = 5;
 let currentIndex = 0;
+let timer;
+function delaySearch(){
+    clearTimeout(timer); // Xóa timeout trước đó nếu có
+    timer = setTimeout(() => {
+        searchItem();
+    }, 200); // Chờ 1 giây sau khi người dùng ngừng gõ
+}
 
 function searchItem() {
     let query = document.getElementById("search").value.trim();
@@ -35,7 +42,6 @@ function loadMoreProducts() {
     let resultContainer = document.getElementById("productResults");
     let nextBatch = allProducts.slice(currentIndex, currentIndex + productsPerLoad);
     nextBatch.forEach(product => {
-        console.log("hahsdajsd"+product.imageUrl);
         const item = document.createElement("div");
         item.className = "search-item";
         item.innerHTML = `
