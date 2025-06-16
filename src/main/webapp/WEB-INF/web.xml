@@ -3,6 +3,10 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    <servlet-mapping>
+        <servlet-name>s_chatBox</servlet-name>
+        <url-pattern>/s_chatBox</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
@@ -20,6 +24,10 @@
     <servlet>
         <servlet-name>s_productDetail</servlet-name>
         <servlet-class>Controller.s_productDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_chatBox</servlet-name>
+        <servlet-class>Controller.Conversation.s_chatBox</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Home</servlet-name>

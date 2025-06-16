@@ -10,6 +10,7 @@
         <!-- Title  -->
         <title>Reloop</title>
         <!-- Favicon  -->
+        <link rel="stylesheet" href="css/conversation/CSS_chatbox.css"/>
         <link rel="icon" href="img/core-img/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -24,6 +25,7 @@
         </div>
 
         <c:import url="/JSP/Home/Search.jsp" />
+        <c:import url="/JSP/Conversation/chatBox.jsp"/>
 
         <!-- ##### Main Content Wrapper Start ##### -->
         <div class="main-content-wrapper d-flex clearfix">
@@ -32,7 +34,6 @@
         </div>
 
         <c:import url="/JSP/Home/Footer.jsp" />
-
         <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
         <script src="js/jquery/jquery-2.2.4.min.js"></script>
         <!-- Popper js -->
@@ -68,6 +69,7 @@
                 });
             </script>
         </c:if>
+        <script src="js/conversation/JS_chatBox.js"></script>
 
     </body>
 </html>

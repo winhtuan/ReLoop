@@ -4,18 +4,18 @@ function toggleChat() {
 }
 
 async function sendMessage() {
-    let userInput = document.getElementById("userInput").value.trim();
+    let userInput = document.getElementById("userInputAI").value.trim();
     if (userInput === "") return;
 
     let requestData = {
         message: userInput,
 //        database: databaseScript,
-        instruction: "Chỉ trả lời dựa trên dữ liệu trong database. Nếu không có thông tin, hãy trả lời: 'Vui lòng hỏi câu liên quan đến danh sách xe ô tô có sẵn.'"
+        instruction: "Chỉ trả lời dựa trên dữ liệu trong database. Nếu không có thông tin, hãy trả lời: 'Vui lòng hỏi câu liên quan đến đồ vạt bạn muốn mua.'"
     };
 
     let chatBox = document.getElementById("chatBoxAI");
     chatBox.innerHTML += `<div><b>Bạn:</b> ${userInput}</div>`;
-    document.getElementById("userInput").value = "";
+    document.getElementById("userInputAI").value = "";
 
     try {
         let response = await fetch("/ReLoop/s_chatBox", {
