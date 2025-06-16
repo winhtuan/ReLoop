@@ -36,8 +36,8 @@ CREATE TRIGGER set_premium_expiry_on_insert
 BEFORE INSERT ON users
 FOR EACH ROW
 BEGIN
-    IF NEW.is_premium = 1 THEN
-        SET NEW.premium_expiry = DATE_ADD(NOW(), INTERVAL 30 DAY);
+    IF NEW.is_premium = 1 AND NEW.usage_time > 0 THEN  -- Sử dụng usage_time thay vì use_time
+        SET NEW.premium_expiry = DATE_ADD(NOW(), INTERVAL NEW.usage_time DAY);
     END IF;
 END$$
 
@@ -45,8 +45,8 @@ CREATE TRIGGER set_premium_expiry_on_update
 BEFORE UPDATE ON users
 FOR EACH ROW
 BEGIN
-    IF NEW.is_premium = 1 AND (NEW.premium_expiry IS NULL OR NEW.premium_expiry <= NOW()) THEN
-        SET NEW.premium_expiry = DATE_ADD(NOW(), INTERVAL 30 DAY);
+    IF NEW.is_premium = 1 AND NEW.usage_time > 0 AND (NEW.premium_expiry IS NULL OR NEW.premium_expiry <= NOW()) THEN
+        SET NEW.premium_expiry = DATE_ADD(NOW(), INTERVAL NEW.usage_time DAY);
     END IF;
 END$$
 
@@ -54,7 +54,7 @@ CREATE TRIGGER update_is_premium
 BEFORE UPDATE ON users
 FOR EACH ROW
 BEGIN
-    IF NEW.premium_expiry IS NOT NULL AND NEW.premium_expiry > NOW() THEN
+    IF NEW.premium_expiry IS NOT NULL AND NEW.premium_expiry > NOW() AND NEW.usage_time > 0 THEN  -- Sử dụng usage_time thay vì use_time
         SET NEW.is_premium = 1;
     ELSE
         SET NEW.is_premium = 0;
