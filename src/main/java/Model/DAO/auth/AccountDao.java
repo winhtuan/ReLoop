@@ -37,6 +37,8 @@ public class AccountDao {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                String hashedPassword = rs.getString("password");
+                if (BCrypt.checkpw(password, hashedPassword)) {
                 LocalDate regisDate = null;
                 Date date = rs.getDate("regisDate");
                 if (date != null) {
@@ -53,8 +55,12 @@ public class AccountDao {
                         rs.getBoolean("is_verified")
                 );
             }
+            else {
+                return null;
+            }
         }
         return null;
+    }
     }
 
     public boolean addAccount(String email, String role, String userId) {
@@ -267,8 +273,8 @@ public class AccountDao {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(BCrypt.hashpw("12345", BCrypt.gensalt()));
+    public static void main(String[] args) throws SQLException {
+        System.out.println(new AccountDao().checkLogin("johnsmith@example.com", "1235"));
     }
 
 }

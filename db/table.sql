@@ -2,6 +2,7 @@
 CREATE DATABASE reloop_v2;
 USE reloop_v2;
 -- 1. users
+
 CREATE TABLE users (
     user_id CHAR(7) NOT NULL PRIMARY KEY CHECK (user_id LIKE 'CUS____'),
     FullName VARCHAR(255),
@@ -72,7 +73,7 @@ CREATE TABLE Account (
     CONSTRAINT FK_Account_User FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- 7. PasswordResetToken
+-- 6. Bảng PasswordResetToken
 CREATE TABLE PasswordResetToken (
     reset_id CHAR(7) NOT NULL PRIMARY KEY CHECK (reset_id LIKE 'RST____'),
     user_id CHAR(7) NOT NULL,

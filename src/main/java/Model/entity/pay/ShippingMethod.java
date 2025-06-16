@@ -69,3 +69,4 @@ public class ShippingMethod {
         isActive = active;
     }
 }
+

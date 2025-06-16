@@ -13,7 +13,6 @@ function searchItem() {
         currentIndex = 0;
         return;
     }
-
     fetch(`s_search?query=${encodeURIComponent(query)}`)
             .then(response => response.json())
             .then(data => {
@@ -35,13 +34,12 @@ function searchItem() {
 function loadMoreProducts() {
     let resultContainer = document.getElementById("productResults");
     let nextBatch = allProducts.slice(currentIndex, currentIndex + productsPerLoad);
-
     nextBatch.forEach(product => {
+        console.log("hahsdajsd"+product.imageUrl);
         const item = document.createElement("div");
         item.className = "search-item";
-
         item.innerHTML = `
-            <img src="img/product-img/pro-big-1.jpg" alt="Product" class="img-thumbnail">
+            <img src="${product.imageUrl}" alt="Product" class="img-thumbnail">
             <div class="search-left-content">
                 <div class="fav-tittle">
                     <span><strong>${product.title}</strong></span>
@@ -49,7 +47,7 @@ function loadMoreProducts() {
                 </div>
             </div>
             <div class="search-actions">
-                <ion-icon name="arrow-forward-outline" class="btn-icon"></ion-icon><a href="s_productDetail?productId=${product.id}">View More</a>
+                <ion-icon name="arrow-forward-outline" class="btn-icon"></ion-icon><a href="s_productDetail?productId=${product.product_id}">View More</a>
             </div>
         `;
 

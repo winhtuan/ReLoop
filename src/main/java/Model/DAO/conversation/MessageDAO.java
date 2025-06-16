@@ -16,8 +16,8 @@ public class MessageDAO {
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
-                String lastId = rs.getString("conversation_id");
-                int num = Integer.parseInt(lastId.substring(2));
+                String lastId = rs.getString("message_id");
+                int num = Integer.parseInt(lastId.substring(3));
                 nextId = num + 1;
             }
         } catch (SQLException e) {
@@ -31,7 +31,7 @@ public class MessageDAO {
     public static String saveMessage(String conversationId, String senderId, String message) {
         String messageId = generateMessageId(); // giả sử có hàm sinh ID
         String sql = "INSERT INTO Messages (message_id, conversation_id, sender_id, content, SentAt, isRead, type) "
-                + "VALUES (?, ?, ?, ?, GETDATE(), 0, 'text')";
+                + "VALUES (?, ?, ?, ?, NOW(), 0, 'text')";
         try (Connection conn = Utils.DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, messageId);
             ps.setString(2, conversationId);
@@ -49,7 +49,7 @@ public class MessageDAO {
     public static String saveMessage(String conversationId, String senderId, String message, String type) {
         String messageId = generateMessageId(); // giả sử có hàm sinh ID
         String sql = "INSERT INTO Messages (message_id, conversation_id, sender_id, content, SentAt, isRead, type) "
-                + "VALUES (?, ?, ?, ?, GETDATE(), 0, ?)";
+                + "VALUES (?, ?, ?, ?, NOW(), 0, ?)";
         try (Connection conn = Utils.DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, messageId);
             ps.setString(2, conversationId);

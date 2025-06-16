@@ -314,12 +314,3 @@ INSERT INTO conversation (conversation_id, sender_id, receiver_id, product_id) V
 ('CON0001', 'CUS0001', 'CUS0002', 'PRD0001'),
 ('CON0002', 'CUS0002', 'CUS0003', 'PRD0002'),
 ('CON0003', 'CUS0003', 'CUS0001', 'PRD0003');
-
--- Messages for conversation 1
-INSERT INTO Messages (message_id, conversation_id, sender_id, content, isRead, type, SentAt, is_recall) VALUES
-('MSG0001', 'CON0001', 'CUS0001', 'Chào bạn, sản phẩm này còn không?', 1, 'text', '2025-06-14 21:00:00', 0),
-('MSG0002', 'CON0001', 'CUS0002', 'Còn bạn nhé!', 1, 'text', '2025-06-14 21:01:00', 0),
-('MSG0003', 'CON0002', 'CUS0002', 'Bạn có thể gửi thêm ảnh sản phẩm không?', 1, 'text', '2025-06-14 21:05:00', 0),
-('MSG0004', 'CON0002', 'CUS0003', 'Đây là ảnh nhé.', 1, 'text', '2025-06-14 21:06:00', 0),
-('MSG0005', 'CON0003', 'CUS0003', 'Sản phẩm này bảo hành bao lâu?', 1, 'text', '2025-06-14 21:10:00', 0),
-('MSG0006', 'CON0003', 'CUS0001', 'Bảo hành 6 tháng bạn nhé.', 0, 'text', '2025-06-14 21:11:00', 0);
