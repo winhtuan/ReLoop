@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+<!--  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/core-style.css" />-->
 <!-- ##### Footer Area Start ##### -->
 <footer class="footer_area clearfix">
     <div class="container">
@@ -10,7 +11,7 @@
                 <div class="single_widget_area">
                     <!-- Logo -->
                     <div class="footer-logo mr-50">
-                        <a href="index.html"><img src="img/core-img/logo2.png" alt=""></a>
+                        <a href="${contextPath}/index.jsp"><img src="${contextPath}/img/core-img/logo2.png" alt=""></a>
                     </div>
                     <!-- Copywrite Text -->
                     <p class="copywrite">
@@ -28,19 +29,19 @@
                             <div class="collapse navbar-collapse" id="footerNavContent">
                                 <ul class="navbar-nav ml-auto">
                                     <li class="nav-item active">
-                                        <a class="nav-link" href="index.html">Home</a>
+                                        <a class="nav-link" href="${contextPath}/index.jsp">Home</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="shop.html">About us</a>
+                                        <a class="nav-link" href="${contextPath}/about.jsp">About us</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="product-details.html">Post</a>
+                                        <a class="nav-link" href="${contextPath}/post.jsp">Post</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="cart.html">Cart</a>
+                                        <a class="nav-link" href="${contextPath}/cart.jsp">Cart</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="checkout.html">Premium</a>
+                                        <a class="nav-link" href="${contextPath}/premium.jsp">Premium</a>
                                     </li>
                                 </ul>
                             </div>
