@@ -153,7 +153,7 @@ public class AdminDAO {
     }
 
     public boolean createAccount(String accId, String password, String email, String userId) {
-        String sql = "INSERT INTO Account (acc_id, password, email, regisDate, user_id) VALUES (?, ?, ?, NOW(), ?)";
+        String sql = "INSERT INTO Account (acc_id, password, email, regisDate, user_id, is_verified) VALUES (?, ?, ?, NOW(), ?, 1)";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, accId);
             ps.setString(2, password);

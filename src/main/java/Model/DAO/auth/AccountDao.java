@@ -267,8 +267,53 @@ public class AccountDao {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(BCrypt.hashpw("12345", BCrypt.gensalt()));
+    public String getUserId(String email) {
+        String sql = "SELECT user_id FROM account WHERE email = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email); // Thiết lập giá trị cho dấu hỏi
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("user_id");
+            } else {
+                return null; // Không tìm thấy email
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Boolean checkIsAdmin(String user_id) {
+        String sql = "SELECT role FROM users WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user_id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return "admin".equalsIgnoreCase(role); // true nếu là admin, false nếu không
+            } else {
+                return false; // Không tìm thấy user_id → không phải admin
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Lỗi DB
+        }
+    }
+
+     public static void main(String[] args) {
+        AccountDao dao = new AccountDao();
+        String emailToCheck = "john.doe@example.com"; // Thay bằng email có thật trong DB
+        String userId = dao.getUserId(emailToCheck);
+
+        if (userId != null) {
+            System.out.println("User ID for email " + emailToCheck + ": " + userId);
+        } else {
+            System.out.println("No user found with email: " + emailToCheck);
+        }
     }
 
 }

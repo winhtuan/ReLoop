@@ -111,41 +111,55 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+    String email = request.getParameter("email");
+    String password = request.getParameter("password");
 
-        // Validate đầu vào
-        if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "Email and password cannot be empty!");
-            request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
-            return;
-        }
+    if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+        request.setAttribute("errorMessage", "Email and password cannot be empty!");
+        request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
+        return;
+    }
 
-        AccountDao accountDao = new AccountDao();
+    AccountDao accountDao = new AccountDao();
 
-        try {
-            // Kiểm tra đăng nhập
-            Account acc = accountDao.checkLogin(email.trim(), password.trim()); // hoặc hashedPassword nếu đã hash
+    try {
+        Account acc = accountDao.checkLogin(email.trim(), password.trim());
+
+        if (acc != null) {
             User user = new UserDao().getUserById(acc.getUserId());
+
             if (user != null) {
-                // Đăng nhập thành công, lưu vào session
+                // Đăng nhập thành công
                 request.getSession().setAttribute("cus", user);
                 request.getSession().setAttribute("user", acc);
+
+                // Kiểm tra role
+                String user_id = acc.getUserId();
+                boolean isAdmin = accountDao.checkIsAdmin(user_id);
+
+                if (isAdmin) {
+                    request.getRequestDispatcher("StatictisServlet").forward(request, response);
+                    return;
+                }
+
                 redirectUser(request, response);
-            } else {
-                // Đăng nhập thất bại
-                request.setAttribute("errorMessage", "Please check email, password or verify your account to login!");
-                request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
+                return;
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Database error during login", ex);
-            request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
-            request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
         }
+
+        // Nếu acc == null hoặc user == null
+        request.setAttribute("errorMessage", "Please check email, password or verify your account to login!");
+        request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
+
+    } catch (SQLException ex) {
+        LOGGER.log(Level.SEVERE, "Database error during login", ex);
+        request.setAttribute("errorMessage", "Database error: " + ex.getMessage());
+        request.getRequestDispatcher("JSP/Authenticate/JoinIn.jsp").forward(request, response);
     }
+}
 
     private void redirectUser(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
