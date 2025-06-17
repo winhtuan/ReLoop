@@ -1,6 +1,13 @@
 let allProducts = [];
 let productsPerLoad = 5;
 let currentIndex = 0;
+let timer;
+function delaySearch(){
+    clearTimeout(timer); // Xóa timeout trước đó nếu có
+    timer = setTimeout(() => {
+        searchItem();
+    }, 200); // Chờ 1 giây sau khi người dùng ngừng gõ
+}
 
 function searchItem() {
     let query = document.getElementById("search").value.trim();
@@ -40,6 +47,21 @@ function searchItem() {
 function loadMoreProducts() {
     let resultContainer = document.getElementById("productResults");
     let nextBatch = allProducts.slice(currentIndex, currentIndex + productsPerLoad);
+    nextBatch.forEach(product => {
+        const item = document.createElement("div");
+        item.className = "search-item";
+        item.innerHTML = `
+            <img src="${product.imageUrl}" alt="Product" class="img-thumbnail">
+            <div class="search-left-content">
+                <div class="fav-tittle">
+                    <span><strong>${product.title}</strong></span>
+                    <p><b>Price:</b> ${parseFloat(product.price).toLocaleString()}$</p>
+                </div>
+            </div>
+            <div class="search-actions">
+                <ion-icon name="arrow-forward-outline" class="btn-icon"></ion-icon><a href="s_productDetail?productId=${product.product_id}">View More</a>
+            </div>
+        `;
 
     // Ensure that products are loaded correctly
     if (nextBatch.length > 0) {

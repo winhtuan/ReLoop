@@ -18,7 +18,7 @@
                         <div class="search_box search-content d-flex justify-content-center">
                             <div class="position-relative w-100" style="max-width: 700px;">
                                 <form action="s_search" method="post">
-                                <input type="search" name="search" id="search" onkeyup="searchItem()" placeholder="Type your keyword...">
+                                <input type="search" name="search" id="search" onkeyup="delaySearch()" placeholder="Type your keyword...">
                                 <!-- Icon search bên trái -->
                                 <button type="submit" class="search-btn">
                                     <ion-icon name="search-outline"></ion-icon>

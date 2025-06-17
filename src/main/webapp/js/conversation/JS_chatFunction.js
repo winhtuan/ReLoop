@@ -242,7 +242,7 @@ function addMessageToChatBox(msg) {
 function addImageToChatBox(msg) {
     const msID = msg.messageId;
     const img = document.createElement("img");
-    img.src = contextPath + msg.content;
+    img.src = contextPathI + msg.content;
     img.class = "chat-img";
     return img;
 }
@@ -342,7 +342,16 @@ function loadChatHistory(userId) {
 
                 chatBox.innerHTML = "";
 
-                data.forEach(addMessageToChatBox);
+                data.messages.forEach(addMessageToChatBox);
+                if (data.product) {
+                    document.getElementById("chat-header-product").style.display = "flex";
+
+                    document.getElementById("chat-product-image").src = data.product.images[0].imageUrl;
+                    document.getElementById("chat-product-title").textContent = data.product.title;
+                    document.getElementById("chat-product-price").textContent = data.product.price + "₫";
+                } else {
+                    document.getElementById("chat-header-product").style.display = "none";
+                }
 
             })
 
@@ -574,7 +583,7 @@ function sendImage() {
             .catch(error => console.error("Upload failed", error));
 }
 function searchUsers() {
-    const searchInput = document.getElementById("search").value.toLowerCase();
+    const searchInput = document.getElementById("searchUser").value.toLowerCase();
     const userList = document.getElementById("userList");
     const users = userList.getElementsByTagName("li");
 
@@ -589,7 +598,7 @@ function searchUsers() {
 }
 
 // Add event listener for search input
-document.getElementById("search").addEventListener("input", searchUsers);
+document.getElementById("searchUser").addEventListener("input", searchUsers);
 
 // Add event listener to close dropdown when clicking outside
 document.addEventListener("click", function (event) {

@@ -83,7 +83,7 @@ public class chat {
                         return;
                     }
 
-                    String conversationId = new ConversationDAO().getOrCreateConversation(fromUserId, toUserId);
+                    String conversationId = new ConversationDAO().getConversation(fromUserId, toUserId).getConversationId();
                     String messageId = MessageDAO.saveMessage(conversationId, fromUserId, imageUrl, "img");
                     String timestamp = LocalDateTime.now().toString();
 
@@ -115,7 +115,7 @@ public class chat {
                         return;
                     }
 
-                    String conversationId = new ConversationDAO().getOrCreateConversation(fromUserId, toUserId);
+                    String conversationId = new ConversationDAO().getConversation(fromUserId, toUserId).getConversationId();
                     String messageId = MessageDAO.saveMessage(conversationId, fromUserId, content);
                     String timestamp = LocalDateTime.now().toString();
 
