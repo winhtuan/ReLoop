@@ -80,9 +80,9 @@ public class ProductImageDao {
     public static void main(String[] args) throws SQLException {
         try (Connection conn = DBUtils.getConnect()) {
             ProductImageDao dao = new ProductImageDao();
-            List<ProductImage> images = dao.getImagesByProductId("PROD001");
+            List<ProductImage> images = dao.getImagesByProductId("PRD0001");
             for (ProductImage img : images) {
-                System.out.println(img);
+                System.out.println(img.getImageUrl());
             }
         }
     }

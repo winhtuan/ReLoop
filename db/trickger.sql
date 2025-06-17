@@ -32,35 +32,6 @@ BEGIN
     END IF;
 END$$
 
-CREATE TRIGGER set_premium_expiry_on_insert
-BEFORE INSERT ON users
-FOR EACH ROW
-BEGIN
-    IF NEW.is_premium = 1 THEN
-        SET NEW.premium_expiry = DATE_ADD(NOW(), INTERVAL 30 DAY);
-    END IF;
-END$$
-
-CREATE TRIGGER set_premium_expiry_on_update
-BEFORE UPDATE ON users
-FOR EACH ROW
-BEGIN
-    IF NEW.is_premium = 1 AND (NEW.premium_expiry IS NULL OR NEW.premium_expiry <= NOW()) THEN
-        SET NEW.premium_expiry = DATE_ADD(NOW(), INTERVAL 30 DAY);
-    END IF;
-END$$
-
-CREATE TRIGGER update_is_premium
-BEFORE UPDATE ON users
-FOR EACH ROW
-BEGIN
-    IF NEW.premium_expiry IS NOT NULL AND NEW.premium_expiry > NOW() THEN
-        SET NEW.is_premium = 1;
-    ELSE
-        SET NEW.is_premium = 0;
-    END IF;
-END$$
-
 DELIMITER ;
 DELIMITER //
 -- hàm chuyển từ name sang slug

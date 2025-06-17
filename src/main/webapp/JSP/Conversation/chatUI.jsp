@@ -14,6 +14,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Reloop | Chat Interface</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/core-style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/avatar.css">
         <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -22,7 +23,6 @@
     </head>
 
     <body>
-
         <section class="products-catagories-area clearfix">
             <div class="container-fluid">
                 <div class="chat-container">
@@ -126,70 +126,60 @@
                 if (msg.type === "unread_list") {
                     msg.senders.forEach(senderId => markUserAsUnread(senderId));
                     return;
-                }
-                if (msg.type === "block_status") {
-                    const messageInput = document.getElementById("messageInput");
-                    const sendBtn = document.querySelector(".inputBox button");
-                    const blockBtn = document.getElementById("blockBtn");
-                    const unblockBtn = document.getElementById("unblockBtn");
-                    const blockNotice = document.getElementById("blockNotice");
+                if ((msg.status === "blocked_me" || msg.status === "unblocked_me") && currentChatUserId !== msg.blockerId)
+                    return;
 
-                    if ((msg.status === "blocked_by_me" || msg.status === "unblocked_by_me") && currentChatUserId !== msg.blockedId)
-                        return;
-                    if ((msg.status === "blocked_me" || msg.status === "unblocked_me") && currentChatUserId !== msg.blockerId)
-                        return;
-
-                    if (msg.status === "blocked_by_me" || msg.status === "blocked_me") {
-                        messageInput.style.display = "none";
-                        sendBtn.style.display = "none";
-                        blockBtn.style.display = "none";
-                        document.getElementById("imageUploadLabel").style.display = "none";
-                        document.getElementById("imageUpload").style.display = "none";
-                        document.getElementById("emojiBtn").style.display = "none";
-                        if (msg.status === "blocked_by_me")
-                            unblockBtn.style.display = "inline-block";
-                        else
-                            unblockBtn.style.display = "none";
-                        blockNotice.textContent = msg.status === "blocked_by_me" ? "Bạn đã block người dùng này" : "Người dùng này đã block bạn";
-                        blockNotice.style.display = "block";
-                    } else if (msg.status === "unblocked_by_me" || msg.status === "unblocked_me") {
-                        messageInput.style.display = "block";
-                        sendBtn.style.display = "inline-block";
-                        blockBtn.style.display = "inline-block";
+                if (msg.status === "blocked_by_me" || msg.status === "blocked_me") {
+                    messageInput.style.display = "none";
+                    sendBtn.style.display = "none";
+                    blockBtn.style.display = "none";
+                    document.getElementById("imageUploadLabel").style.display = "none";
+                    document.getElementById("imageUpload").style.display = "none";
+                    document.getElementById("emojiBtn").style.display = "none";
+                    if (msg.status === "blocked_by_me")
+                        unblockBtn.style.display = "inline-block";
+                    else
                         unblockBtn.style.display = "none";
-                        blockNotice.style.display = "none";
-                        document.getElementById("imageUploadLabel").style.display = "inline-block";
-                        document.getElementById("imageUpload").style.display = "none";
-                        document.getElementById("emojiBtn").style.display = "inline-block";
-                    }
-                    return;
+                    blockNotice.textContent = msg.status === "blocked_by_me" ? "Bạn đã block người dùng này" : "Người dùng này đã block bạn";
+                    blockNotice.style.display = "block";
+                } else if (msg.status === "unblocked_by_me" || msg.status === "unblocked_me") {
+                    messageInput.style.display = "block";
+                    sendBtn.style.display = "inline-block";
+                    blockBtn.style.display = "inline-block";
+                    unblockBtn.style.display = "none";
+                    blockNotice.style.display = "none";
+                    document.getElementById("imageUploadLabel").style.display = "inline-block";
+                    document.getElementById("imageUpload").style.display = "none";
+                    document.getElementById("emojiBtn").style.display = "inline-block";
                 }
+                return;
+            }
 
-                if (msg.type === "recall") {
-                    handleRecallMessage(msg);
-                    return;
+            if (msg.type === "recall") {
+                handleRecallMessage(msg);
+                return;
+            }
+
+            if (msg.type === "recall_failed") {
+                alert(msg.message);
+                return;
+            }
+
+            const isRelated = (msg.fromUserId === currentChatUserId && msg.toUserId === currentUserId) ||
+                    (msg.toUserId === currentChatUserId && msg.fromUserId === currentUserId);
+            const isSentByMe = msg.fromUserId === currentUserId;
+
+            if (isRelated)
+                addMessageToChatBox(msg);
+
+            if (!isSentByMe && (!isRelated || document.hidden)) {
+                const now = Date.now();
+                const lastTime = lastNotificationTimestamps[msg.fromUserId] || 0;
+                if (now - lastTime > NOTIFY_COOLDOWN_MS) {
+                    showBrowserNotification(msg.fromUsername, msg.content);
+                    lastNotificationTimestamps[msg.fromUserId] = now;
                 }
-
-                if (msg.type === "recall_failed") {
-                    alert(msg.message);
-                    return;
-                }
-
-                const isRelated = (msg.fromUserId === currentChatUserId && msg.toUserId === currentUserId) ||
-                        (msg.toUserId === currentChatUserId && msg.fromUserId === currentUserId);
-                const isSentByMe = msg.fromUserId === currentUserId;
-
-                if (isRelated)
-                    addMessageToChatBox(msg);
-
-                if (!isSentByMe && (!isRelated || document.hidden)) {
-                    const now = Date.now();
-                    const lastTime = lastNotificationTimestamps[msg.fromUserId] || 0;
-                    if (now - lastTime > NOTIFY_COOLDOWN_MS) {
-                        showBrowserNotification(msg.fromUsername, msg.content);
-                        lastNotificationTimestamps[msg.fromUserId] = now;
-                    }
-                }
+            }
 
                 if (!isSentByMe && msg.fromUserId !== currentChatUserId)
                     markUserAsUnread(msg.fromUserId);
