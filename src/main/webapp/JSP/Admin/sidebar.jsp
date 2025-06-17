@@ -126,7 +126,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="s_logout" class="nav-link">
                             <span class="material-symbols-rounded">logout</span>
                             <span class="nav-label">Logout</span>
                         </a>
