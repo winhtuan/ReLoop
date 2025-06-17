@@ -12,7 +12,7 @@
                 font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             }
             main {
-                background: #F3F5F9;
+                background: #FFFFFF;
                 height: 100%;
             }
             main .header {
@@ -47,6 +47,46 @@
                 <h1 class="text-2xl font-semibold text-gray-800">Account Manager</h1>
             </div>
 
+            <!-- Hiển thị thông báo thành công/thất bại -->
+            <div class="max-w-7xl mx-auto px-4 mt-4">
+                <c:if test="${param.msg == 'delete_success'}">
+                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
+                        ✅ Account deleted successfully!
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'delete_failed'}">
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
+                        ❌ Failed to delete account. Please try again.
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'created'}">
+                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
+                        ✅ Account created successfully!
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'create_acc_fail'}">
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
+                        ❌ Failed to create account. Please try again.
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'create_user_fail'}">
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
+                        ❌ Failed to create user record. Please try again.
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'role_updated'}">
+                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
+                        ✅ Role updated successfully!
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'role_update_failed'}">
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
+                        ❌ Failed to update role. Please try again.
+                    </div>
+                </c:if>
+            </div>
+
+
             <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-xl p-6">
                 <!-- Create Account  -->
                 <div class="flex items-center justify-between mb-4">
@@ -73,7 +113,7 @@
                                 <th class="px-4 py-2 border-b">Email</th>
                                 <th class="px-4 py-2 border-b">Phone</th>
                                 <th class="px-4 py-2 border-b">Role</th>
-                                <th class="px-4 py-2 border-b text-right pr-[110px]">Actions</th>
+                                <th class="px-4 py-2 border-b text-right pr-[130px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="postTableBody" class="text-gray-800">
@@ -86,17 +126,26 @@
                                     <td class="px-4 py-2 text-right pr-[110px]">
                                         <div class="flex justify-end items-center gap-4">
                                             <!-- Unblock button -->
-                                            <button onclick="openModal('unblockModal')" 
-                                                    type="button" class="group relative cursor-pointer text-green-600 hover:text-green-800">
+                                            <button onclick="openModal('blockModal', '${user.userId}')" 
+                                                    type="button" class="group relative cursor-pointer text-red-600 hover:text-red-800">
                                                 <span class="material-symbols-rounded text-xl">lock_open</span>
                                                 <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
-                                                    Unblock
+                                                    Block
+                                                </div>
+                                            </button>
+
+                                            <!-- Edit button -->
+                                            <button onclick="openEditModal('${user.userId}', '${user.fullName}', '${user.email}', '${user.phoneNumber}', '${user.role}')"
+                                                    type="button" class="group relative cursor-pointer text-blue-600 hover:text-blue-800">
+                                                <span class="material-symbols-rounded text-xl">edit</span>
+                                                <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
+                                                    Edit
                                                 </div>
                                             </button>
 
                                             <!-- Delete button -->
-                                            <button onclick="openModal('deleteModal')"
-                                                    type="button" class="group relative cursor-pointer text-red-600 hover:text-red-800">
+                                            <button onclick="openModal('deleteModal', '${user.userId}')"
+                                                    type="button" class="group relative cursor-pointer text-gray-600 hover:text-gray-800">
                                                 <span class="material-symbols-rounded text-xl">delete</span>
                                                 <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
                                                     Delete
@@ -119,7 +168,10 @@
                     <p class="text-gray-600 mb-6">Are you sure you want to block this account?</p>
                     <div class="flex justify-end gap-3">
                         <button onclick="closeModal('blockModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                        <button onclick="confirmBlock()" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Confirm</button>
+                        <form action="BlockAccountServlet" method="post">
+                            <input type="hidden" name="user_id" id="blockUserId">
+                            <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Confirm</button>   
+                        </form>
                     </div>
                 </div>
             </div>
@@ -130,9 +182,56 @@
                     <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Delete</h2>
                     <p class="text-gray-600 mb-6">Are you sure you want to delete this account?</p>
                     <div class="flex justify-end gap-3">
+                        <!-- Đổi method="port" thành post -->
                         <button onclick="closeModal('deleteModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                        <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Confirm</button>
+                        <form action="DeleteAccountServlet" method="post">
+                            <input type="hidden" name="user_id" id="deleteUserId">
+                            <input type="hidden" name="origin" value="AccountManageServlet" />
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Confirm</button>
+                        </form>
                     </div>
+                </div>
+            </div>
+
+            <!-- Edit Role Modal -->
+            <div id="editModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-800">Edit Role</h2>
+
+                    <form action="EditServlet" method="post" class="space-y-4">
+                        <!-- Hidden user_id -->
+                        <input type="hidden" name="user_id" id="editUserId">
+
+                        <div>
+                            <label class="block text-gray-700">Full Name</label>
+                            <input type="text" id="editFullName" class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-600" readonly />
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700">Email</label>
+                            <input type="email" id="editEmail" class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-600" readonly />
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700">Phone Number</label>
+                            <input type="text" id="editPhone" class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-600" readonly />
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700">Role</label>
+                            <select name="role" id="editRole" class="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="admin">Admin</option>
+                                <option value="supporter">Supporter</option>
+                                <option value="user">User</option>
+                                <option value="shopkeeper">Shopkeeper</option>
+                            </select>
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4">
+                            <button type="button" onclick="closeModaledit('editModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -141,11 +240,7 @@
                 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-800">Create New Account</h2>
 
-                    <form id="createAccountForm" class="space-y-4">
-                        <div>
-                            <label class="block text-gray-700">Username</label>
-                            <input type="text" name="username" class="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-                        </div>
+                    <form action="CreateAccountServlet" method="post" id="createAccountForm" class="space-y-4">
                         <div>
                             <label class="block text-gray-700">Email</label>
                             <input type="email" name="email" class="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
@@ -160,6 +255,8 @@
                                 <option value="" disabled selected>Select role</option>
                                 <option value="admin">Admin</option>
                                 <option value="user">Supporter</option>
+                                <option value="user">User</option>
+                                <option value="shopkeeper">Shopkeeper</option>
                                 <!-- Add more roles if needed -->
                             </select>
                         </div>
@@ -250,36 +347,56 @@
                 }
             }
             //Modal
-            function openModal(id) {
+            function openModal(id, userId) {
                 document.getElementById(id).classList.remove("hidden");
+
+                // Gán userId vào input hidden tương ứng
+                if (id === 'blockModal') {
+                    document.getElementById('blockUserId').value = userId;
+                } else if (id === 'deleteModal') {
+                    document.getElementById('deleteUserId').value = userId;
+                }
             }
 
             function closeModal(id) {
                 document.getElementById(id).classList.add("hidden");
             }
 
-            function confirmBlock() {
-                // TODO: Gọi API hoặc logic block tại đây
-                alert("Account blocked!");
-                closeModal('blockModal');
+            function openEditModal(userId, fullName, email, phone, role) {
+                document.getElementById('editUserId').value = userId;
+                document.getElementById('editFullName').value = fullName;
+                document.getElementById('editEmail').value = email;
+                document.getElementById('editPhone').value = phone;
+                document.getElementById('editRole').value = role;
+                document.getElementById('editModal').classList.remove('hidden');
             }
 
-            function confirmDelete() {
-                // TODO: Gọi API hoặc logic xóa tại đây
-                alert("Account deleted!");
-                closeModal('deleteModal');
+            function closeModaledit(modalId) {
+                document.getElementById(modalId).classList.add('hidden');
             }
 
-            document.getElementById('createAccountForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-
-                // TODO: Gửi dữ liệu tới server hoặc xử lý tại đây
-                alert("Account created!\nUsername: " + formData.get('username'));
-
-                closeModal('createModal');
-                this.reset(); // reset form sau khi tạo
-            });
+//            function confirmBlock() {
+//                // TODO: Gọi API hoặc logic block tại đây
+//                alert("Account blocked!");
+//                closeModal('blockModal');
+//            }
+//
+//            function confirmDelete() {
+//                // TODO: Gọi API hoặc logic xóa tại đây
+//                alert("Account deleted!");
+//                closeModal('deleteModal');
+//            }
+//
+//            document.getElementById('createAccountForm').addEventListener('submit', function (e) {
+//                e.preventDefault();
+//                const formData = new FormData(this);
+//
+//                // TODO: Gửi dữ liệu tới server hoặc xử lý tại đây
+//                alert("Account created!\nUsername: " + formData.get('username'));
+//
+//                closeModal('createModal');
+//                this.reset(); // reset form sau khi tạo
+//            });
             // Tìm kiếm
             searchInput.addEventListener("keyup", () => {
                 const keyword = searchInput.value.trim().toLowerCase();
