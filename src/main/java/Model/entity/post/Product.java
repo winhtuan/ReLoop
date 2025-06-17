@@ -15,6 +15,8 @@ public class Product {
     private boolean isPriority;
     private Date createdAt;
     private Date updatedAt;
+    private String state;
+    private int quantity;
     private List<ProductImage> images;
 
     public Product() {}
@@ -34,6 +36,25 @@ public class Product {
         this.images = images;
     }
 
+    public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, String state, int quantity, List<ProductImage> images) {
+        this.productId = productId;
+        this.userId = userId;
+        this.categoryId = categoryId;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.location = location;
+        this.status = status;
+        this.isPriority = isPriority;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.state = state;
+        this.quantity = quantity;
+        this.images = images;
+    }
+
+    
+    
     public Product(String productId, String userId, Integer categoryId, String title, String description,
                     int price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt) {
         this.productId = productId;
@@ -49,6 +70,24 @@ public class Product {
         this.updatedAt = updatedAt;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    
+    
     public boolean isIsPriority() {
         return isPriority;
     }
@@ -97,4 +136,12 @@ public class Product {
 
     public Date getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+
+    @Override
+    public String toString() {
+        return "Product{" + "productId=" + productId + ", userId=" + userId + ", categoryId=" + categoryId + ", title=" + title + ", description=" + description + ", price=" + price + ", location=" + location + ", status=" + status + ", isPriority=" + isPriority + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", state=" + state + ", quantity=" + quantity + ", images=" + images + '}';
+    }
+    
+    
+    
 }

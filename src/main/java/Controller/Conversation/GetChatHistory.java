@@ -2,7 +2,10 @@ package Controller.Conversation;
 
 import Model.DAO.conversation.ConversationDAO;
 import Model.DAO.conversation.MessageDAO;
+import Model.DAO.post.ProductDao;
+import Model.entity.conversation.Conversation;
 import Model.entity.conversation.Message;
+import Model.entity.post.Product;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,7 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/GetChatHistory")
 public class GetChatHistory extends HttpServlet {
@@ -28,24 +33,26 @@ public class GetChatHistory extends HttpServlet {
 //        String productId = request.getParameter("productId"); // Lấy productId nếu cần
 
         // Kiểm tra đầu vào
-        if (user1 == null || user2 == null ) {
+        if (user1 == null || user2 == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu tham số!");
             return;
         }
 
         // Tạo hoặc lấy conversation_id (String)
-        String conversationId = new ConversationDAO().getOrCreateConversation(user1, user2);
-
+        Conversation conversationId = new ConversationDAO().getConversation(user1, user2);
+        Product pro= new ProductDao().getProductById(conversationId.getProductId());
         // Lấy danh sách tin nhắn
-        List<Message> messages = MessageDAO.getMessagesByconversationId(conversationId);
+        List<Message> messages = MessageDAO.getMessagesByconversationId(conversationId.getConversationId());
         // Thiết lập response JSON
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("product", pro);
+        payload.put("messages", messages);
+
+        /*--- Trả JSON ---*/
         response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-
-        Gson gson = new Gson();
-        String json = gson.toJson(messages);
-
-        out.print(json);
-        out.flush();
+        try (PrintWriter out = response.getWriter()) {
+            out.print(new Gson().toJson(payload));
+        }
     }
 }

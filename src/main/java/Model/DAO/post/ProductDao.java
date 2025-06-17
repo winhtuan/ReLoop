@@ -242,7 +242,7 @@ public class ProductDao {
 
     public static void main(String[] args) {
         for (Product a : new ProductDao().searchProducts("s")) {
-            System.out.println(a.getImages().getFirst());
+            System.out.println(a.toString());
         }
     }
 

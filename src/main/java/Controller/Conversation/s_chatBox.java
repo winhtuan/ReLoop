@@ -18,9 +18,9 @@ import com.google.gson.*;
 
 public class s_chatBox extends HttpServlet {
 
-    private static final String API_URL = new AppConfig().get("url_chatBox");
+    private static final String API_URL = new AppConfig().get("chatbox.api_url");
     
-    private static final String API_KEY = new AppConfig().get("key_chatBox");
+    private static final String API_KEY = new AppConfig().get("chatbox.api_key");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -71,7 +71,7 @@ public class s_chatBox extends HttpServlet {
                 + "Answer in Vietnamese and if question are not relate to products then answer \"Vui lòng hỏi câu liên quan đến các sản phẩm bạn cần!\"";
         // Tạo payload JSON theo chuẩn Chat Completion
         JsonObject requestBody = new JsonObject();
-        requestBody.addProperty("model", "accounts/fireworks/models/llama-v3p1-8b-instruct");
+        requestBody.addProperty("model", new AppConfig().get("chatbox.model"));
         requestBody.addProperty("stream", false);
 
         JsonArray messages = new JsonArray();
@@ -84,52 +84,51 @@ public class s_chatBox extends HttpServlet {
         requestBody.add("messages", messages);
 
         // Gửi request đến Huggingface
-        URL url = new URL(API_URL);
+            URL url = new URL(API_URL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
+            conn.setRequestMethod("POST");
         conn.setRequestProperty("Authorization", API_KEY);
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("Accept", "application/json");
-        conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
 
-        try (OutputStream os = conn.getOutputStream()) {
-            byte[] input = requestBody.toString().getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
-        }
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = requestBody.toString().getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
 
-        int status = conn.getResponseCode();
-        InputStream inputStream = (status < 400) ? conn.getInputStream() : conn.getErrorStream();
+            int status = conn.getResponseCode();
+            InputStream inputStream = (status < 400) ? conn.getInputStream() : conn.getErrorStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            StringBuilder responseStr = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                responseStr.append(line.trim());
+            }
+            br.close();
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        StringBuilder responseStr = new StringBuilder();
-        while ((line = br.readLine()) != null) {
-            responseStr.append(line.trim());
-        }
-        br.close();
-
-        String aiResponseText = "Vui lòng hỏi câu liên quan đến các sản phẩm bạn cần.";
-        try {
-            JsonObject jsonResponse = JsonParser.parseString(responseStr.toString()).getAsJsonObject();
-            if (jsonResponse.has("choices")) {
-                JsonArray choices = jsonResponse.getAsJsonArray("choices");
-                if (choices.size() > 0) {
-                    JsonObject firstChoice = choices.get(0).getAsJsonObject();
-                    JsonObject messageObj = firstChoice.getAsJsonObject("message");
-                    if (messageObj != null && messageObj.has("content")) {
-                        aiResponseText = messageObj.get("content").getAsString();
+            String aiResponseText = "Vui lòng hỏi câu liên quan đến các sản phẩm bạn cần111.";
+            try {
+                JsonObject jsonResponse = JsonParser.parseString(responseStr.toString()).getAsJsonObject();
+                if (jsonResponse.has("choices")) {
+                    JsonArray choices = jsonResponse.getAsJsonArray("choices");
+                    if (choices.size() > 0) {
+                        JsonObject firstChoice = choices.get(0).getAsJsonObject();
+                        JsonObject messageObj = firstChoice.getAsJsonObject("message");
+                        if (messageObj != null && messageObj.has("content")) {
+                            aiResponseText = messageObj.get("content").getAsString();
+                        }
                     }
                 }
-            }
         } catch (Exception e) {
-            aiResponseText = "Lỗi xử lý phản hồi từ AI.";
-            e.printStackTrace();
-        }
+                aiResponseText = "Lỗi xử lý phản hồi từ AI.";
+                e.printStackTrace();
+            }
 
         // Gửi response về client
-        JsonObject clientResponse = new JsonObject();
-        clientResponse.addProperty("response", aiResponseText);
+            JsonObject clientResponse = new JsonObject();
+            clientResponse.addProperty("response", aiResponseText);
 
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(clientResponse.toString());
-    }
-}
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(clientResponse.toString());
+            }
+        }

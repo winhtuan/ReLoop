@@ -4,10 +4,14 @@ import Model.DAO.auth.UserDao;
 import Model.DAO.conversation.ConversationDAO;
 import Model.entity.auth.Account;
 import Model.entity.auth.User;
+import Model.entity.conversation.Conversation;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UsersServlet extends HttpServlet {
     @Override
@@ -29,7 +33,7 @@ public class UsersServlet extends HttpServlet {
 
         req.setAttribute("cus", user);
         req.setAttribute("userList", users);
-        req.getRequestDispatcher("JSP/Conversation/chatUI.jsp").forward(req, resp);
+        req.getRequestDispatcher("JSP/Conversation/chat.jsp").forward(req, resp);
     }
 
     @Override
@@ -43,10 +47,19 @@ public class UsersServlet extends HttpServlet {
         }
         // Lấy Customer hiện tại
         User user = new UserDao().getUserById(currentUser.getUserId());
-
-        // Tạo hoặc lấy conversation_id
-        new ConversationDAO().getOrCreateConversation(sellerId, user.getUserId(), productId);
-
+        Conversation conver= new ConversationDAO().getConversation(currentUser.getUserId(), sellerId);
+        if(conver == null)
+        {
+            try {
+                conver = new ConversationDAO().createConversation(currentUser.getUserId(), sellerId, productId);
+            } catch (SQLException ex) {
+                Logger.getLogger(UsersServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if(!productId.equalsIgnoreCase(conver.getProductId()))
+        {
+            new ConversationDAO().updateProductId(conver.getConversationId(), productId);
+        }
         // Lấy danh sách user đã trò chuyện
         List<User> users = new UserDao().listAllCustomers(currentUser.getUserId());
 
@@ -63,6 +76,6 @@ public class UsersServlet extends HttpServlet {
         req.setAttribute("sellid", sellerId);
         req.setAttribute("cus", user);
         req.setAttribute("userList", users);
-        req.getRequestDispatcher("JSP/Conversation/chatUI.jsp").forward(req, resp);
+        req.getRequestDispatcher("JSP/Conversation/chat.jsp").forward(req, resp);
     }
 }
