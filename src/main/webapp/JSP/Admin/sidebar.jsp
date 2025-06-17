@@ -32,7 +32,7 @@
                 <!-- Primary Top Nav -->
                 <ul class="nav-list primary-nav">
                     <li class="nav-item">
-                        <a href="dashboard.jsp" class="nav-link">
+                        <a href="${pageContext.request.contextPath}/JSP/Admin/dashboard.jsp" class="nav-link">
                             <span class="material-symbols-rounded">dashboard</span>
                             <span class="nav-label">Dashboard</span>
                         </a>
@@ -63,7 +63,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="blockAcc.jsp" class="nav-link dropdown-link">Block User</a>
+                                <a href="${pageContext.request.contextPath}/BlockListAccountServlet" class="nav-link dropdown-link">Block User</a>
                             </li>
 
                         </ul>

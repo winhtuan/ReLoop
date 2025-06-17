@@ -12,7 +12,7 @@
                 font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             }
             main {
-                background: #F3F5F9;
+                background: #FFFFFF;
                 height: 100%;
             }
             main .header {

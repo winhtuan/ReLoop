@@ -11,7 +11,7 @@
 </head>
 <style>
   main {
-    background: #F3F5F9;
+    background: #FFFFFF;
     height: 100%;
   }
 
