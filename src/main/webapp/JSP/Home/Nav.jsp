@@ -28,7 +28,7 @@
     <nav class="amado-nav mt-30 mb-15">
         <ul>
             <li class="active"><a href="home">Home</a></li>
-            <li><a href="#">About us</a></li>
+            <li><a href="#">New Post</a></li>
             <li><a href="#">Post</a></li>
             <li><a href="#">Shop</a></li>
             <li><a href="premium?user_id=${sessionScope.cus.userId}">Premium</a></li>
@@ -107,9 +107,21 @@
         <c:choose>
             <c:when test="${sessionScope.user != null}">
                 <div class="nav-brand" id="join-in-btn">
-                    <a href="#">
-                        <ion-icon name="bug-outline"></ion-icon> ${sessionScope.cus.fullName}
-                    </a>
+                    <c:if test="${sessionScope.cus.isPremium}">
+                        <div class="avatar-pro-container d-flex align-items-center gap-3">
+                            <div class="avatar-wrapper position-relative">
+                                <img src="${sessionScope.cus.srcImg}" alt="Avatar" class="avatar-pro">
+                                <span class="badge-pro position-absolute bottom-0 start-50 translate-middle-x">pro</span>
+                            </div>
+                            <span class="name-pro">${sessionScope.cus.fullName}</span>
+                        </div>
+                    </c:if>
+                    <c:if test="${!sessionScope.cus.isPremium}">
+                        <a href="#" class="nav-user-toggle d-flex align-items-center gap-3">
+                            <img src="${sessionScope.cus.srcImg}" alt="Avatar" class="user-avatar rounded-circle">
+                            <span class="join-label">${sessionScope.cus.fullName}</span>
+                        </a>
+                    </c:if>
                     <ul id="menu" class="menu">
                         <li><a href="#" id="menu-item"><ion-icon name="bag-handle-outline"></ion-icon>Order History</a></li>
                         <li><a href="#" id="menu-item"><ion-icon name="newspaper-outline"></ion-icon>Manager Post</a></li>

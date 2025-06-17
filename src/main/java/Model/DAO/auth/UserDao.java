@@ -1,6 +1,7 @@
 package Model.DAO.auth;
 
 import java.sql.*;
+import java.util.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import Model.entity.auth.User;
@@ -43,8 +44,10 @@ public class UserDao {
                         rs.getString("email"),
                         rs.getBoolean("is_premium"),
                         rs.getTimestamp("premium_expiry"),
-                        rs.getBigDecimal("balance")
+                        rs.getBigDecimal("balance"),
+                        rs.getString("img")
                 );
+                System.out.println(rs.getString("img"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -77,6 +80,25 @@ public class UserDao {
         return customerID;
     }
 
+    public boolean updatePremiumStatus(String userId, boolean isPremium, Date expiry) {
+        String sql = "UPDATE users SET is_premium = ?, premium_expiry = ? WHERE user_id = ?";
+        
+        try (Connection con = DBUtils.getConnect(); PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setBoolean(1, isPremium);
+            ps.setObject(2, expiry);
+            ps.setString(3, userId);
+            
+            int rows = ps.executeUpdate();
+            return rows > 0; // true if at least one row was updated
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+    
     public boolean updateUser(User user) {
         String sql = "UPDATE users SET FullName=?, role=?, Address=?, PhoneNumber=?, email=?, is_premium=?, premium_expiry=?, balance=? WHERE user_id=?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
