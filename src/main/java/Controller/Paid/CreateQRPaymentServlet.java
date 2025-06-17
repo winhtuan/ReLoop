@@ -1,6 +1,5 @@
 package Controller.Paid;
 
-import Model.DAO.auth.UserDao;
 import Model.DAO.commerce.OrderDao;
 import Model.DAO.pay.PaidServiceDAO;
 import Model.entity.pay.PaidService;
@@ -10,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import vn.payos.PayOS;
 import vn.payos.type.CheckoutResponseData;
 import vn.payos.type.PaymentData;
@@ -22,11 +22,11 @@ public class CreateQRPaymentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id = request.getParameter("paidService_id");
+        String paid_id = request.getParameter("paidService_id");
         String user_id = request.getParameter("user_id");
 
         // Retrieve the paid service details
-        PaidService premium = new PaidServiceDAO().getPaidServiceById(id);
+        PaidService premium = new PaidServiceDAO().getPaidServiceById(paid_id);
         String description = String.format("Purchases %s", premium.getServiceName());
         int amount = (int) premium.getPrice();
 
@@ -42,13 +42,13 @@ public class CreateQRPaymentServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to create order");
             return;
         }
-
+        String encodedPaidId = URLEncoder.encode(paid_id, "UTF-8"); // gửi paid Service ID nếu cần
         // Prepare payment data to be sent to PayOS
         PaymentData paymentData = PaymentData.builder()
                 .orderCode(Long.valueOf(orderId.substring(3)))  // Pass orderId as orderCode for PayOS
                 .amount(amount)
                 .description(description)
-                .returnUrl("http://localhost:8080/ReLoop/PayOSCallback")  // Pass orderId in the return URL
+                .returnUrl("http://localhost:8080/ReLoop/PayOSCallback") 
                 .cancelUrl("http://localhost:8080/ReLoop/html/cancel.html")
                 .build();
 

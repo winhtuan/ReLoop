@@ -47,14 +47,27 @@
                             <li><ion-icon name="checkmark-circle-outline"></ion-icon> Auto-renew listings</li>
                             <li><ion-icon name="checkmark-circle-outline"></ion-icon> View followers</li>
                         </ul>
-                        
+
                         <form action="createQR" method="post" style="width: 100%;">
                             <input type="hidden" name="paidService_id" value="PRO0001" />
                             <input type="hidden" name="cus" value=${sessionScope.cus} />
                             <input type="hidden" name="user_id" value=${sessionScope.cus.userId} />
-                            <button type="submit" class="amado-btn-custom mt-auto" style="width: 100%; border: none;">
-                                UPGRADE NOW
-                            </button>
+
+                            <c:choose>
+                                <c:when test="${cus.isPremium}">
+                                    <!-- Nếu là Premium, hiển thị thông báo và vô hiệu hóa nút -->
+                                    <button type="button" class="amado-btn-custom mt-auto" style="width: 100%; border: none;" disabled>
+                                        Already a Premium member
+                                    </button>
+                                </c:when>
+                                <c:otherwise>
+                                    <!-- Nếu không phải Premium, hiển thị nút để nâng cấp -->
+                                    <button type="submit" class="amado-btn-custom mt-auto" style="width: 100%; border: none;">
+                                        UPGRADE NOW
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
+
                         </form>
                     </div>
                 </div>

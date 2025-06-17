@@ -133,6 +133,8 @@ CREATE TABLE product (
     CONSTRAINT FK_product_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT FK_product_category FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
 );
+alter table product add column state varchar(50);
+alter table product add column quantity int;
 
 -- 12. orders
 CREATE TABLE orders (
@@ -247,3 +249,12 @@ CREATE TABLE Messages (
     CONSTRAINT FK_Messages_conversation FOREIGN KEY (conversation_id) REFERENCES conversation(conversation_id) ON DELETE CASCADE,
     CONSTRAINT FK_Messages_sender FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+create table notification(
+	noti_id CHAR(7) NOT NULL PRIMARY KEY CHECK (noti_id LIKE 'NOT____'),
+    user_id CHAR(7) NOT NULL,
+    content text,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read BOOLEAN DEFAULT FALSE,
+    CONSTRAINT FK_notic_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+)

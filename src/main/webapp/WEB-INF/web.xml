@@ -144,4 +144,12 @@
         <servlet-name>CreateQRPaymentServlet</servlet-name>
         <url-pattern>/createQR</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>PayOSCallbackServlet</servlet-name>
+        <servlet-class>Controller.Paid.PayOSCallbackServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PayOSCallbackServlet</servlet-name>
+        <url-pattern>/PayOSCallback</url-pattern>
+    </servlet-mapping>
 </web-app>

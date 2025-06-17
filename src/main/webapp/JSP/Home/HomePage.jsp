@@ -15,6 +15,7 @@
 
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
+        <link rel="stylesheet" href="css/avatar.css">
 
     </head>
     <body>
