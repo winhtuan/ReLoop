@@ -98,11 +98,14 @@ public class LoginServlet extends HttpServlet {
 
         if (!new AccountDao().isEmailExist(email)) {
             request.getSession().setAttribute("user", acc);
+            request.getSession().setAttribute("fullname", name);
             request.getRequestDispatcher("JSP/Authenticate/registerGoogle.jsp").forward(request, response);
         } else {
             acc = new AccountDao().getAccountByEmail(email);
             if (acc != null) {
                 request.getSession().setAttribute("user", acc);
+                User user=new UserDao().getUserById(acc.getUserId());
+                request.getSession().setAttribute("cus", user);
                 redirectUser(request, response);
             } else {
                 response.getWriter().println("Error retrieving account information.");

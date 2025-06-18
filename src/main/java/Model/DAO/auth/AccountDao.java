@@ -21,7 +21,7 @@ public class AccountDao {
 
             if (rs.next()) {
                 String lastId = rs.getString("acc_id");
-                int num = Integer.parseInt(lastId.substring(2));
+                int num = Integer.parseInt(lastId.substring(3));
                 nextId = num + 1;
             }
         } catch (SQLException e) {
@@ -64,12 +64,12 @@ public class AccountDao {
     }
 
     public boolean addAccount(String email, String role, String userId) {
-        String query = "INSERT INTO Account (password, email, role, regisDate, userid, is_verified, number_post) "
-                + "VALUES (?, ?, ?, GETDATE(), ?, 1, 0)";
+        String query = "INSERT INTO Account (acc_id,password, email, regisDate, user_id, is_verified) "
+                + "VALUES (?, ?, ?, NOW(), ?, 1)";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, "google");
-            ps.setString(2, email);
-            ps.setString(3, role);
+            ps.setString(1, generateAccountId());
+            ps.setString(2, "google");
+            ps.setString(3, email);
             ps.setString(4, userId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -102,7 +102,7 @@ public class AccountDao {
     }
 
     public boolean isEmailExist(String email) {
-        String sql = "SELECT accID FROM Account WHERE email = ?";
+        String sql = "SELECT acc_id FROM Account WHERE email = ?";
         try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -115,7 +115,7 @@ public class AccountDao {
 
     public String newAccount(Account account) {
         String id = generateAccountId(); // Tạo acc_id mới
-        String sql = "INSERT INTO Account (acc_id, password, email, regisDate, userid, verification_token, is_verified, number_post) "
+        String sql = "INSERT INTO Account (acc_id, password, email, regisDate, user_id, verification_token, is_verified, number_post) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
