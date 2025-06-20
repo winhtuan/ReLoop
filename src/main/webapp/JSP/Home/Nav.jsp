@@ -37,7 +37,7 @@
     <!-- Cart Menu -->
     <div class="cart-fav-search">
         <a href="#" class="search-nav"><ion-icon name="search-outline"></ion-icon> Search</a>
-        <a href="cart.html" class="cart-nav"><ion-icon name="cart-outline"></ion-icon> Cart <span>(0)</span></a>
+        <a href="s_cart" class="cart-nav"><ion-icon name="cart-outline"></ion-icon> Cart <span>(0)</span></a>
 
         <div class="fav-nav favourite-container" id="favouriteContainer">
             <a href="#" id="favouriteLink"><ion-icon name="heart-outline"></ion-icon> 

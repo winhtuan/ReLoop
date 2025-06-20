@@ -122,7 +122,7 @@
         const NOTIFY_COOLDOWN_MS = 500;
 
         ws.onmessage = function (event) {
-            console.log("asdh" + msg.type);
+            const msg = JSON.parse(event.data);
             if (msg.type === "unread_list") {
                 msg.senders.forEach(senderId => markUserAsUnread(senderId));
                 return;

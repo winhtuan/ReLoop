@@ -130,12 +130,11 @@ public class ProductDao {
 
     public List<Product> searchProducts(String keyword) {
         List<Product> products = new ArrayList<>();
-        String sql = " SELECT p.*, pi.img_id, pi.image_url, pi.is_primary FROM product p LEFT JOIN product_images pi ON p.product_id = pi.product_id WHERE p.title LIKE ? OR p.description LIKE ? ";
+        String sql = " SELECT p.*, pi.img_id, pi.image_url, pi.is_primary FROM product p LEFT JOIN product_images pi ON p.product_id = pi.product_id WHERE p.title LIKE ?";
 
         try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
             String pattern = "%" + keyword + "%";
             stmt.setString(1, pattern);
-            stmt.setString(2, pattern);
             ResultSet rs = stmt.executeQuery();
 
             Map<String, Product> productMap = new LinkedHashMap<>();
