@@ -46,9 +46,6 @@
                         <div class="col-12">
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mt-50">
-                                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/home">Home</a></li>
-                                    <li class="breadcrumb-item"><a href="#">Furniture</a></li>
-                                    <li class="breadcrumb-item"><a href="#">Chairs</a></li>
                                     <li class="breadcrumb-item active" aria-current="page">${sessionScope.product.title}</li>
                                 </ol>
                             </nav>

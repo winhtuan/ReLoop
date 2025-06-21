@@ -93,7 +93,8 @@ public class s_cart extends HttpServlet {
         Gson gson = new Gson();
         List<CartUpdate> updates = gson.fromJson(json.toString(), new TypeToken<List<CartUpdate>>() {
         }.getType());
-
+        if(updates==null)
+            return;
         // Lấy userId từ session
         HttpSession session = request.getSession(false);
         Account ac = (Account) session.getAttribute("user");

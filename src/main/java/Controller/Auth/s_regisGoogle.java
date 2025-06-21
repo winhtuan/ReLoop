@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import Model.entity.auth.Account;
 import Model.DAO.auth.AccountDao;
 import Model.DAO.auth.UserDao;
+import Model.DAO.commerce.CartDAO;
 import Model.entity.auth.User;
 import java.math.BigDecimal;
 
@@ -48,7 +49,8 @@ public class s_regisGoogle extends HttpServlet {
         user.setUserId(userId);
         user = new AccountDao().getAccountByEmail(user.getEmail());
         request.getSession().setAttribute("user", user);
-
+        int cartN=new CartDAO().getTotalQuantityByUserId(user.getUserId());
+        request.getSession().setAttribute("cartN", cartN);
         // Redirect logic
         String redirectUrl = (String) request.getSession().getAttribute("redirectUrl");
         if (redirectUrl != null) {

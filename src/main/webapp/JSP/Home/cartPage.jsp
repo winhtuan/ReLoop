@@ -1,6 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -26,6 +28,7 @@
             <div class="loader"></div>
         </div>
 
+
         <c:import url="/JSP/Home/Search.jsp" />
 
         <!-- ##### Main Content Wrapper Start ##### -->
@@ -34,54 +37,55 @@
             <c:choose>
                 <c:when test="${not empty sessionScope.cartItems}">
                     <div class="wrapper">
+                        <form id="cartForm" method="post" action="s_cartBuy">
+                            <div class="cart-left">
+                                <div class="cart-title">Shopping Cart</div>
 
-                        <div class="cart-left">
-                            <div class="cart-title">Shopping Cart</div>
-
-                            <div class="thead">
-                                <div></div>
-                                <div></div>
-                                <div >Name</div>
-                                <div>Price</div>
-                                <div>Quantity</div>
-                                <div></div>
-                            </div>
-
-
-                            <c:forEach var="item" items="${sessionScope.cartItems}">
-                                <div class="item">
-                                    <div class="col checkbox">
-                                        <input type="checkbox" class="item-checkbox" checked />
-                                    </div>
-
-                                    <div class="col image">
-                                        <img src="<c:choose>
-                                                 <c:when test='${not empty item.images}'>
-                                                     ${item.images[0].imageUrl}
-                                                 </c:when>
-                                                 <c:otherwise>/assets/img/no-image.png</c:otherwise>
-                                             </c:choose>" alt="${item.title}" />
-                                    </div>
-
-                                    <div class="col name">${item.title}</div>
-
-                                    <div class="col price" data-price="${item.price}">
-                                        <fmt:formatNumber value="${item.price}" type="currency" currencySymbol="VND"/>
-                                    </div>
-
-                                    <div class="col qty">
-                                        <button class="dec" data-id="${item.productId}" onclick="updateQty(this, -1)">–</button>
-                                        <span id="q-${item.productId}">${item.quantity}</span>
-                                        <button class="inc" data-id="${item.productId}" onclick="updateQty(this, 1)">+</button>
-                                    </div>
-
-                                    <div class="col delete">
-                                        <button class="delete-btn" onclick="removeFromCart('${item.productId}', this)">🗑</button>
-                                    </div>
+                                <div class="thead">
+                                    <div></div>
+                                    <div></div>
+                                    <div>Name</div>
+                                    <div>Price</div>
+                                    <div>Quantity</div>
+                                    <div></div>
                                 </div>
 
-                            </c:forEach>
-                        </div>
+                                <c:forEach var="item" items="${sessionScope.cartItems}">
+                                    <div class="item">
+                                        <div class="col checkbox">
+                                            <input type="checkbox" name="productIds" value="${item.productId}" class="item-checkbox"/>
+                                        </div>
+                                        <div class="col image">
+                                            <img src="<c:choose>
+                                                     <c:when test='${not empty item.images}'>
+                                                         ${item.images[0].imageUrl}
+                                                     </c:when>
+                                                     <c:otherwise>/assets/img/no-image.png</c:otherwise>
+                                                 </c:choose>" alt="${item.title}" />
+                                        </div>
+
+                                        <div class="col name">${item.title}</div>
+
+                                        <div class="col price" data-price="${item.price}">
+                                            <fmt:formatNumber value="${item.price}" type="currency" currencySymbol="VND"/>
+                                        </div>
+
+                                        <div class="col qty">
+                                            <button type="button" class="dec" data-id="${item.productId}" onclick="updateQty(this, -1)">–</button>
+                                            <span id="q-${item.productId}">${item.quantity}</span>
+                                            <input type="hidden"
+                                                   name="qty_${item.productId}"
+                                                   value="${item.quantity}"
+                                                   class="qty-hidden" />
+                                            <button type="button" class="inc" data-id="${item.productId}" onclick="updateQty(this, 1)">+</button>
+                                        </div>
+                                        <div class="col delete">
+                                            <button type="button" class="delete-btn" onclick="removeFromCart('${item.productId}', this)">🗑</button>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </form>
 
                         <div class="cart-right">
                             <h3>Cart Total</h3>
@@ -97,9 +101,8 @@
                                 <span><fmt:formatNumber value="${sub}" type="currency" currencySymbol="VND"/></span>
                             </div>
 
-                            <button class="checkout" onclick="location.href = '${pageContext.request.contextPath}/checkout'">
-                                Checkout
-                            </button>
+                            <button type="submit" form="cartForm" class="checkout">Checkout</button>
+
                         </div>
                     </div>
                 </c:when>
@@ -136,13 +139,13 @@
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>
-                                const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
-                                window.addEventListener("load", function () {
-                                    const preloader = document.getElementById("preloader");
-                                    preloader.style.opacity = "0";
-                                    preloader.style.pointerEvents = "none";
-                                    setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
-                                });
+                                                const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
+                                                window.addEventListener("load", function () {
+                                                    const preloader = document.getElementById("preloader");
+                                                    preloader.style.opacity = "0";
+                                                    preloader.style.pointerEvents = "none";
+                                                    setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
+                                                });
 
         </script>
         <c:if test="${not empty requestScope.openLogin}">
@@ -158,5 +161,28 @@
             </script>
         </c:if>
         <script src="js/JS_cart.js"></script>
+        <c:if test="${not empty requestScope.message}">
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                window.addEventListener("DOMContentLoaded", function () {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Thông báo',
+                        text: "${fn:escapeXml(requestScope.message)}"
+                    });
+                });
+            </script>
+                <c:remove var="message" scope="request" />
+        </c:if>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // gắn sự kiện sau khi DOM đã sẵn sàng
+                document.querySelectorAll(".item-checkbox")
+                        .forEach(cb => cb.addEventListener("change", updateSubtotal));
+
+                updateSubtotal();          // tính tổng lần đầu (sẽ = 0 vì chưa tick)
+            });
+
+        </script>
     </body>
 </html>

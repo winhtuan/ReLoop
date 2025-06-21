@@ -38,26 +38,26 @@ public class OrderDao {
 
     // Phương thức để tạo đơn hàng
     public boolean createOrder(String orderId, String userId, double amount, String status, String shippingAddress, Integer shippingMethod, String voucherId, double discountAmount) {
-        
+
         // SQL query to insert a new order into the database
         String sql = "INSERT INTO orders (order_id, user_id, total_amount, status, shipping_address, shipping_method, "
                 + "voucher_id, discount_amount, created_at, updated_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-        
+
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             // Set values for the prepared statement
             ps.setString(1, orderId);            // order_id
             ps.setString(2, userId);             // user_id
             ps.setDouble(3, amount);             // total_amount
             ps.setString(4, status);             // status (pending, paid, etc.)
-            
+
             // Handle shipping address (could be null)
             if (shippingAddress == null) {
                 ps.setNull(5, Types.VARCHAR);    // shipping_address is null if not provided
             } else {
                 ps.setString(5, shippingAddress); // shipping_address provided
             }
-            
+
             // Handle shipping method (could be null or set based on user's choice)
             if (shippingMethod == null) {
                 ps.setNull(6, Types.INTEGER);    // shipping_method is null if not provided
@@ -71,7 +71,7 @@ public class OrderDao {
             } else {
                 ps.setString(7, voucherId);      // voucher_id is set if a voucher is applied
             }
-            
+
             // Set discount_amount (can be modified based on the discount logic)
             ps.setDouble(8, discountAmount);    // discount_amount (set to 0 if no discount)
 
@@ -98,32 +98,79 @@ public class OrderDao {
             return false;
         }
     }
-    
-    public Order getOrderById(String orderId) {
-    String sql = "SELECT * FROM orders WHERE order_id = ?";
-    try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, orderId);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                Order order = new Order();
-                order.setOrderId(rs.getString("order_id"));
-                order.setUserId(rs.getString("user_id"));
-                order.setTotalAmount(rs.getInt("total_amount"));
-                order.setStatus(rs.getString("status"));
-                order.setShippingAddress(rs.getString("shipping_address"));
-                order.setShippingMethod(rs.getObject("shipping_method") != null ? rs.getInt("shipping_method") : null);
-                order.setVoucherId(rs.getString("voucher_id"));
-                order.setDiscountAmount(rs.getInt("discount_amount"));
-                order.setCreatedAt(rs.getTimestamp("created_at"));
-                order.setUpdatedAt(rs.getTimestamp("updated_at"));
-                return order;
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return null; // Không tìm thấy
-}
 
+    public Order getOrderById(String orderId) {
+        String sql = "SELECT * FROM orders WHERE order_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Order order = new Order();
+                    order.setOrderId(rs.getString("order_id"));
+                    order.setUserId(rs.getString("user_id"));
+                    order.setTotalAmount(rs.getInt("total_amount"));
+                    order.setStatus(rs.getString("status"));
+                    order.setShippingAddress(rs.getString("shipping_address"));
+                    order.setShippingMethod(rs.getObject("shipping_method") != null ? rs.getInt("shipping_method") : null);
+                    order.setVoucherId(rs.getString("voucher_id"));
+                    order.setDiscountAmount(rs.getInt("discount_amount"));
+                    order.setCreatedAt(rs.getTimestamp("created_at"));
+                    order.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    return order;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Không tìm thấy
+    }
+    // Thêm mới đơn hàng dựa trên object Order
+
+    public boolean insert(Order order) {
+        // Nếu orderId chưa có –> sinh tự động
+        if (order.getOrderId() == null || order.getOrderId().isBlank()) {
+            order.setOrderId(generateOrderId());
+        }
+
+        String sql = "INSERT INTO orders (order_id, user_id, total_amount, status,shipping_address, shipping_method,voucher_id, discount_amount,created_at, updated_at)VALUES(?,?,?,?,?,?,?,?,NOW(),NOW())";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, generateOrderId());
+            ps.setString(2, order.getUserId());
+            ps.setInt(3, order.getTotalAmount());  
+            ps.setString(4, order.getStatus());
+
+            // shipping_address
+            if (order.getShippingAddress() == null) {
+                ps.setNull(5, Types.VARCHAR);
+            } else {
+                ps.setString(5, order.getShippingAddress());
+            }
+
+            // shipping_method
+            if (order.getShippingMethod() == null) {
+                ps.setNull(6, Types.INTEGER);
+            } else {
+                ps.setInt(6, order.getShippingMethod());
+            }
+
+            // voucher_id
+            if (order.getVoucherId() == null) {
+                ps.setNull(7, Types.VARCHAR);
+            } else {
+                ps.setString(7, order.getVoucherId());
+            }
+
+            // discount_amount
+            ps.setInt(8, order.getDiscountAmount());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }

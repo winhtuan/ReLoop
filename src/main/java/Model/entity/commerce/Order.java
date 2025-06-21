@@ -1,6 +1,7 @@
 package Model.entity.commerce;
 
 import java.util.Date;
+import java.util.List;
 
 public class Order {
     private String orderId;
@@ -13,6 +14,15 @@ public class Order {
     private int discountAmount;
     private Date createdAt;
     private Date updatedAt;
+    private List<OrderItem> listItems;
+
+    public List<OrderItem> getListItems() {
+        return listItems;
+    }
+
+    public void setListItems(List<OrderItem> listItems) {
+        this.listItems = listItems;
+    }
 
     public Order() {}
 

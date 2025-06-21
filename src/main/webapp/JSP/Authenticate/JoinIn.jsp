@@ -7,7 +7,7 @@
         <!--=============== REMIXICONS ===============-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
         <!--=============== CSS ===============-->
-        <link rel="stylesheet" href="css/join_in.css">    
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/join_in.css">    
     </head>
     <body>
         <!--=============== MODAL ===============-->
@@ -20,6 +20,6 @@
             </div>
         </div>
 
-        <script src="js/join_in.js"></script>
+        <script src="${pageContext.request.contextPath}/js/join_in.js"></script>
     </body>
 </html>

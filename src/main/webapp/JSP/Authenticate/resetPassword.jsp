@@ -114,7 +114,7 @@
     </style>
 </head>
 <body>
-    <a href="JSP/Authenticate/JoinIn.jsp" class="signin-button">Sign In</a>
+    <a href="${pageContext.request.contextPath}/JSP/Authenticate/JoinIn.jsp" class="signin-button">Sign In</a>
     <div class="reset-password-card">
         <section class="text-center">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Reset Password</h2>
@@ -130,7 +130,7 @@
             <% } %>
             <% if (request.getAttribute("showForm") == null || !(Boolean)request.getAttribute("showForm")) { %>
                 <div class="back-to-login">
-                    <a href="JSP/Authenticate/JoinIn.jsp" class="text-blue-600 hover:underline font-medium">Back to Login</a>
+                    <a href="${pageContext.request.contextPath}/JSP/Authenticate/JoinIn.jsp" class="text-blue-600 hover:underline font-medium">Back to Login</a>
                 </div>
             <% } else { %>
                 <form action="resetPassword" method="post" class="space-y-4">

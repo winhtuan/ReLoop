@@ -5,7 +5,7 @@
 <div class="mobile-nav">
     <!-- Navbar Brand -->
     <div class="amado-navbar-brand">
-        <a href="home"><img src="img/core-img/logo.png" alt=""></a>
+        <a href="home"><img src="${pageContext.request.contextPath}/img/core-img/logo.png" alt=""></a>
     </div>
     <!-- Navbar Toggler -->
     <div class="amado-navbar-toggler">
@@ -21,23 +21,23 @@
     </div>
     <!-- Logo -->
     <div class="logo">
-        <a href="home"><img src="img/core-img/logo.png" alt=""></a>
+        <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/img/core-img/logo.png" alt=""></a>
     </div>
 
     <!-- Amado Nav -->
     <nav class="amado-nav mt-30 mb-15">
         <ul>
-            <li class="active"><a href="home">Home</a></li>
+            <li class="active"><a href="${pageContext.request.contextPath}/home">Home</a></li>
             <li><a href="#">New Post</a></li>
             <li><a href="#">Post</a></li>
             <li><a href="#">Shop</a></li>
-            <li><a href="premium?user_id=${sessionScope.cus.userId}">Premium</a></li>
+            <li><a href="${pageContext.request.contextPath}/premium?user_id=${sessionScope.cus.userId}">Premium</a></li>
         </ul>
     </nav>
     <!-- Cart Menu -->
     <div class="cart-fav-search">
         <a href="#" class="search-nav"><ion-icon name="search-outline"></ion-icon> Search</a>
-        <a href="s_cart" class="cart-nav"><ion-icon name="cart-outline"></ion-icon> Cart <span>(0)</span></a>
+        <a href="${pageContext.request.contextPath}/s_cart" class="cart-nav"><ion-icon name="cart-outline"></ion-icon> Cart <span style="color: #fbb710;">(<c:out value="${sessionScope.cartN}" default="0" />)</span></a>
 
         <div class="fav-nav favourite-container" id="favouriteContainer">
             <a href="#" id="favouriteLink"><ion-icon name="heart-outline"></ion-icon> 
@@ -48,7 +48,7 @@
                 <p>No Items In Your <strong>Favourite List</strong></p>
                 <!-- Một mục yêu thích -->
                 <div class="favourite-item">
-                    <img src="img/product-img/pro-big-1.jpg" alt="Product" class="img-thumbnail">
+                    <img src="${pageContext.request.contextPath}/img/product-img/pro-big-1.jpg" alt="Product" class="img-thumbnail">
 
                     <div class="fav-left-content">
                         <div class="fav-tittle">
@@ -127,7 +127,7 @@
                         <li><a href="#" id="menu-item"><ion-icon name="newspaper-outline"></ion-icon>Manager Post</a></li>
                         <li><a href="${pageContext.request.contextPath}/UsersServlet" id="menu-item"><ion-icon name="chatbubble-ellipses-outline"></ion-icon>Message</a></li>
                         <li><a href="#" id="menu-item"><ion-icon name="document-text-outline"></ion-icon>Profile</a></li>
-                        <li><a href="s_logout" id="menu-item" class="text-danger"><ion-icon name="log-out"></ion-icon> Log Out</a></li>
+                        <li><a href="${pageContext.request.contextPath}/s_logout" id="menu-item" class="text-danger"><ion-icon name="log-out"></ion-icon> Log Out</a></li>
                     </ul>
                 </div>
             </c:when>

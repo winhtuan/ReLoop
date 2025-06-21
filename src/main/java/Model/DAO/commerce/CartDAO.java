@@ -89,6 +89,29 @@ public class CartDAO {
         }
     }
 
+    /**
+     * Tổng tất cả quantity trong cart của user
+     */
+    /**
+     * Đếm DISTINCT product_id trong cart của user
+     */
+    public int getTotalQuantityByUserId(String userId) {
+        String sql = "SELECT COUNT(*) AS cnt FROM   cart c JOIN   cart_items ci ON c.cart_id = ci.cart_id WHERE  c.user_id = ?";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("cnt");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         for (Product a : new CartDAO().getCartProductsByUserId("CUS0001")) {
             System.out.println(a.toString());

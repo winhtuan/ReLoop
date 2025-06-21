@@ -5,7 +5,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
-    <link rel="stylesheet" href="css/search.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/search.css">
     <body>
         <!-- Search Wrapper Area Start -->
         <div class="search-wrapper section-padding-100">

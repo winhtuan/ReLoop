@@ -2,6 +2,7 @@ package Controller.Auth;
 
 import Model.DAO.auth.AccountDao;
 import Model.DAO.auth.UserDao;
+import Model.DAO.commerce.CartDAO;
 import Model.entity.auth.Account;
 import Model.entity.auth.User;
 import com.google.gson.JsonObject;
@@ -137,6 +138,8 @@ public class LoginServlet extends HttpServlet {
                 // Đăng nhập thành công, lưu vào session
                 request.getSession().setAttribute("cus", user);
                 request.getSession().setAttribute("user", acc);
+                int cartN=new CartDAO().getTotalQuantityByUserId(acc.getUserId());
+                request.getSession().setAttribute("cartN", cartN);
                 redirectUser(request, response);
             } else {
                 // Đăng nhập thất bại
