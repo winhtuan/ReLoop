@@ -1,6 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -104,7 +106,7 @@
                                 </div>
 
                                 <!-- Add to Cart Form -->
-                                <form class="cart clearfix" action="${pageContext.request.contextPath}/handlebutton" method="post">
+                                <form class="cart clearfix" action="${pageContext.request.contextPath}/s_addToCart" method="post">
                                     <div class="cart-btn d-flex mb-50">
                                         <p>Quantity</p>
                                         <div class="quantity">
@@ -124,14 +126,17 @@
                                     <div class="amado-btn-group">
                                         <input type="hidden" name="postID" value="${sessionScope.product.productId}">
                                         <input type="hidden" name="customerId" value="${sessionScope.customerId}">
-                                        <button type="submit" name="action" value="addtocart" class="amado-btn-custom">
+
+                                        <button type="submit" name="action" class="amado-btn-custom">
                                             <span class="btn-icon"><ion-icon name="cart-outline"></ion-icon></span>Add to Cart
                                         </button>
+
                                         <button type="submit" name="action" value="buynow" class="amado-btn-custom" style="background-color:#20d34a;">
                                             <span class="btn-icon"><ion-icon name="flash-outline"></ion-icon></span>Buy Now
                                         </button>
                                     </div>
                                 </form>
+
                                 <!-- Seller Info Card -->
                                 <div class="seller-info-horizontal">
                                     <div class="seller-avatar-hz">
@@ -185,15 +190,29 @@
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>
-                                                const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
-                                                window.addEventListener("load", function () {
-                                                    const preloader = document.getElementById("preloader");
-                                                    preloader.style.opacity = "0";
-                                                    preloader.style.pointerEvents = "none";
-                                                    setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
-                                                });
-
+            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
+            window.addEventListener("load", function () {
+                const preloader = document.getElementById("preloader");
+                preloader.style.opacity = "0";
+                preloader.style.pointerEvents = "none";
+                setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
+            });
+                
         </script>
+        <c:if test="${not empty requestScope.messCartAdd}">
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                window.addEventListener("DOMContentLoaded", function () {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: "${fn:escapeXml(messCartAdd)}"
+                    });
+                });
+            </script>
+            <c:remove var="messCartAdd" scope="request" />
+        </c:if>
+
     </body>
 
 </html>

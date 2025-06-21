@@ -15,6 +15,10 @@
         <servlet-name>s_cancelOrder</servlet-name>
         <servlet-class>Controller.s_cancelOrder</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>s_addToCart</servlet-name>
+        <servlet-class>Controller.s_addToCart</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>s_chatBox</servlet-name>
         <url-pattern>/s_chatBox</url-pattern>
@@ -30,6 +34,10 @@
     <servlet-mapping>
         <servlet-name>s_cancelOrder</servlet-name>
         <url-pattern>/s_cancelOrder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_addToCart</servlet-name>
+        <url-pattern>/s_addToCart</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

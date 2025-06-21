@@ -105,7 +105,7 @@ public class LoginServlet extends HttpServlet {
             acc = new AccountDao().getAccountByEmail(email);
             if (acc != null) {
                 request.getSession().setAttribute("user", acc);
-                User user=new UserDao().getUserById(acc.getUserId());
+                User user = new UserDao().getUserById(acc.getUserId());
                 request.getSession().setAttribute("cus", user);
                 redirectUser(request, response);
             } else {
@@ -117,7 +117,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        String remember = request.getParameter("remember");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
@@ -134,11 +134,34 @@ public class LoginServlet extends HttpServlet {
             // Kiểm tra đăng nhập
             Account acc = accountDao.checkLogin(email.trim(), password.trim()); // hoặc hashedPassword nếu đã hash
             if (acc != null) {
+
+                if ("on".equals(remember)) {
+                    Cookie emailCookie = new Cookie("userEmail", email);
+                    Cookie passwordCookie = new Cookie("userPassword", password); // hoặc mã hóa!
+
+                    emailCookie.setMaxAge(7 * 24 * 60 * 60);   // 7 ngày
+                    passwordCookie.setMaxAge(7 * 24 * 60 * 60);
+
+                    emailCookie.setPath(request.getContextPath());
+                    passwordCookie.setPath(request.getContextPath());
+
+                    response.addCookie(emailCookie);
+                    response.addCookie(passwordCookie);
+                } else {
+                    // Xoá nếu không nhớ nữa
+                    Cookie emailCookie = new Cookie("userEmail", "");
+                    Cookie passwordCookie = new Cookie("userPassword", "");
+                    emailCookie.setMaxAge(0);
+                    passwordCookie.setMaxAge(0);
+                    response.addCookie(emailCookie);
+                    response.addCookie(passwordCookie);
+                }
+
                 User user = new UserDao().getUserById(acc.getUserId());
                 // Đăng nhập thành công, lưu vào session
                 request.getSession().setAttribute("cus", user);
                 request.getSession().setAttribute("user", acc);
-                int cartN=new CartDAO().getTotalQuantityByUserId(acc.getUserId());
+                int cartN = new CartDAO().getTotalQuantityByUserId(acc.getUserId());
                 request.getSession().setAttribute("cartN", cartN);
                 redirectUser(request, response);
             } else {
