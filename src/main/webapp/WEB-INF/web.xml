@@ -3,9 +3,33 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    <servlet>
+        <servlet-name>s_cart</servlet-name>
+        <servlet-class>Controller.s_cart</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_cartBuy</servlet-name>
+        <servlet-class>Controller.s_cartBuy</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_cancelOrder</servlet-name>
+        <servlet-class>Controller.s_cancelOrder</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>s_chatBox</servlet-name>
         <url-pattern>/s_chatBox</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_cart</servlet-name>
+        <url-pattern>/s_cart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_cartBuy</servlet-name>
+        <url-pattern>/s_cartBuy</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_cancelOrder</servlet-name>
+        <url-pattern>/s_cancelOrder</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

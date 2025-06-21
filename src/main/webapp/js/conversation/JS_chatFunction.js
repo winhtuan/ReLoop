@@ -8,8 +8,6 @@ function selectChatUser(userId, username) {
 
     document.getElementById("chatWith").textContent = username;
 
-
-
     document.querySelectorAll("#userList li").forEach(item => {
 
         item.classList.toggle("selected", parseInt(item.dataset.userid) === userId);
@@ -349,6 +347,7 @@ function loadChatHistory(userId) {
                     document.getElementById("chat-product-image").src = data.product.images[0].imageUrl;
                     document.getElementById("chat-product-title").textContent = data.product.title;
                     document.getElementById("chat-product-price").textContent = data.product.price + "₫";
+                    document.querySelector("#chat-header-product a").href = "s_productDetail?productId=" + data.product.productId;
                 } else {
                     document.getElementById("chat-header-product").style.display = "none";
                 }

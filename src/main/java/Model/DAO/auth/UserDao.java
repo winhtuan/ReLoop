@@ -18,13 +18,12 @@ public class UserDao {
 
             if (rs.next()) {
                 String lastId = rs.getString("user_id"); // Lấy user_id lớn nhất
-                int num = Integer.parseInt(lastId.substring(2)); // Cắt bỏ 'US' để lấy số
+                int num = Integer.parseInt(lastId.substring(3)); // Cắt bỏ 'US' để lấy số
                 nextId = num + 1; // Tăng giá trị lên 1
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return String.format("%s%04d", prefix, nextId); // Định dạng thành 'US00000X'
     }
 
@@ -56,13 +55,14 @@ public class UserDao {
     }
 
     public String addUser(String name, String email) {
-        String query = "INSERT INTO users (FullName, email) VALUES (?,?)";
+        String query = "INSERT INTO users (user_id, FullName, email) VALUES (?,?,?)";
         String customerID = generateUserId(); // Giá trị mặc định nếu không lấy được ID
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, name);
-            ps.setString(2, email);
+            ps.setString(2, name);
+            ps.setString(3, email);
+            ps.setString(1, customerID);
 
             int rowsInserted = ps.executeUpdate();
 
@@ -82,23 +82,23 @@ public class UserDao {
 
     public boolean updatePremiumStatus(String userId, boolean isPremium, Date expiry) {
         String sql = "UPDATE users SET is_premium = ?, premium_expiry = ? WHERE user_id = ?";
-        
+
         try (Connection con = DBUtils.getConnect(); PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
             ps.setBoolean(1, isPremium);
             ps.setObject(2, expiry);
             ps.setString(3, userId);
-            
+
             int rows = ps.executeUpdate();
             return rows > 0; // true if at least one row was updated
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return false;
     }
-    
+
     public boolean updateUser(User user) {
         String sql = "UPDATE users SET FullName=?, role=?, Address=?, PhoneNumber=?, email=?, is_premium=?, premium_expiry=?, balance=? WHERE user_id=?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -179,20 +179,26 @@ public class UserDao {
 
     public String newUser(User c) {
         String id = generateUserId();
-        String sql = "INSERT INTO users (FullName, Address, PhoneNumber, email) "
-                + "OUTPUT INSERTED.id VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (user_id, FullName, Address, PhoneNumber, email,role) "
+                + "VALUES (?,?, ?, ?, ?, ?)";
 
         try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
             // Gán giá trị cho các tham số
-            stmt.setString(1, c.getFullName());
-            stmt.setString(2, c.getAddress());
-            stmt.setString(3, c.getPhoneNumber());
-            stmt.setString(4, c.getEmail());
+            stmt.setString(1, c.getUserId());
+            stmt.setString(2, c.getFullName());
+            stmt.setString(3, c.getAddress());
+            stmt.setString(4, c.getPhoneNumber());
+            stmt.setString(5, c.getEmail());
+            stmt.setString(6, c.getRole());
 
             // Thực thi truy vấn và lấy ID của bản ghi vừa thêm
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                id = rs.getString(1);
+            int rowsInserted = stmt.executeUpdate();
+
+            if (rowsInserted > 0) {
+                ResultSet rs = stmt.getGeneratedKeys(); // Lấy khóa chính được tạo tự động
+                if (rs.next()) {
+                    System.out.println("Thêm khách hàng thành công! ID: " + c.getUserId());
+                }
             }
         } catch (Exception ex) {
             System.out.println(ex);
@@ -211,4 +217,7 @@ public class UserDao {
         }
     }
 
+    public static void main(String[] args) {
+        System.out.println(new UserDao().generateUserId());
+    }
 }

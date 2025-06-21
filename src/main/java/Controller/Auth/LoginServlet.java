@@ -2,6 +2,7 @@ package Controller.Auth;
 
 import Model.DAO.auth.AccountDao;
 import Model.DAO.auth.UserDao;
+import Model.DAO.commerce.CartDAO;
 import Model.entity.auth.Account;
 import Model.entity.auth.User;
 import com.google.gson.JsonObject;
@@ -98,11 +99,14 @@ public class LoginServlet extends HttpServlet {
 
         if (!new AccountDao().isEmailExist(email)) {
             request.getSession().setAttribute("user", acc);
+            request.getSession().setAttribute("fullname", name);
             request.getRequestDispatcher("JSP/Authenticate/registerGoogle.jsp").forward(request, response);
         } else {
             acc = new AccountDao().getAccountByEmail(email);
             if (acc != null) {
                 request.getSession().setAttribute("user", acc);
+                User user=new UserDao().getUserById(acc.getUserId());
+                request.getSession().setAttribute("cus", user);
                 redirectUser(request, response);
             } else {
                 response.getWriter().println("Error retrieving account information.");
@@ -134,6 +138,8 @@ public class LoginServlet extends HttpServlet {
                 // Đăng nhập thành công, lưu vào session
                 request.getSession().setAttribute("cus", user);
                 request.getSession().setAttribute("user", acc);
+                int cartN=new CartDAO().getTotalQuantityByUserId(acc.getUserId());
+                request.getSession().setAttribute("cartN", cartN);
                 redirectUser(request, response);
             } else {
                 // Đăng nhập thất bại

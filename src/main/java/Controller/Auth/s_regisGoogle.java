@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import Model.entity.auth.Account;
 import Model.DAO.auth.AccountDao;
 import Model.DAO.auth.UserDao;
+import Model.DAO.commerce.CartDAO;
+import Model.entity.auth.User;
+import java.math.BigDecimal;
 
 public class s_regisGoogle extends HttpServlet {
 
@@ -27,10 +30,14 @@ public class s_regisGoogle extends HttpServlet {
         }
 
         String address = request.getParameter("address");
-        Account user = (Account) request.getSession().getAttribute("user");
+        String phone = request.getParameter("Phone");
 
+        Account user = (Account) request.getSession().getAttribute("user");
+        User newU = new User(new UserDao().generateUserId(), (String) request.getSession().getAttribute("fullname"),
+                 "user", address, phone, user.getEmail(), false, null, BigDecimal.ONE);
+        request.getSession().setAttribute("cus", newU);
         // Insert new user in users table and get user_id
-        String userId = new UserDao().addUser(address, user.getEmail());
+        String userId = new UserDao().newUser(newU);
 
         // Add account for this user
         new AccountDao().addAccount(
@@ -42,7 +49,8 @@ public class s_regisGoogle extends HttpServlet {
         user.setUserId(userId);
         user = new AccountDao().getAccountByEmail(user.getEmail());
         request.getSession().setAttribute("user", user);
-
+        int cartN=new CartDAO().getTotalQuantityByUserId(user.getUserId());
+        request.getSession().setAttribute("cartN", cartN);
         // Redirect logic
         String redirectUrl = (String) request.getSession().getAttribute("redirectUrl");
         if (redirectUrl != null) {

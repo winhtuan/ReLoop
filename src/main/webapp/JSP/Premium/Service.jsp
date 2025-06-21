@@ -23,7 +23,18 @@
                             <li><ion-icon name="close-circle-outline"></ion-icon> Auto-renew listings</li>
                             <li><ion-icon name="close-circle-outline"></ion-icon> View followers</li>
                         </ul>
-                        <button class="amado-btn-custom mt-auto" disabled>CURRENT PLAN</button>
+                        <c:choose>
+                            <c:when test="${cus.isPremium}">
+                                <!-- Nếu là Premium, hiển thị thông báo và vô hiệu hóa nút -->
+                                <button class="amado-btn-custom mt-auto" disabled>Free Plan</button>
+
+                            </c:when>
+                            <c:otherwise>
+                                <!-- Nếu không phải Premium, hiển thị nút để nâng cấp -->
+                                <button class="amado-btn-custom mt-auto" disabled>CURRENT PLAN</button>
+
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
             </div>

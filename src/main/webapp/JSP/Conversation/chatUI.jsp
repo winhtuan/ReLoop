@@ -106,25 +106,35 @@
     <input type="file" id="chatImageInput" accept="image/*" style="display: none;" multiple>
 
     <script>
-            const currentUserId = "${cus.userId}";
-            const currentUsername = "${cus.fullName}";
-            let currentChatUserId = null;
-            let currentChatUserName = null;
+        const currentUserId = "${cus.userId}";
+        const currentUsername = "${cus.fullName}";
+        let currentChatUserId = null;
+        let currentChatUserName = null;
 
-            const contextPathI = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
+        const contextPathI = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
 
-            const ws = new WebSocket("ws://" + location.host + "/ReLoop/chat");
-            ws.onopen = () => console.log("WebSocket connected");
-            ws.onclose = () => console.log("WebSocket closed");
-            ws.onerror = err => console.error("WebSocket error", err);
+        const ws = new WebSocket("ws://" + location.host + "/ReLoop/chat");
+        ws.onopen = () => console.log("WebSocket connected");
+        ws.onclose = () => console.log("WebSocket closed");
+        ws.onerror = err => console.error("WebSocket error", err);
 
-            const lastNotificationTimestamps = {};
-            const NOTIFY_COOLDOWN_MS = 500;
+        const lastNotificationTimestamps = {};
+        const NOTIFY_COOLDOWN_MS = 500;
 
-            ws.onmessage = function (event) {
-                const msg = JSON.parse(event.data);
-                if (msg.type === "unread_list") {
-                    msg.senders.forEach(senderId => markUserAsUnread(senderId));
+        ws.onmessage = function (event) {
+            const msg = JSON.parse(event.data);
+            if (msg.type === "unread_list") {
+                msg.senders.forEach(senderId => markUserAsUnread(senderId));
+                return;
+            }
+            if (msg.type === "block_status") {
+                const messageInput = document.getElementById("messageInput");
+                const sendBtn = document.querySelector(".inputBox button");
+                const blockBtn = document.getElementById("blockBtn");
+                const unblockBtn = document.getElementById("unblockBtn");
+                const blockNotice = document.getElementById("blockNotice");
+
+                if ((msg.status === "blocked_by_me" || msg.status === "unblocked_by_me") && currentChatUserId !== msg.blockedId)
                     return;
                 if ((msg.status === "blocked_me" || msg.status === "unblocked_me") && currentChatUserId !== msg.blockerId)
                     return;
@@ -154,7 +164,6 @@
                 }
                 return;
             }
-
             if (msg.type === "recall") {
                 handleRecallMessage(msg);
                 return;
@@ -181,11 +190,11 @@
                 }
             }
 
-                if (!isSentByMe && msg.fromUserId !== currentChatUserId)
-                    markUserAsUnread(msg.fromUserId);
-                else
-                    markMessagesAsRead(msg.fromUserId);
-            };
+            if (!isSentByMe && msg.fromUserId !== currentChatUserId)
+                markUserAsUnread(msg.fromUserId);
+            else
+                markMessagesAsRead(msg.fromUserId);
+        };
     </script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.6.2/index.js"></script>
     <script type="module">
@@ -219,7 +228,7 @@
 
     <c:if test="${not empty requestScope.sellid}">
         <script>
-            loadChatHistory(${requestScope.sellid});
+        loadChatHistory(${requestScope.sellid});
         </script>
     </c:if>
 
