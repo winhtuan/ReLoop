@@ -12,10 +12,11 @@
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        
+
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
 
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
     </head>
     <body>
         <!-- Page Preloder -->
@@ -55,5 +56,7 @@
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
         </script>
+        <!<!-- category -->
+        <script src="js/dropdown-handler.js"></script>
     </body>
 </html>

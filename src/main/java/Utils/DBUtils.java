@@ -17,7 +17,7 @@ public class DBUtils {
             java.sql.Connection con = DriverManager.getConnection(config.get("db.url"), config.get("db.user"), config.get("db.password"));
             return con;
         } catch (SQLException e) {
-            System.out.println("Error: " + e);
+            System.out.println("Error: " + e.getMessage());
         }
         return null;
     }

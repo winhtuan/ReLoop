@@ -36,6 +36,18 @@
     </nav>
     <!-- Cart Menu -->
     <div class="cart-fav-search">
+        <div class="category-dropdown-container">
+            <a href="#" class="category-nav">
+                <ion-icon name="menu-outline"></ion-icon> CATEGORY
+            </a>
+
+            <div class="category-dropdown">
+                <div class="category-container">
+                    <jsp:include page="/JSP/Home/Category.jsp" />
+                </div>
+            </div>
+        </div>
+
         <a href="#" class="search-nav"><ion-icon name="search-outline"></ion-icon> Search</a>
         <a href="cart.html" class="cart-nav"><ion-icon name="cart-outline"></ion-icon> Cart <span>(0)</span></a>
 
@@ -137,7 +149,7 @@
     </div>
     <!-- Button Group -->
     <div class="amado-btn-group mt-15 mb-100">
-        <a href="#" class="item-btn-custom">
+        <a href="${pageContext.request.contextPath}/upPostServlet" class="item-btn-custom">
             <ion-icon name="document-text-outline" class="btn-icon"></ion-icon>
             <span>Up Post</span>
         </a>

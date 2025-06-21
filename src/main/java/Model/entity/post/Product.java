@@ -17,8 +17,25 @@ public class Product {
     private Date createdAt;
     private Date updatedAt;
     private List<ProductImage> images;
+    private String state;
 
     public Product() {}
+
+    public Product(String productId, String userId, Integer categoryId, String title, String description, BigDecimal price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images, String state) {
+        this.productId = productId;
+        this.userId = userId;
+        this.categoryId = categoryId;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.location = location;
+        this.status = status;
+        this.isPriority = isPriority;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.images = images;
+        this.state = state;
+    }
 
     public Product(String productId, String userId, Integer categoryId, String title, String description, BigDecimal price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
         this.productId = productId;
@@ -48,6 +65,14 @@ public class Product {
         this.isPriority = isPriority;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public boolean isIsPriority() {
