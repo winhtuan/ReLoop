@@ -81,13 +81,13 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="postModeration.jsp" class="nav-link dropdown-link">Approval Post</a>
+                                <a href="${pageContext.request.contextPath}/ApprovalPost" class="nav-link dropdown-link">Approval Post</a>
                             </li>
                             <li class="nav-item">
-                                <a href="rejectPost.jsp" class="nav-link dropdown-link">Reject Post</a>
+                                <a href="${pageContext.request.contextPath}/RejectPost" class="nav-link dropdown-link">Reject Post</a>
                             </li>
                             <li class="nav-item">
-                                <a href="deletePost.jsp" class="nav-link dropdown-link">Delete Post</a>
+                                <a href="${pageContext.request.contextPath}/DeletePost" class="nav-link dropdown-link">Delete Post</a>
                             </li>
                         </ul>
                     </li>

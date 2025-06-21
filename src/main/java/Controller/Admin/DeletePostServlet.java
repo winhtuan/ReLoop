@@ -15,10 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author ACER
+ * @author Admin
  */
-@WebServlet(name = "StatictisServlet", urlPatterns = {"/StatictisServlet"})
-public class StatictisServlet extends HttpServlet {
+@WebServlet(name = "DeletePostServlet", urlPatterns = {"/DeletePostServlet"})
+public class DeletePostServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,19 +33,16 @@ public class StatictisServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            AdminPostDAO dao = new AdminPostDAO();
-
-            int totalUsers = dao.getTotalUsers();
-            int totalProducts = dao.getTotalProducts();
-            int todayProducts = dao.getTodayTotalProducts();
-
-            // Truyền dữ liệu sang JSP
-            request.setAttribute("totalUsers", totalUsers);
-            request.setAttribute("totalProducts", totalProducts);
-            request.setAttribute("todayProducts", todayProducts);
-
-            // Forward tới dashboard.jsp
-            request.getRequestDispatcher("/JSP/Admin/dashboard.jsp").forward(request, response);
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet DeletePostServlet</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet DeletePostServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
     }
 
@@ -61,7 +58,7 @@ public class StatictisServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doPost(request, response);
     }
 
     /**
@@ -75,7 +72,20 @@ public class StatictisServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+                        AdminPostDAO db = new AdminPostDAO();
+                String action = request.getParameter("action");
+                String productId = request.getParameter("productId");
+
+        if (productId != null && !productId.isEmpty()) {
+            if ("Restore".equals(action)) {
+                db.pendingPostById(productId);
+            } else if ("Delete".equals(action)) {
+                db.deleteProductById(productId);
+            }
+        }
+
+        // Sau khi xử lý xong, redirect về trang danh sách chờ duyệt
+        response.sendRedirect("RejectPost"); // Đổi đường dẫn nếu cần
     }
 
     /**

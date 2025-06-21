@@ -31,6 +31,9 @@
                 color: #2c3e50;
                 margin: 0;
             }
+            .modal-overlay {
+                background-color: rgba(0, 0, 0, 0.4);
+            }
         </style>
     </head>
     <body>
@@ -40,15 +43,65 @@
 
         <main class="flex-1">
             <div class="header bg-white flex items-center px-6 py-4 gap-3 pb-[100px]">
-                <span class="material-symbols-rounded text-gray-600 text-3xl">delete</span>
-                <h1 class="text-2xl font-semibold text-gray-800">Post Delete</h1>
+                <span class="material-symbols-rounded text-gray-600 text-3xl">person_search</span>
+                <h1 class="text-2xl font-semibold text-gray-800">Account Manager</h1>
             </div>
 
+            <!-- Hiển thị thông báo thành công/thất bại -->
+            <div class="max-w-7xl mx-auto px-4 mt-4">
+                <c:if test="${param.msg == 'delete_success'}">
+                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
+                        ✅ Account deleted successfully!
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'delete_failed'}">
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
+                        ❌ Failed to delete account. Please try again.
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'created'}">
+                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
+                        ✅ Account created successfully!
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'create_acc_fail'}">
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
+                        ❌ Failed to create account. Please try again.
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'create_user_fail'}">
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
+                        ❌ Failed to create user record. Please try again.
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'role_updated'}">
+                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
+                        ✅ Role updated successfully!
+                    </div>
+                </c:if>
+                <c:if test="${param.msg == 'role_update_failed'}">
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
+                        ❌ Failed to update role. Please try again.
+                    </div>
+                </c:if>
+            </div>
+
+
             <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-xl p-6">
-                <!-- Search -->
-                <div class="flex items-center gap-2 mb-4 justify-end">
-                    <input type="text" id="searchInput" placeholder="Search by title..."
-                           class="border rounded px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <!-- Create Account  -->
+                <div class="flex items-center justify-end mb-4">
+                    <!-- Button Create Account -->
+                    <!--                    <button onclick="openModal('createModal')"
+                                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                                            <span class="material-symbols-rounded">add</span>
+                                            <span>Create Account</span>
+                                        </button>-->
+
+                    <!-- Search -->
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="searchInput" placeholder="Search by title..."
+                               class="border rounded px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
                 </div>
 
                 <!-- Table -->
@@ -57,39 +110,47 @@
                         <thead class="bg-gray-100 text-gray-700 uppercase">
                             <tr>
                                 <th class="px-4 py-2 border-b">Image</th>
-                                <th class="px-4 py-2 border-b">Title</th>
-                                <th class="px-4 py-2 border-b">Content</th>
-                                <th class="px-4 py-2 border-b">Status</th>
+                                <th class="px-4 py-2 border-b">productId</th>
+                                <th class="px-4 py-2 border-b">userId</th>
+                                <th class="px-4 py-2 border-b">title</th>
+                                <th class="px-4 py-2 border-b">description</th>
+                                <th class="px-4 py-2 border-b">price</th>
+                                <th class="px-4 py-2 border-b">moderationStatus</th>
                                 <th class="px-4 py-2 border-b text-right pr-[110px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="postTableBody" class="text-gray-800">
-                            <c:forEach var="i" begin="1" end="1000">
+                            <c:forEach var="product" items="${approvalPosts}">
                                 <tr class="border-b">
-                                    <td class="px-4 py-2"><img src="https://via.placeholder.com/60" class="rounded" /></td>
-                                    <td class="px-4 py-2">Sample Title ${i}</td>
-                                    <td class="px-4 py-2">Sample content ${i} goes here...</td>
-                                    <td class="px-4 py-2">Pending</td>
+                                    <td class="px-4 py-2">
+                                        <img src="${imageMap[product.productId]}" class="rounded w-[60px] h-auto" />
+                                    </td>
+                                    <td class="px-4 py-2">${product.productId}</td>
+                                    <td class="px-4 py-2">${product.userId}</td>
+                                    <td class="px-4 py-2">${product.title}</td>
+                                    <td class="px-4 py-2">${product.description}</td>
+                                    <td class="px-4 py-2">${product.price}</td>
+                                    <td class="px-4 py-2">${product.moderationStatus}</td>
                                     <td class="px-4 py-2 text-right pr-[110px]">
                                         <div class="flex justify-end items-center gap-4">
-                                            <!-- Undo button -->
-                                            <button type="button" class="group relative cursor-pointer text-blue-600 hover:text-blue-800">
-                                                <span class="material-symbols-rounded text-xl">undo</span>
+                                            <!-- Unblock button -->
+                                            <button onclick="openModal('approveModal', '${product.productId}')" 
+                                                    type="button" class="group relative cursor-pointer text-red-600 hover:text-red-800">
+                                                <span class="material-symbols-outlined">Restore</span>
                                                 <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
-                                                    Undo
+                                                    Restore
                                                 </div>
                                             </button>
-
                                             <!-- Delete button -->
-                                            <button type="button" class="group relative cursor-pointer text-red-600 hover:text-red-800">
-                                                <span class="material-symbols-rounded text-xl">delete</span>
+                                            <button onclick="openModal('rejectModal', '${product.productId}')"
+                                                    type="button" class="group relative cursor-pointer text-gray-600 hover:text-gray-800">
+                                                <span class="material-symbols-outlined">delete</span>
                                                 <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
                                                     Delete
                                                 </div>
                                             </button>
                                         </div>
                                     </td>
-
                                 </tr>
                             </c:forEach>
                         </tbody>
@@ -97,6 +158,38 @@
                     <div id="pagination" class="mt-6 flex justify-center"></div>
                 </div>
             </div>
+            <!-- Approve Modal -->
+            <div id="approveModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Approval</h2>
+                    <p class="text-gray-600 mb-6">Are you sure you want to Restore this product?</p>
+                    <div class="flex justify-end gap-3">
+                        <button onclick="closeModal('approveModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
+                        <form action="DeletePostServlet" method="post">
+                            <input type="hidden" name="productId" id="approveProductId">
+                            <input type="hidden" name="action" value="Restore">
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Yes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reject Modal -->
+            <div id="rejectModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Rejection</h2>
+                    <p class="text-gray-600 mb-6">Are you sure you want to delete this product?</p>
+                    <div class="flex justify-end gap-3">
+                        <button onclick="closeModal('rejectModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
+                        <form action="DeletePostServlet" method="post">
+                            <input type="hidden" name="productId" id="rejectProductId">
+                            <input type="hidden" name="action" value="Delete">
+                            <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Yes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
         <!-- Pagination buttons -->
@@ -176,13 +269,63 @@
                     pagination.appendChild(btn);
                 }
             }
+            //Modal
+            function openModal(id, userId) {
+                document.getElementById(id).classList.remove("hidden");
 
+                // Gán userId vào input hidden tương ứng
+                if (id === 'approveModal') {
+                    document.getElementById('approveProductId').value = userId;
+                } else if (id === 'rejectModal') {
+                    document.getElementById('rejectProductId').value = userId;
+                }
+            }
+
+            function closeModal(id) {
+                document.getElementById(id).classList.add("hidden");
+            }
+
+            function openEditModal(userId, fullName, email, phone, role) {
+                document.getElementById('editUserId').value = userId;
+                document.getElementById('editFullName').value = fullName;
+                document.getElementById('editEmail').value = email;
+                document.getElementById('editPhone').value = phone;
+                document.getElementById('editRole').value = role;
+                document.getElementById('editModal').classList.remove('hidden');
+            }
+
+            function closeModaledit(modalId) {
+                document.getElementById(modalId).classList.add('hidden');
+            }
+
+//            function confirmBlock() {
+//                // TODO: Gọi API hoặc logic block tại đây
+//                alert("Account blocked!");
+//                closeModal('blockModal');
+//            }
+//
+//            function confirmDelete() {
+//                // TODO: Gọi API hoặc logic xóa tại đây
+//                alert("Account deleted!");
+//                closeModal('deleteModal');
+//            }
+//
+//            document.getElementById('createAccountForm').addEventListener('submit', function (e) {
+//                e.preventDefault();
+//                const formData = new FormData(this);
+//
+//                // TODO: Gửi dữ liệu tới server hoặc xử lý tại đây
+//                alert("Account created!\nUsername: " + formData.get('username'));
+//
+//                closeModal('createModal');
+//                this.reset(); // reset form sau khi tạo
+//            });
             // Tìm kiếm
             searchInput.addEventListener("keyup", () => {
                 const keyword = searchInput.value.trim().toLowerCase();
                 filteredRows = rows.filter(row => {
-                    const title = row.children[1]?.textContent.toLowerCase() || "";
-                    const content = row.children[2]?.textContent.toLowerCase() || "";
+                    const title = row.children[4]?.textContent.toLowerCase() || "";
+                    const content = row.children[5]?.textContent.toLowerCase() || "";
                     return title.includes(keyword) || content.includes(keyword);
                 });
 

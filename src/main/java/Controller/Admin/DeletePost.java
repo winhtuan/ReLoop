@@ -5,6 +5,8 @@
 package Controller.Admin;
 
 import Model.DAO.admin.AdminPostDAO;
+import Model.entity.post.Product;
+import Model.entity.post.ProductImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,13 +14,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
- * @author ACER
+ * @author Admin
  */
-@WebServlet(name = "StatictisServlet", urlPatterns = {"/StatictisServlet"})
-public class StatictisServlet extends HttpServlet {
+@WebServlet(name = "DeletePost", urlPatterns = {"/DeletePost"})
+public class DeletePost extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,19 +38,16 @@ public class StatictisServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            AdminPostDAO dao = new AdminPostDAO();
-
-            int totalUsers = dao.getTotalUsers();
-            int totalProducts = dao.getTotalProducts();
-            int todayProducts = dao.getTodayTotalProducts();
-
-            // Truyền dữ liệu sang JSP
-            request.setAttribute("totalUsers", totalUsers);
-            request.setAttribute("totalProducts", totalProducts);
-            request.setAttribute("todayProducts", todayProducts);
-
-            // Forward tới dashboard.jsp
-            request.getRequestDispatcher("/JSP/Admin/dashboard.jsp").forward(request, response);
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet DeletePost</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet DeletePost at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
     }
 
@@ -61,7 +63,7 @@ public class StatictisServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doPost(request, response);
     }
 
     /**
@@ -75,7 +77,23 @@ public class StatictisServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+         AdminPostDAO ad = new AdminPostDAO();
+        List<Product> productList = ad.getblockList();
+
+// Duyệt từng product để lấy ảnh
+        Map<String, String> imageMap = new HashMap<>();
+        for (Product p : productList) {
+            List<ProductImage> images = ad.image(p.getProductId());
+            if (images != null && !images.isEmpty()) {
+                imageMap.put(p.getProductId(), images.get(0).getImageUrl()); // lấy 1 ảnh đầu
+            } else {
+                imageMap.put(p.getProductId(), "https://via.placeholder.com/60");
+            }
+        }
+
+        request.setAttribute("approvalPosts", productList);
+        request.setAttribute("imageMap", imageMap);
+        request.getRequestDispatcher("/JSP/Admin/deletePost.jsp").forward(request, response);
     }
 
     /**
