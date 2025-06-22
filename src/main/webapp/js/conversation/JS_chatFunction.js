@@ -240,7 +240,7 @@ function addMessageToChatBox(msg) {
 function addImageToChatBox(msg) {
     const msID = msg.messageId;
     const img = document.createElement("img");
-    img.src = contextPathI + msg.content;
+    img.src = msg.content;
     img.class = "chat-img";
     return img;
 }
@@ -546,41 +546,43 @@ function recallMessage(meId) {
 
 }
 
-function sendImage() {
-    const input = document.getElementById("imageUpload");
-    const files = input.files;
+async function sendImage() {
+  const files = document.getElementById("imageUpload").files;
+  if (files.length === 0) return;
 
-    if (files.length === 0)
-        return;
+  const formData = new FormData();
+  for (const f of files) formData.append("file", f);   // <-- field “file” trùng servlet
 
-    const formData = new FormData();
+  try {
+    const res = await fetch("/ReLoop/api/files", { method: "POST", body: formData });
 
-    for (let i = 0; i < files.length; i++) {
-        formData.append("images", files[i]); // name="images" để trùng servlet xử lý
+    // nếu server trả lỗi, ném ngoại lệ sớm
+    if (!res.ok) {
+      const errTxt = await res.text();      // cố đọc nội dung để log
+      throw new Error(`HTTP ${res.status}: ${errTxt}`);
     }
 
-    formData.append("fromUserId", currentUserId);
-    formData.append("toUserId", currentChatUserId);
+    const { uploaded } = await res.json();  // server trả { uploaded:[…] }
+    if (!(Array.isArray(uploaded) && uploaded.length)) {
+      console.warn("Không có ảnh nào được trả về", uploaded);
+      return;
+    }
 
-    fetch("/ReLoop/uploadImage", {
-        method: "POST",
-        body: formData
-    })
-            .then(response => response.json())
-            .then(result => {
-                const imageUrls = result.imageUrls; // giả sử server trả về list ảnh
-
-                imageUrls.forEach(imageUrl => {
-                    ws.send(JSON.stringify({
-                        type: "image",
-                        fromUserId: currentUserId,
-                        toUserId: currentChatUserId,
-                        imageUrl: imageUrl
-                    }));
-                });
-            })
-            .catch(error => console.error("Upload failed", error));
+    // gửi qua WebSocket
+    uploaded.forEach(img =>
+      ws.send(JSON.stringify({
+        type: "image",
+        fromUserId: currentUserId,
+        toUserId:   currentChatUserId,
+        imageUrl:   img.shareLink           // hoặc webContentLink
+      }))
+    );
+  } catch (err) {
+    console.error("Upload failed", err);
+  }
 }
+
+
 function searchUsers() {
     const searchInput = document.getElementById("searchUser").value.toLowerCase();
     const userList = document.getElementById("userList");

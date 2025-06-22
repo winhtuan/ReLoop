@@ -19,6 +19,10 @@
         <servlet-name>s_addToCart</servlet-name>
         <servlet-class>Controller.s_addToCart</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>s_driver</servlet-name>
+        <servlet-class>Controller.s_driver</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>s_chatBox</servlet-name>
         <url-pattern>/s_chatBox</url-pattern>
@@ -38,6 +42,10 @@
     <servlet-mapping>
         <servlet-name>s_addToCart</servlet-name>
         <url-pattern>/s_addToCart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_driver</servlet-name>
+        <url-pattern>/s_driver</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
