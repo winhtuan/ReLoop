@@ -25,7 +25,8 @@ public class s_regisGoogle extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getAttribute("erormess") != null) {
-            request.getRequestDispatcher("JSP/Authenticate/registerGoogle.jsp").forward(request, response);
+            request.getSession().setAttribute("Message", request.getAttribute("erormess"));
+            response.sendRedirect("home");
             return;
         }
 

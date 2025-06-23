@@ -166,8 +166,7 @@ public class LoginServlet extends HttpServlet {
                 redirectUser(request, response);
             } else {
                 // Đăng nhập thất bại
-                request.setAttribute("errorMessage", "Please check email, password or verify your account to login!");
-                request.getSession().setAttribute("openLogin", true);
+                request.getSession().setAttribute("Message", "Please check email, password or verify your account to login!");
                 redirectUser(request, response);
             }
         } catch (SQLException ex) {
