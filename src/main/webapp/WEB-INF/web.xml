@@ -4,6 +4,16 @@
         <welcome-file>home</welcome-file>
     </welcome-file-list>
     <servlet>
+    <servlet-name>NewPostPage</servlet-name>
+    <servlet-class>Controller.NewPostPage</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>NewPostPage</servlet-name>
+    <url-pattern>/NewPostPage</url-pattern>
+</servlet-mapping>
+
+    <servlet>
         <servlet-name>s_cart</servlet-name>
         <servlet-class>Controller.s_cart</servlet-class>
     </servlet>

@@ -28,7 +28,7 @@
     <nav class="amado-nav mt-30 mb-15">
         <ul>
             <li class="active"><a href="${pageContext.request.contextPath}/home">Home</a></li>
-            <li><a href="#">New Post</a></li>
+            <li><a href="${pageContext.request.contextPath}/NewPostPage">New Post</a></li>
             <li><a href="#">Post</a></li>
             <li><a href="#">Shop</a></li>
                 <c:choose>

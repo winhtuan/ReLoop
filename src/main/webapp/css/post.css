@@ -1,0 +1,230 @@
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f7f7fb;
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+/* ==== Product Card Modern ==== */
+.product-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.2s;
+  position: relative;
+  min-height: 410px;
+}
+
+.product-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 40px 0 rgba(251, 183, 16, 0.12),
+    0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.product-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  border-radius: 0;
+  min-height: 180px;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.07) rotate(-1.5deg);
+}
+
+.product-actions {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 3;
+}
+
+.btn-action {
+  background: rgba(255, 255, 255, 0.96);
+  border: none;
+  outline: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+}
+
+.btn-action:hover {
+  background: #ececec;
+  color: #fff;
+  transform: scale(1.13);
+}
+
+.btn-action.wishlist ion-icon {
+  color: #eb2f06;
+}
+
+.btn-action.add-to-cart ion-icon {
+  color: #f3b50c;
+}
+
+.btn-action.buy-now ion-icon {
+  color: #1cbb23;
+}
+
+.product-title {
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.2;
+}
+
+.product-price {
+  color: #fbb710;
+  font-size: 1.13rem;
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fff;
+}
+
+.product-description {
+  font-size: 0.97rem;
+  color: #666;
+  min-height: 38px;
+}
+
+.products-catagories-area {
+  padding-top: 20px !important;
+}
+
+@media (max-width: 576px) {
+  .product-card {
+    min-height: 320px;
+  }
+
+  .product-info {
+    padding: 1rem !important;
+  }
+}
+@media (min-width: 1400px) {
+  .custom-xxl-5 {
+    flex: 0 0 auto;
+    width: 20%;
+    max-width: 20%;
+  }
+}
+
+.category-bar-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+.category-item {
+  min-width: 90px;
+  width: 90px;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* <-- CHÍNH ĐIỂM NÀY */
+  text-align: center;
+}
+
+.category-item .category-name {
+  font-size: 14px;
+  margin-top: 4px;
+  text-align: center;
+  width: 100%;
+}
+
+.cat-btn-left,
+.cat-btn-right {
+  position: absolute;
+  padding: 0 !important;
+  top: 50%; 
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  z-index: 10;
+  background: #f5f6fa;
+  color: #545454;
+  opacity: 0.85;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.18s, background 0.18s, box-shadow 0.18s, color 0.18s;
+  font-size: 20px;
+}
+.cat-btn-left:hover,
+.cat-btn-right:hover {
+  opacity: 1;
+  background: #e0e5ee; 
+  color: #2563eb; 
+  box-shadow: 0 4px 14px rgba(30, 64, 175, 0.1);
+}
+.cat-btn-left svg,
+.cat-btn-right svg {
+  transition: transform 0.19s;
+}
+.cat-btn-left:hover svg,
+.cat-btn-right:hover svg {
+  transform: scale(1.22);
+}
+.cat-btn-left {
+  left: 8px;
+}
+.cat-btn-right {
+  right: 8px;
+}
+.category-bar {
+  scrollbar-width: none;
+}
+.category-bar::-webkit-scrollbar {
+  display: none;
+}
+.category-bar {
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 8px;
+}
+@media (min-width: 1200px) {
+  .category-bar-container {
+    max-width: calc(100% - 12px); /* Giống .container */
+  }
+}
+.category-item {
+  min-width: 90px;
+  width: 90px;
+  flex: 0 0 auto;
+}
+@media (max-width: 767.98px) {
+  .category-bar-title {
+    font-size: 17px;
+  }
+  .category-item {
+    min-width: 70px;
+    width: 70px;
+  }
+}
