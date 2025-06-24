@@ -179,8 +179,8 @@ public class UserDao {
 
     public String newUser(User c) {
         String id = generateUserId();
-        String sql = "INSERT INTO users (user_id, FullName, Address, PhoneNumber, email,role) "
-                + "VALUES (?,?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (user_id, FullName, Address, PhoneNumber, email,role,img) "
+                + "VALUES (?,?, ?, ?, ?, ?,?)";
 
         try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
             // Gán giá trị cho các tham số
@@ -190,6 +190,7 @@ public class UserDao {
             stmt.setString(4, c.getPhoneNumber());
             stmt.setString(5, c.getEmail());
             stmt.setString(6, c.getRole());
+            stmt.setString(7, c.getSrcImg());
 
             // Thực thi truy vấn và lấy ID của bản ghi vừa thêm
             int rowsInserted = stmt.executeUpdate();

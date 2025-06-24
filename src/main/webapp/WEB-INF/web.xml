@@ -23,6 +23,14 @@
         <servlet-name>s_driver</servlet-name>
         <servlet-class>Controller.s_driver</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>s_orderHistory</servlet-name>
+        <servlet-class>Controller.s_orderHistory</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>callLogin</servlet-name>
+        <servlet-class>Controller.callLogin</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>s_chatBox</servlet-name>
         <url-pattern>/s_chatBox</url-pattern>
@@ -46,6 +54,14 @@
     <servlet-mapping>
         <servlet-name>s_driver</servlet-name>
         <url-pattern>/s_driver</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_orderHistory</servlet-name>
+        <url-pattern>/s_orderHistory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>callLogin</servlet-name>
+        <url-pattern>/callLogin</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

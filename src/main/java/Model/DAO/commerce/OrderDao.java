@@ -1,12 +1,19 @@
 package Model.DAO.commerce;
 
 import Model.entity.commerce.Order;
+import Model.entity.commerce.OrderItem;
 import Utils.DBUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class OrderDao {
 
@@ -138,7 +145,7 @@ public class OrderDao {
 
             ps.setString(1, generateOrderId());
             ps.setString(2, order.getUserId());
-            ps.setInt(3, order.getTotalAmount());  
+            ps.setInt(3, order.getTotalAmount());
             ps.setString(4, order.getStatus());
 
             // shipping_address
@@ -173,4 +180,59 @@ public class OrderDao {
         }
     }
 
+    public List<Order> getOrdersByUserId(String userId) {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM orders WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Order order = new Order();
+                order.setOrderId(rs.getString("order_id"));
+                order.setUserId(rs.getString("user_id"));
+                order.setTotalAmount(rs.getInt("total_amount"));
+                order.setStatus(rs.getString("status"));
+                order.setShippingAddress(rs.getString("shipping_address"));
+                order.setShippingMethod(rs.getInt("shipping_method"));
+                order.setVoucherId(rs.getString("voucher_id"));
+                order.setDiscountAmount(rs.getInt("discount_amount"));
+                order.setCreatedAt(rs.getTimestamp("created_at"));
+                order.setUpdatedAt(rs.getTimestamp("updated_at"));
+                order.setListItems(getOrderItems(order.getOrderId()));
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    public List<OrderItem> getOrderItems(String orderId) {
+        List<OrderItem> items = new ArrayList<>();
+        String sql = "SELECT oi.order_id, oi.product_id, oi.quantity, oi.price, p.title FROM order_items oi "+
+        "JOIN product p ON oi.product_id = p.product_id WHERE oi.order_id = ?";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, orderId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                OrderItem item = new OrderItem();
+                item.setOrderId(rs.getString("order_id"));
+                item.setProductId(rs.getString("product_id"));
+                item.setQuantity(rs.getInt("quantity"));
+                item.setPrice(rs.getInt("price"));
+                item.setProductName(rs.getString("title"));
+                items.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        for (OrderItem o : new OrderDao().getOrderItems("ORD0005")) {
+            System.out.println(o);
+        }
+    }
 }

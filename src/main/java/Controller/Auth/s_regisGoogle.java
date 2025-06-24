@@ -35,7 +35,7 @@ public class s_regisGoogle extends HttpServlet {
 
         Account user = (Account) request.getSession().getAttribute("user");
         User newU = new User(new UserDao().generateUserId(), (String) request.getSession().getAttribute("fullname"),
-                 "user", address, phone, user.getEmail(), false, null, BigDecimal.ONE);
+                 "user", address, phone, user.getEmail(), false, null, BigDecimal.ONE,(String)request.getSession().getAttribute("picture"));
         request.getSession().setAttribute("cus", newU);
         // Insert new user in users table and get user_id
         String userId = new UserDao().newUser(newU);
@@ -50,7 +50,7 @@ public class s_regisGoogle extends HttpServlet {
         user.setUserId(userId);
         user = new AccountDao().getAccountByEmail(user.getEmail());
         request.getSession().setAttribute("user", user);
-        int cartN=new CartDAO().getTotalQuantityByUserId(user.getUserId());
+        int cartN=new CartDAO().getTotalQuantityByUserId(newU.getUserId());
         request.getSession().setAttribute("cartN", cartN);
         // Redirect logic
         String redirectUrl = (String) request.getSession().getAttribute("redirectUrl");

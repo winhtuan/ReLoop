@@ -62,8 +62,9 @@ public class LoginServlet extends HttpServlet {
 
         String email = userInfo.get("email").getAsString();
         String name = userInfo.get("name").getAsString();
+        String picture = userInfo.get("picture").getAsString();
 
-        processSocialLogin(request, response, email, name);
+        processSocialLogin(request, response, email, name, picture);
     }
 
     private void handleFacebookLogin(HttpServletRequest request, HttpServletResponse response, String code)
@@ -87,12 +88,13 @@ public class LoginServlet extends HttpServlet {
                 ? userInfo.get("email").getAsString()
                 : "no-email@" + userInfo.get("id").getAsString() + ".com";
         String name = userInfo.get("name").getAsString();
-
-        processSocialLogin(request, response, email, name);
+        String picture = userInfo.get("picture").getAsString();
+        processSocialLogin(request, response, email, name,picture);
+        
     }
 
     private void processSocialLogin(HttpServletRequest request, HttpServletResponse response,
-            String email, String name)
+            String email, String name, String pic)
             throws IOException, ServletException {
 
         Account acc = new Account(email);
@@ -100,6 +102,7 @@ public class LoginServlet extends HttpServlet {
         if (!new AccountDao().isEmailExist(email)) {
             request.getSession().setAttribute("user", acc);
             request.getSession().setAttribute("fullname", name);
+            request.getSession().setAttribute("picture", pic);
             request.getRequestDispatcher("JSP/Authenticate/registerGoogle.jsp").forward(request, response);
         } else {
             acc = new AccountDao().getAccountByEmail(email);

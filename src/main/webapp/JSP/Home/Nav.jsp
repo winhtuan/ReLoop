@@ -31,18 +31,32 @@
             <li><a href="#">New Post</a></li>
             <li><a href="#">Post</a></li>
             <li><a href="#">Shop</a></li>
-            <li><a href="${pageContext.request.contextPath}/premium?user_id=${sessionScope.cus.userId}">Premium</a></li>
+                <c:choose>
+                    <c:when test="${sessionScope.user != null}">
+                    <li><a href="${pageContext.request.contextPath}/premium?user_id=${sessionScope.cus.userId}">Premium</a></li>
+                    </c:when>
+                    <c:otherwise>
+                    <li><a href="${pageContext.request.contextPath}/callLogin">Premium</a></li>
+                    </c:otherwise>
+                </c:choose>
         </ul>
     </nav>
     <!-- Cart Menu -->
     <div class="cart-fav-search">
         <a href="#" class="search-nav"><ion-icon name="search-outline"></ion-icon> Search</a>
-        <a href="${pageContext.request.contextPath}/s_cart" class="cart-nav"><ion-icon name="cart-outline"></ion-icon> Cart <span style="color: #fbb710;">(<c:out value="${sessionScope.cartN}" default="0" />)</span></a>
+                <c:choose>
+                    <c:when test="${sessionScope.user != null}">
+                <a href="${pageContext.request.contextPath}/s_cart" class="cart-nav"><ion-icon name="cart-outline"></ion-icon> Cart <span style="color: #fbb710;">(<c:out value="${sessionScope.cartN}" default="0" />)</span></a>
+                    </c:when>
+                    <c:otherwise>
+                <a href="${pageContext.request.contextPath}/callLogin" class="cart-nav"><ion-icon name="cart-outline"></ion-icon> Cart <span style="color: #fbb710;">(<c:out value="${sessionScope.cartN}" default="0" />)</span></a>
+                    </c:otherwise>
+                </c:choose>
 
         <div class="fav-nav favourite-container" id="favouriteContainer">
             <a href="#" id="favouriteLink"><ion-icon name="heart-outline"></ion-icon> 
                 Favourite
-            </a>
+            </a>            
             <!-- Khung hiện yêu thích -->
             <div id="favouriteBox" class="favourite-box">
                 <p>No Items In Your <strong>Favourite List</strong></p>
@@ -123,7 +137,7 @@
                         </a>
                     </c:if>
                     <ul id="menu" class="menu">
-                        <li><a href="#" id="menu-item"><ion-icon name="bag-handle-outline"></ion-icon>Order History</a></li>
+                        <li><a href="${pageContext.request.contextPath}/s_orderHistory" id="menu-item"><ion-icon name="bag-handle-outline"></ion-icon>Order History</a></li>
                         <li><a href="#" id="menu-item"><ion-icon name="newspaper-outline"></ion-icon>Manager Post</a></li>
                         <li><a href="${pageContext.request.contextPath}/UsersServlet" id="menu-item"><ion-icon name="chatbubble-ellipses-outline"></ion-icon>Message</a></li>
                         <li><a href="#" id="menu-item"><ion-icon name="document-text-outline"></ion-icon>Profile</a></li>

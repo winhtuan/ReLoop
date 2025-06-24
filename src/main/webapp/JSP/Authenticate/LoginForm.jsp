@@ -22,13 +22,14 @@
                 </div>
 
             </div>
-            <div class="login__remember">
+            <div style="display: flex; align-items: center;">
+            <span class="login__remember">
                 <input type="checkbox" id="remember" name="remember" />
                 <label for="remember">Remember me</label>
-            </div>
+            </span>
 
             <a href="${pageContext.request.contextPath}/JSP/Authenticate/forgotPassword.jsp" class="login__forgot">Forgot your password?</a>
-
+            </div>
             <button type="submit" class="login__button">Login</button>
         </form>
 
