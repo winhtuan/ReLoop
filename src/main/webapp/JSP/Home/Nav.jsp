@@ -54,9 +54,18 @@
                 </c:choose>
 
         <div class="fav-nav favourite-container" id="favouriteContainer">
-            <a href="#" id="favouriteLink"><ion-icon name="heart-outline"></ion-icon> 
-                Favourite
-            </a>            
+            <c:choose>
+                <c:when test="${sessionScope.user != null}">
+                    <a href="#" id="favouriteLink"><ion-icon name="heart-outline"></ion-icon> 
+                        Favourite
+                    </a>                    
+                </c:when>
+                <c:otherwise>
+                    <a href="${pageContext.request.contextPath}/callLogin" ><ion-icon name="heart-outline"></ion-icon> 
+                        Favourite
+                    </a>                    
+                </c:otherwise>
+            </c:choose>           
             <!-- Khung hiện yêu thích -->
             <div id="favouriteBox" class="favourite-box">
                 <p>No Items In Your <strong>Favourite List</strong></p>
@@ -89,9 +98,18 @@
         </div>
 
         <div class="not-nav notification-container" id="notificationContainer">
-            <a href="#" id="notificationLink">
-                <ion-icon name="notifications-outline"></ion-icon> Notification
-            </a>
+            <c:choose>
+                <c:when test="${sessionScope.user != null}">
+                    <a href="#" id="notificationLink">
+                        <ion-icon name="notifications-outline"></ion-icon> Notification
+                    </a>                 
+                </c:when>
+                <c:otherwise>
+                    <a href="${pageContext.request.contextPath}/callLogin">
+                        <ion-icon name="notifications-outline"></ion-icon> Notification
+                    </a>               
+                </c:otherwise>
+            </c:choose>
 
             <!-- Khung hiện thông báo -->
             <div id="notificationBox" class="notification-box">
@@ -154,10 +172,21 @@
     </div>
     <!-- Button Group -->
     <div class="amado-btn-group mt-15 mb-100">
-        <a href="#" class="item-btn-custom">
-            <ion-icon name="document-text-outline" class="btn-icon"></ion-icon>
-            <span>Up Post</span>
-        </a>
+        <c:choose>
+            <c:when test="${sessionScope.user != null}">
+                <a href="#" class="item-btn-custom">
+                    <ion-icon name="document-text-outline" class="btn-icon"></ion-icon>
+                    <span>Up Post</span>
+                </a>                    
+            </c:when>
+            <c:otherwise>
+                <a href="${pageContext.request.contextPath}/callLogin" class="item-btn-custom">
+                    <ion-icon name="document-text-outline" class="btn-icon"></ion-icon>
+                    <span>Up Post</span>
+                </a>                   
+            </c:otherwise>
+        </c:choose>
+
     </div>
 
 </header>

@@ -55,7 +55,7 @@ public class UserDao {
     }
 
     public String addUser(String name, String email) {
-        String query = "INSERT INTO users (user_id, FullName, email) VALUES (?,?,?)";
+        String query = "INSERT INTO users (user_id, FullName, email, role) VALUES (?,?,?,'user')";
         String customerID = generateUserId(); // Giá trị mặc định nếu không lấy được ID
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {

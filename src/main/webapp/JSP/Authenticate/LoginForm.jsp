@@ -47,9 +47,6 @@
                     <img src="${pageContext.request.contextPath}/img/modal-img/icon-facebook.svg" alt="image" class="login__social-img">
                 </a>
 
-                <a href="#" class="login__social-link">
-                    <img src="${pageContext.request.contextPath}/img/modal-img/icon-apple.svg" alt="image" class="login__social-img">
-                </a>
             </div>
         </div>
 

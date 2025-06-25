@@ -20,7 +20,7 @@ public class callLogin extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getSession().setAttribute("Message", "Vui lòng đăng nhập để sử dụng tính năng.");
+        request.getSession().setAttribute("Message", "Please login to use the feature.");
         request.getRequestDispatcher("JSP/Home/HomePage.jsp").forward(request, response);
     }
 
