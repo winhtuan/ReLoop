@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Forgot Password</title>
-        <link rel="stylesheet" href="css/fw.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/fw.css">
         <style>
             :root {
                 --first-color: #007BFF;

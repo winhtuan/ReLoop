@@ -1,42 +1,108 @@
-  .premium-compare-row {
-      display: flex; justify-content: center; align-items: stretch;
-      gap: 20px; flex-wrap: wrap; margin-top: 24px;
+.premium-compare-row {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+.premium-card-box {
+    display: flex;
+    flex: 1 1 340px;
+    max-width: 400px;
+    min-width: 280px;
+    justify-content: center;
+}
+.premium-card {
+    background: #fff;
+    border-radius: 32px;
+    box-shadow: 0 4px 24px #0001;
+    border: 2px solid #ececec;
+    transition: box-shadow 0.18s, transform 0.18s;
+    width: 100%;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.premium-card .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+.premium-section-title {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+.premium-card ul li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #000;
+}
+.premium-card ul li ion-icon[name="checkmark-circle-outline"] {
+    color: #fbb710;
+    font-size: 1.25em;
+}
+.premium-card ul li ion-icon[name="close-circle-outline"] {
+    color: #ccc;
+    font-size: 1.25em;
+}
+.premium-card .amado-btn-custom {
+    background: #eaeaea;
+    color: #242424;
+    font-size: 1.08rem;
+    padding: 13px 0;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    width: 100%;
+    margin-top: auto;
+    cursor: not-allowed;
+    border: none;
+    outline: none;
+    transition: background 0.18s;
+}
+.premium-card-highlight {
+    border: 3px solid #fbb710;
+    box-shadow: 0 8px 32px #fbb71033, 0 2px 8px #fbb71022;
+    position: relative;
+    z-index: 2;
+}
+.premium-card-highlight .amado-btn-custom {
+    background: #fbb710;
+    color: #fff;
+    box-shadow: 0 4px 24px #fbb71033;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.premium-card-highlight .amado-btn-custom:hover {
+    background: #e0a800;
+}
+.premium-card:hover {
+    box-shadow: 0 8px 32px #0002;
+    transform: translateY(-3px) scale(1.03);
+}
+@media (max-width: 900px) {
+    .premium-compare-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
     }
     .premium-card-box {
-      display: flex; flex: 1 1 340px; max-width: 400px; min-width: 280px; justify-content: center;
+        width: 100%;
+        min-width: 0;
+        max-width: 98vw;
+        margin-bottom: 0;
     }
     .premium-card {
-      background: #fff; border-radius: 32px; box-shadow: 0 4px 24px #0001;
-      border: 2px solid #ececec; transition: box-shadow 0.18s, transform 0.18s;
-      width: 100%; min-height: 520px; display: flex; flex-direction: column; align-items: stretch;
+        min-height: 0;
     }
-    .premium-card .card-body {
-      display: flex; flex-direction: column; align-items: center; height: 100%;
-    }
-    .premium-section-title { margin-top: 0; margin-bottom: 18px; }
-    .premium-card ul li {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #000;
-    }
-    .premium-card ul li ion-icon[name="checkmark-circle-outline"] { color: #fbb710; font-size: 1.25em; }
-    .premium-card ul li ion-icon[name="close-circle-outline"] { color: #ccc; font-size: 1.25em; }
-    .premium-card .amado-btn-custom {
-      background: #eaeaea; color: #242424; font-size: 1.08rem; padding: 13px 0;
-      border-radius: 12px; font-weight: 600; letter-spacing: 1px; width: 100%;
-      margin-top: auto; cursor: not-allowed; border: none; outline: none; transition: background 0.18s;
-    }
-    .premium-card-highlight {
-      border: 3px solid #fbb710; box-shadow: 0 8px 32px #fbb71033, 0 2px 8px #fbb71022;
-      position: relative; z-index: 2;
-    }
-    .premium-card-highlight .amado-btn-custom {
-      background: #fbb710; color: #fff; box-shadow: 0 4px 24px #fbb71033;
-      cursor: pointer; transition: background 0.18s;
-    }
-    .premium-card-highlight .amado-btn-custom:hover { background: #e0a800; }
-    .premium-card:hover { box-shadow: 0 8px 32px #0002; transform: translateY(-3px) scale(1.03); }
-    @media (max-width: 900px) {
-      .premium-compare-row { flex-direction: column; align-items: center; gap: 20px; }
-      .premium-card-box { width: 100%; min-width: 0; max-width: 98vw; margin-bottom: 0; }
-      .premium-card { min-height: 0; }
-    }
-    .container { padding: 0 !important; margin: 0 auto !important; max-width: 1100px; }
+}
+.container {
+    padding: 0 !important;
+    margin: 0 auto !important;
+    max-width: 1100px;
+}

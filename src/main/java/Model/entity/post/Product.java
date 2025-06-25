@@ -11,7 +11,7 @@ public class Product {
     private Integer categoryId;
     private String title;
     private String description;
-    private BigDecimal price;
+    private int price;
     private String location;
     private String status;
     private String moderationStatus;
@@ -25,28 +25,26 @@ public class Product {
     public Product() {
     }
 
+    public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, String moderationStatus, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
+        this.productId = productId;
+        this.userId = userId;
+        this.categoryId = categoryId;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.location = location;
+        this.status = status;
+        this.moderationStatus = moderationStatus;
+        this.isPriority = isPriority;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.images = images;
+    }
     @Override
     public String toString() {
-        return "Product{" + "productId=" + productId + ", categoryId=" + categoryId + ", title=" + title + ", images=" + images + '}';
+        return "Product{" + "productId=" + productId + ", userId=" + userId + ", categoryId=" + categoryId + ", title=" + title + ", description=" + description + ", price=" + price + ", location=" + location + ", status=" + status + ", moderationStatus=" + moderationStatus + ", isPriority=" + isPriority + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", state=" + state + ", quantity=" + quantity + ", images=" + images + '}';
     }
-
-    public Product(String productId, String userId, Integer categoryId, String title, String description, BigDecimal price, String location, String status, String moderationStatus, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
-        this.productId = productId;
-        this.userId = userId;
-        this.categoryId = categoryId;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.location = location;
-        this.status = status;
-        this.moderationStatus = moderationStatus;
-        this.isPriority = isPriority;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.images = images;
-    }
-
-    public Product(String productId, String userId, Integer categoryId, String title, String description, BigDecimal price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
+    public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
         this.productId = productId;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -61,8 +59,8 @@ public class Product {
         this.images = images;
     }
 
-    public Product(String productId, String userId, Integer categoryId, String title, String description,
-            BigDecimal price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt) {
+
+    public Product(String productId, String userId, Integer categoryId, String title, String description,int price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt) {
         this.productId = productId;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -75,8 +73,9 @@ public class Product {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+  
 
-    public Product(String productId, String userId, Integer categoryId, String title, String description, BigDecimal price, String location, String status, String moderationStatus, boolean isPriority, Date createdAt, Date updatedAt, String state, int quantity, List<ProductImage> images) {
+    public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, String moderationStatus, boolean isPriority, Date createdAt, Date updatedAt, String state, int quantity, List<ProductImage> images) {
         this.productId = productId;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -91,46 +90,6 @@ public class Product {
         this.updatedAt = updatedAt;
         this.state = state;
         this.quantity = quantity;
-        this.images = images;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public String getModerationStatus() {
-        return moderationStatus;
-    }
-
-    public void setModerationStatus(String moderationStatus) {
-        this.moderationStatus = moderationStatus;
-    }
-
-    public boolean isIsPriority() {
-        return isPriority;
-    }
-
-    public void setIsPriority(boolean isPriority) {
-        this.isPriority = isPriority;
-    }
-
-    public List<ProductImage> getImages() {
-        return images;
-    }
-
-    public void setImages(List<ProductImage> images) {
         this.images = images;
     }
 
@@ -174,11 +133,11 @@ public class Product {
         this.description = description;
     }
 
-    public BigDecimal getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
@@ -198,12 +157,20 @@ public class Product {
         this.status = status;
     }
 
-    public boolean isPriority() {
+    public String getModerationStatus() {
+        return moderationStatus;
+    }
+
+    public void setModerationStatus(String moderationStatus) {
+        this.moderationStatus = moderationStatus;
+    }
+
+    public boolean isIsPriority() {
         return isPriority;
     }
 
-    public void setPriority(boolean priority) {
-        isPriority = priority;
+    public void setIsPriority(boolean isPriority) {
+        this.isPriority = isPriority;
     }
 
     public Date getCreatedAt() {
@@ -221,4 +188,33 @@ public class Product {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public List<ProductImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
+    }
+ 
 }
+
+   
+
+

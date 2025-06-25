@@ -1,7 +1,7 @@
 package Controller.Paid;
 
 import Model.DAO.commerce.OrderDao;
-import Model.DAO.pay.payServiceDao;
+import Model.DAO.pay.PaidServiceDAO;
 import Model.entity.pay.PaidService;
 import Utils.AppConfig;
 import java.io.IOException;
@@ -9,56 +9,57 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import vn.payos.PayOS;
 import vn.payos.type.CheckoutResponseData;
 import vn.payos.type.PaymentData;
 
 public class CreateQRPaymentServlet extends HttpServlet {
 
-    String clientId = new AppConfig().get("payos.client_id");
-    String apiKey = new AppConfig().get("payos.api_key");
-    String checksumKey = new AppConfig().get("payos.checksum_key");
-    PayOS payOS = new PayOS(clientId, apiKey, checksumKey);
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-    }
+    private PayOS payOS = new PayOS(new AppConfig().get("payos.client_id"),
+             new AppConfig().get("payos.api_key"), new AppConfig().get("payos.checksum_key"));
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id = request.getParameter("paidService_id"); 
-        String user_id = request.getParameter("user_id"); 
-        PaidService paidService = new payServiceDao().findById(id);
-        String description = paidService.getServiceName();
-        int amount = (int) paidService.getPrice() / 100;
-        Long orderCode = System.currentTimeMillis() / 1000;
+        String paid_id = request.getParameter("paidService_id");
+        String user_id = request.getParameter("user_id");
 
-        // Tạo order trong database
-        String status = "pending"; // ban đầu
-        boolean created = new OrderDao().createOrder(user_id, amount, description, status);
+        // Retrieve the paid service details
+        PaidService premium = new PaidServiceDAO().getPaidServiceById(paid_id);
+        String description = String.format("Purchases %s", premium.getServiceName());
+        int amount = (int) premium.getPrice();
+
+        // Generate orderID using the OrderDao method
+        String orderId = new OrderDao().generateOrderId();  // Generate unique orderID
+
+        // Initial order status
+        String status = "pending"; 
+
+        // Create order in the database
+        boolean created = new OrderDao().createOrder(orderId, user_id, amount, status, null, null, null, 0);
         if (!created) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to create order");
             return;
         }
-        // Chuẩn bị dữ liệu gửi sang PayOS
+        String encodedPaidId = URLEncoder.encode(paid_id, "UTF-8"); // gửi paid Service ID nếu cần
+        // Prepare payment data to be sent to PayOS
         PaymentData paymentData = PaymentData.builder()
-                .orderCode(orderCode)
+                .orderCode(Long.valueOf(orderId.substring(3)))  // Pass orderId as orderCode for PayOS
                 .amount(amount)
                 .description(description)
-                .returnUrl("http://localhost:8080/html/success.html")
-                .cancelUrl("http://localhost:8080/html/cancel.html")
+                .returnUrl("http://localhost:8080/ReLoop/PayOSCallback") 
+                .cancelUrl("http://localhost:8080/ReLoop/html/cancel.html")
                 .build();
 
         try {
+            // Generate payment link from PayOS
             CheckoutResponseData result = payOS.createPaymentLink(paymentData);
             System.out.println("Redirecting to: " + result.getCheckoutUrl());
-            response.sendRedirect(result.getCheckoutUrl());
+            response.sendRedirect(result.getCheckoutUrl());  // Redirect user to PayOS for payment
         } catch (Exception e) {
             System.err.println("PayOS error: " + e.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "can't create qr code: " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Can't create QR code: " + e.getMessage());
         }
     }
 

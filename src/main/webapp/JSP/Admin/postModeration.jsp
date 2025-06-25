@@ -134,7 +134,7 @@
                                     <td class="px-4 py-2 text-right pr-[110px]">
                                         <div class="flex justify-end items-center gap-4">
                                             <!-- Unblock button -->
-                                            <button onclick="openModal('approveModal', '${product.productId}')" 
+                                            <button onclick="openModal('approveModal', '${product.productId}', '${product.userId}' )" 
                                                     type="button" class="group relative cursor-pointer text-red-600 hover:text-red-800">
                                                 <span class="material-symbols-rounded text-xl">check_circle</span>
                                                 <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
@@ -142,7 +142,7 @@
                                                 </div>
                                             </button>
                                             <!-- Delete button -->
-                                            <button onclick="openModal('rejectModal', '${product.productId}')"
+                                            <button onclick="openModal('rejectModal', '${product.productId}','${product.userId}')"
                                                     type="button" class="group relative cursor-pointer text-gray-600 hover:text-gray-800">
                                                 <span class="material-symbols-rounded text-xl">cancel</span>
                                                 <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
@@ -173,101 +173,35 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Reject Modal -->
-            <div id="rejectModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Rejection</h2>
-                    <p class="text-gray-600 mb-6">Are you sure you want to reject this product?</p>
-                    <div class="flex justify-end gap-3">
-                        <button onclick="closeModal('rejectModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                        <form action="ApprovalServlet" method="post">
-                            <input type="hidden" name="productId" id="rejectProductId">
-                            <input type="hidden" name="action" value="reject">
-                            <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Yes</button>
-                        </form>
-                    </div>
+            <div id="rejectModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
+                <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-lg relative">
+                    <form action="ApprovalServlet" method="post">
+                        <h2 class="text-xl font-semibold mb-4 text-red-600">Reject Product</h2>
+                        <!-- Hidden để gửi productId -->
+                        <input type="hidden" id="rejectProductId" name="productId">
+                        <input type="hidden" id="rejectUserId" name="userId">
+                        <input type="hidden" name="action" value="reject">
+                        <!-- Lý do từ chối -->
+                        <label for="reason" class="block text-gray-700 mb-1">Reason for rejection:</label>
+                        <textarea name="reason" id="reason" rows="4"
+                                  class="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
+                                  required></textarea>
+                        <!-- Nút submit và cancel -->
+                        <div class="mt-4 flex justify-end gap-3">
+                            <button type="button" onclick="closeModal('rejectModal')"
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <!--             Edit Role Modal 
-                        <div id="editModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
-                            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-                                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Edit Role</h2>
-            
-                                <form action="EditServlet" method="post" class="space-y-4">
-                                     Hidden user_id 
-                                    <input type="hidden" name="user_id" id="editUserId">
-            
-                                    <div>
-                                        <label class="block text-gray-700">Full Name</label>
-                                        <input type="text" id="editFullName" class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-600" readonly />
-                                    </div>
-            
-                                    <div>
-                                        <label class="block text-gray-700">Email</label>
-                                        <input type="email" id="editEmail" class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-600" readonly />
-                                    </div>
-            
-                                    <div>
-                                        <label class="block text-gray-700">Phone Number</label>
-                                        <input type="text" id="editPhone" class="w-full border px-4 py-2 rounded bg-gray-100 text-gray-600" readonly />
-                                    </div>
-            
-                                    <div>
-                                        <label class="block text-gray-700">Role</label>
-                                        <select name="role" id="editRole" class="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                            <option value="admin">Admin</option>
-                                            <option value="supporter">Supporter</option>
-                                            <option value="user">User</option>
-                                            <option value="shopkeeper">Shopkeeper</option>
-                                        </select>
-                                    </div>
-            
-                                    <div class="flex justify-end gap-3 pt-4">
-                                        <button type="button" onclick="closeModaledit('editModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>-->
-
-            <!-- Create Account Modal -->
-            <!--            <div id="createModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
-                            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-                                <h2 class="text-2xl font-semibold mb-4 text-gray-800">Create New Account</h2>
-            
-                                <form action="CreateAccountServlet" method="post" id="createAccountForm" class="space-y-4">
-                                    <div>
-                                        <label class="block text-gray-700">Email</label>
-                                        <input type="email" name="email" class="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-                                    </div>
-                                    <div>
-                                        <label class="block text-gray-700">Password</label>
-                                        <input type="password" name="password" class="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
-                                    </div>
-                                    <div>
-                                        <label class="block text-gray-700">Role</label>
-                                        <select name="role" class="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                            <option value="" disabled selected>Select role</option>
-                                            <option value="admin">Admin</option>
-                                            <option value="user">Supporter</option>
-                                            <option value="user">User</option>
-                                            <option value="shopkeeper">Shopkeeper</option>
-                                             Add more roles if needed 
-                                        </select>
-                                    </div>
-                                    <div class="flex justify-end gap-3 pt-4">
-                                        <button type="button" onclick="closeModal('createModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Create</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>-->
         </main>
-
         <!-- Pagination buttons -->
-
         <script>
             const searchInput = document.getElementById("searchInput");
             const rows = Array.from(document.querySelectorAll("#postTableBody tr"));
@@ -344,14 +278,15 @@
                 }
             }
             //Modal
-            function openModal(id, userId) {
+            function openModal(id, productID ,userId) {
                 document.getElementById(id).classList.remove("hidden");
 
                 // Gán userId vào input hidden tương ứng
                 if (id === 'approveModal') {
-                    document.getElementById('approveProductId').value = userId;
+                    document.getElementById('approveProductId').value = productID;
                 } else if (id === 'rejectModal') {
-                    document.getElementById('rejectProductId').value = userId;
+                    document.getElementById('rejectProductId').value = productID;
+                    document.getElementById('rejectUserId').value = userId;
                 }
             }
 

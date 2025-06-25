@@ -33,7 +33,7 @@ public class AdminPostDAO {
                 product.setUserId(rs.getString("user_id"));
                 product.setTitle(rs.getString("title"));
                 product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
+                product.setPrice(rs.getBigDecimal("price").intValue());
                 product.setModerationStatus(rs.getString("moderation_status"));
                 list.add(product);
             }
@@ -88,7 +88,7 @@ public class AdminPostDAO {
                 product.setUserId(rs.getString("user_id"));
                 product.setTitle(rs.getString("title"));
                 product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
+                product.setPrice(rs.getBigDecimal("price").intValue());
                 product.setModerationStatus(rs.getString("moderation_status"));
                 list.add(product);
             }
@@ -111,7 +111,7 @@ public class AdminPostDAO {
                 product.setUserId(rs.getString("user_id"));
                 product.setTitle(rs.getString("title"));
                 product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
+                product.setPrice(rs.getBigDecimal("price").intValue());
                 product.setModerationStatus(rs.getString("moderation_status"));
                 list.add(product);
             }
@@ -182,7 +182,7 @@ public class AdminPostDAO {
                 product.setUserId(rs.getString("user_id"));
                 product.setTitle(rs.getString("title"));
                 product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
+                product.setPrice(rs.getBigDecimal("price").intValue());
                 product.setModerationStatus(rs.getString("moderation_status"));
                 list.add(product);
             }
@@ -239,5 +239,37 @@ public class AdminPostDAO {
 
         return total;
     }
+
+    public String getUserEmailByUserId(String userId) {
+        String email = null;
+        String sql = "SELECT email FROM reloop_v2.users WHERE user_id = ?";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                email = rs.getString("email");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching email for userId: " + userId);
+            e.printStackTrace();
+        }
+
+        return email;
+    }
+    
+   public static void main(String[] args) {
+    AdminPostDAO dAO = new AdminPostDAO();
+    String email = dAO.getUserEmailByUserId("CUS0014");
+    
+    if (email != null) {
+        System.out.println("Email tìm được: " + email);
+    } else {
+        System.out.println("Không tìm thấy email cho user_id = Cus0014");
+    }
+}
 
 }

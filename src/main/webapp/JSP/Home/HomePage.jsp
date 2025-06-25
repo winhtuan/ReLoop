@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -10,11 +12,13 @@
         <!-- Title  -->
         <title>Reloop</title>
         <!-- Favicon  -->
+        <link rel="stylesheet" href="css/conversation/CSS_chatbox.css"/>
         <link rel="icon" href="img/core-img/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        
+
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
+        <link rel="stylesheet" href="css/avatar.css">
 
     </head>
     <body>
@@ -24,6 +28,7 @@
         </div>
 
         <c:import url="/JSP/Home/Search.jsp" />
+        <c:import url="/JSP/Conversation/chatBox.jsp"/>
 
         <!-- ##### Main Content Wrapper Start ##### -->
         <div class="main-content-wrapper d-flex clearfix">
@@ -32,7 +37,6 @@
         </div>
 
         <c:import url="/JSP/Home/Footer.jsp" />
-
         <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
         <script src="js/jquery/jquery-2.2.4.min.js"></script>
         <!-- Popper js -->
@@ -43,6 +47,7 @@
         <script src="js/lib_js/plugins.js"></script>
         <!-- js -->
         <script src="js/active.js"></script>
+        <script src="js/JS_search.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -54,6 +59,30 @@
                 preloader.style.pointerEvents = "none";
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
+
         </script>
+        <c:if test="${not empty sessionScope.Message}">
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+            modal.classList.add('show');
+
+            window.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thông báo',
+                    text: "${fn:escapeXml(sessionScope.Message)}"
+                });
+            });
+            </script>
+            <c:remove var="Message" scope="session" />
+        </c:if>
+            <c:if test="${not empty param.regis}">
+            <script>
+                modal.classList.add('show');
+                loginAcessRegister.classList.add('active');
+            </script>
+        </c:if>
+        <script src="js/conversation/JS_chatBox.js"></script>
+
     </body>
 </html>

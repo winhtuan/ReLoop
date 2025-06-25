@@ -3,25 +3,82 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    <servlet>
+        <servlet-name>s_cart</servlet-name>
+        <servlet-class>Controller.s_cart</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_cartBuy</servlet-name>
+        <servlet-class>Controller.s_cartBuy</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_cancelOrder</servlet-name>
+        <servlet-class>Controller.s_cancelOrder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_addToCart</servlet-name>
+        <servlet-class>Controller.s_addToCart</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_driver</servlet-name>
+        <servlet-class>Controller.s_driver</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_chatBox</servlet-name>
+        <url-pattern>/s_chatBox</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_cart</servlet-name>
+        <url-pattern>/s_cart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_cartBuy</servlet-name>
+        <url-pattern>/s_cartBuy</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_cancelOrder</servlet-name>
+        <url-pattern>/s_cancelOrder</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_addToCart</servlet-name>
+        <url-pattern>/s_addToCart</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>s_driver</servlet-name>
+        <url-pattern>/s_driver</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
     <!--Home-->
+    <listener>
+        <description>ServletContextListener</description>
+        <listener-class>Utils.CleanupListener</listener-class>
+    </listener>
     <servlet>
         <servlet-name>Home</servlet-name>
         <servlet-class>Controller.Home</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>s_productDetail</servlet-name>
-        <servlet-class>Controller.s_productDetail</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Home</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
-    <!--Login by google-->
+    <!--Product Detail-->
+    <servlet>
+        <servlet-name>s_productDetail</servlet-name>
+        <servlet-class>Controller.s_productDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>s_chatBox</servlet-name>
+        <servlet-class>Controller.Conversation.s_chatBox</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_productDetail</servlet-name>
+        <url-pattern>/s_productDetail</url-pattern>
+    </servlet-mapping>
+    <!--Login by Google-->
     <servlet>
         <servlet-name>s_regisGoogle</servlet-name>
         <servlet-class>Controller.Auth.s_regisGoogle</servlet-class>
@@ -57,7 +114,7 @@
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
     </servlet-mapping>
-    <!--Forgot pw-->
+    <!--Forgot password-->
     <servlet>
         <servlet-name>ForgotPasswordServlet</servlet-name>
         <servlet-class>Controller.Password.ForgotPasswordServlet</servlet-class>
@@ -66,7 +123,7 @@
         <servlet-name>ForgotPasswordServlet</servlet-name>
         <url-pattern>/ForgotPasswordServlet</url-pattern>
     </servlet-mapping>
-    <!--ConfirmServlet-->
+    <!--Confirm password-->
     <servlet>
         <servlet-name>ConfirmServlet</servlet-name>
         <servlet-class>Controller.Password.ConfirmServlet</servlet-class>
@@ -75,6 +132,7 @@
         <servlet-name>ConfirmServlet</servlet-name>
         <url-pattern>/ConfirmServlet</url-pattern>
     </servlet-mapping>
+    <!--Search-->
     <servlet>
         <servlet-name>s_search</servlet-name>
         <servlet-class>Controller.s_search</servlet-class>
@@ -83,65 +141,63 @@
         <servlet-name>s_search</servlet-name>
         <url-pattern>/s_search</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>s_productDetail</servlet-name>
-        <url-pattern>/s_productDetail</url-pattern>
-    </servlet-mapping>
+    <!--User Management-->
     <servlet>
         <servlet-name>UsersServlet</servlet-name>
         <servlet-class>Controller.Conversation.UsersServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UploadImageServlet</servlet-name>
-        <servlet-class>Controller.Conversation.UploadImageServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ImageServlet</servlet-name>
-        <servlet-class>Controller.Conversation.ImageServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UsersServlet</servlet-name>
         <url-pattern>/UsersServlet</url-pattern>
     </servlet-mapping>
+    <!--Image Upload-->
+    <servlet>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <servlet-class>Controller.Conversation.UploadImageServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UploadImageServlet</servlet-name>
         <url-pattern>/uploadImage</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>ImageServlet</servlet-name>
+        <servlet-class>Controller.Conversation.ImageServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ImageServlet</servlet-name>
         <url-pattern>/images/*</url-pattern>
     </servlet-mapping>
-    <!--paid-->
+    <!--Paid and Premium-->
     <servlet>
         <servlet-name>Payment</servlet-name>
         <servlet-class>Controller.Paid.Payment</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Premium</servlet-name>
-        <servlet-class>Controller.Paid.Premium</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Payment</servlet-name>
         <url-pattern>/pay</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>Premium</servlet-name>
+        <servlet-class>Controller.Paid.Premium</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Premium</servlet-name>
         <url-pattern>/premium</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateQRPaymentServlet</servlet-name>
-        <url-pattern>/createQR</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>CreateQRPaymentServlet</servlet-name>
         <servlet-class>Controller.Paid.CreateQRPaymentServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>PayOSCallbackServlet</servlet-name>
-        <url-pattern>/PayOSCallback</url-pattern>
+        <servlet-name>CreateQRPaymentServlet</servlet-name>
+        <url-pattern>/createQR</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>PayOSCallbackServlet</servlet-name>
         <servlet-class>Controller.Paid.PayOSCallbackServlet</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>PayOSCallbackServlet</servlet-name>
+        <url-pattern>/PayOSCallback</url-pattern>
+    </servlet-mapping>
 </web-app>

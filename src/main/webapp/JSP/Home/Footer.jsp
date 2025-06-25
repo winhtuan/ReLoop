@@ -11,7 +11,7 @@
                 <div class="single_widget_area">
                     <!-- Logo -->
                     <div class="footer-logo mr-50">
-                        <a href="${contextPath}/index.jsp"><img src="${contextPath}/img/core-img/logo2.png" alt=""></a>
+                        <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/img/core-img/logo2.png" alt=""></a>
                     </div>
                     <!-- Copywrite Text -->
                     <p class="copywrite">
@@ -29,19 +29,19 @@
                             <div class="collapse navbar-collapse" id="footerNavContent">
                                 <ul class="navbar-nav ml-auto">
                                     <li class="nav-item active">
-                                        <a class="nav-link" href="${contextPath}/index.jsp">Home</a>
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/home">Home</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="${contextPath}/about.jsp">About us</a>
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/home">About us</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="${contextPath}/post.jsp">Post</a>
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/home">Post</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="${contextPath}/cart.jsp">Cart</a>
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/s_cart">Cart</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="${contextPath}/premium.jsp">Premium</a>
+                                        <a class="nav-link" href="${pageContext.request.contextPath}/premium?user_id=${sessionScope.cus.userId}">Premium</a>
                                     </li>
                                 </ul>
                             </div>

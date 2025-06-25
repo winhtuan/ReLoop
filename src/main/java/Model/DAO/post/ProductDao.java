@@ -1,17 +1,23 @@
 package Model.DAO.post;
 
 import Model.entity.post.Product;
+import Model.entity.post.ProductImage;
 import Utils.DBUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 public class ProductDao {
 
+    public static List<Product> productList = null;
+
     public String generateProductId() {
         String sql = "SELECT product_id FROM product ORDER BY product_id DESC LIMIT 1"; // MySQL dùng LIMIT 1
-        String prefix = "PROD";
+        String prefix = "PRD";
         int nextId = 1;
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -25,7 +31,7 @@ public class ProductDao {
             e.printStackTrace();
         }
 
-        return String.format("%s%03d", prefix, nextId);
+        return String.format("%s%04d", prefix, nextId);
     }
 
     public Product getProductById(String productId) {
@@ -40,14 +46,14 @@ public class ProductDao {
                         rs.getInt("category_id"),
                         rs.getString("title"),
                         rs.getString("description"),
-                        rs.getBigDecimal("price"),
+                        rs.getBigDecimal("price").intValue(),
                         rs.getString("location"),
                         rs.getString("status"),
                         rs.getBoolean("is_priority"),
                         rs.getTimestamp("created_at"),
                         rs.getTimestamp("updated_at")
                 );
-                ProductImageDao imageDAO = new ProductImageDao(DBUtils.getConnect());
+                ProductImageDao imageDAO = new ProductImageDao();
                 product.setImages(imageDAO.getImagesByProductId(productId));
 
                 return product;
@@ -59,63 +65,118 @@ public class ProductDao {
     }
 
     public List<Product> getAllProducts() {
+        // Nếu bạn vẫn muốn cache, giữ đoạn dưới (tuỳ chọn):
+        if (productList != null) {
+            return productList;
+        }
+
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM product";
-        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+
+        // JOIN luôn sang bảng product_images để gom ảnh trong một truy vấn duy nhất
+        String sql = "SELECT p.*, pi.img_id, pi.image_url, pi.is_primary "
+                + "FROM product p "
+                + "LEFT JOIN product_images pi ON p.product_id = pi.product_id";
+
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+
+            // Sử dụng LinkedHashMap để giữ nguyên thứ tự insert
+            Map<String, Product> productMap = new LinkedHashMap<>();
+
             while (rs.next()) {
-                Product product = new Product(
-                        rs.getString("product_id"),
-                        rs.getString("user_id"),
-                        rs.getInt("category_id"),
-                        rs.getString("title"),
-                        rs.getString("description"),
-                        rs.getBigDecimal("price"),
-                        rs.getString("location"),
-                        rs.getString("status"),
-                        rs.getBoolean("is_priority"),
-                        rs.getTimestamp("created_at"),
-                        rs.getTimestamp("updated_at")
-                );
-                ProductImageDao imageDAO = new ProductImageDao(DBUtils.getConnect());
-                product.setImages(imageDAO.getImagesByProductId(product.getProductId()));
-                products.add(product);
+                String pid = rs.getString("product_id");
+
+                // Nếu sản phẩm chưa có trong map thì tạo mới
+                Product product = productMap.get(pid);
+                if (product == null) {
+                    product = new Product(
+                            pid,
+                            rs.getString("user_id"),
+                            rs.getInt("category_id"),
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getBigDecimal("price").intValue(),
+                            rs.getString("location"),
+                            rs.getString("status"),
+                            rs.getBoolean("is_priority"),
+                            rs.getTimestamp("created_at"),
+                            rs.getTimestamp("updated_at")
+                    );
+                    product.setImages(new ArrayList<>()); // chuẩn bị list ảnh
+                    productMap.put(pid, product);
+                }
+
+                // Thêm ảnh (nếu có) vào danh sách ảnh của sản phẩm
+                String imageUrl = rs.getString("image_url");
+                if (imageUrl != null) {
+                    ProductImage img = new ProductImage();
+                    img.setImgId(rs.getInt("img_id"));
+                    img.setProductId(pid);
+                    img.setImageUrl(imageUrl);
+                    img.setPrimary(rs.getBoolean("is_primary"));
+                    product.getImages().add(img);
+                }
             }
+
+            products.addAll(productMap.values());
+            // Lưu vào cache nếu cần
+            productList = products;
+
         } catch (SQLException e) {
             System.out.println("Error retrieving products: " + e.getMessage());
         }
+
         return products;
     }
 
     public List<Product> searchProducts(String keyword) {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM product WHERE title LIKE ? OR description LIKE ?";
+        String sql = " SELECT p.*, pi.img_id, pi.image_url, pi.is_primary FROM product p LEFT JOIN product_images pi ON p.product_id = pi.product_id WHERE p.title LIKE ?";
+
         try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
             String pattern = "%" + keyword + "%";
             stmt.setString(1, pattern);
-            stmt.setString(2, pattern);
             ResultSet rs = stmt.executeQuery();
+
+            Map<String, Product> productMap = new LinkedHashMap<>();
+
             while (rs.next()) {
-                Product product = new Product(
-                        rs.getString("product_id"),
-                        rs.getString("user_id"),
-                        rs.getInt("category_id"),
-                        rs.getString("title"),
-                        rs.getString("description"),
-                        rs.getBigDecimal("price"),
-                        rs.getString("location"),
-                        rs.getString("status"),
-                        rs.getBoolean("is_priority"),
-                        rs.getTimestamp("created_at"),
-                        rs.getTimestamp("updated_at")
-                );
-                ProductImageDao imageDAO = new ProductImageDao(DBUtils.getConnect());
-                product.setImages(imageDAO.getImagesByProductId(product.getProductId()));
-                products.add(product);
+                String pid = rs.getString("product_id");
+                Product product = productMap.get(pid);
+                if (product == null) {
+                    product = new Product(
+                            pid,
+                            rs.getString("user_id"),
+                            rs.getInt("category_id"),
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getBigDecimal("price").intValue(), // 🔴 chuyển BigDecimal → int
+                            rs.getString("location"),
+                            rs.getString("status"),
+                            rs.getBoolean("is_priority"),
+                            rs.getTimestamp("created_at"),
+                            rs.getTimestamp("updated_at")
+                    );
+                    product.setImages(new ArrayList<>());
+                    productMap.put(pid, product);
+                }
+
+                String imageUrl = rs.getString("image_url");
+                if (imageUrl != null) {
+                    ProductImage img = new ProductImage();
+                    img.setImgId(rs.getInt("img_id"));
+                    img.setProductId(pid);
+                    img.setImageUrl(imageUrl);
+                    img.setPrimary(rs.getBoolean("is_primary"));
+                    product.getImages().add(img);
+                }
             }
+
+            products.addAll(productMap.values());
+
         } catch (SQLException e) {
             System.out.println("Error searching products: " + e.getMessage());
         }
+
         return products;
     }
 
@@ -132,10 +193,10 @@ public class ProductDao {
             }
             stmt.setString(4, product.getTitle());
             stmt.setString(5, product.getDescription());
-            stmt.setBigDecimal(6, product.getPrice());
+            stmt.setInt(6, product.getPrice());
             stmt.setString(7, product.getLocation());
             stmt.setString(8, product.getStatus());
-            stmt.setBoolean(9, product.isPriority());
+            stmt.setBoolean(9, product.isIsPriority());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Error adding product: " + e.getMessage());
@@ -155,10 +216,10 @@ public class ProductDao {
             }
             stmt.setString(3, product.getTitle());
             stmt.setString(4, product.getDescription());
-            stmt.setBigDecimal(5, product.getPrice());
+            stmt.setInt(5, product.getPrice());
             stmt.setString(6, product.getLocation());
             stmt.setString(7, product.getStatus());
-            stmt.setBoolean(8, product.isPriority());
+            stmt.setBoolean(8, product.isIsPriority());
             stmt.setString(9, product.getProductId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -176,6 +237,12 @@ public class ProductDao {
             System.out.println("Error deleting product: " + e.getMessage());
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        for (Product a : new ProductDao().searchProducts("s")) {
+            System.out.println(a.getImages().get(0).getImageUrl());
+        }
     }
 
 }

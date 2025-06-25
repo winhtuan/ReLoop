@@ -174,7 +174,7 @@
                 </div>
             </div>
 
-            <!-- Reject Modal -->
+            <!--Reject Modal-->                        
             <div id="rejectModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                     <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Rejection</h2>

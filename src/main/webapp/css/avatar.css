@@ -1,0 +1,74 @@
+.nav-user-toggle {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #202020; /* Giữ màu chữ mặc định hoặc đổi sang xanh thẫm nếu muốn */
+    transition: all 0.3s ease;
+}
+.nav-user-toggle .join-label {
+    text-transform: none !important;
+    font-weight: 600;
+    font-size: 15px;
+    color: #003366 !important;
+    margin-left: 12px !important;
+}
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #DAA520; /* Viền avatar đổi sang vàng gold */
+    object-fit: cover;
+}
+
+.avatar-pro-container {
+    position: relative;
+    display: flex;         /* Sắp xếp các phần tử con (avatar, tên) theo hàng ngang */
+    align-items: center;   /* Căn chỉnh các phần tử con vào giữa theo chiều dọc */
+    gap: 12px;             /* Tạo khoảng cách 12px giữa avatar và tên */
+}
+
+/* Vùng bao bọc cho ảnh avatar và huy hiệu 'pro' */
+.avatar-wrapper {
+    position: relative;    /* Tạo bối cảnh định vị cho huy hiệu 'pro' */
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;      /* Ngăn avatar bị co lại nếu không đủ không gian */
+}
+
+.avatar-pro {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid #DAA520; /* Viền avatar pro đổi sang vàng gold */
+    object-fit: cover;
+    background-color: #ddd; /* Giữ màu nền dự phòng */
+    display: block;
+    box-sizing: border-box;
+}
+
+/* Huy hiệu 'pro' nằm dưới avatar */
+.badge-pro {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #003366; /* Màu nền huy hiệu pro đổi sang xanh thẫm */
+    color: #DAA520; /* Màu chữ huy hiệu pro đổi sang vàng gold */
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0 6px;
+    line-height: 16px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    text-transform: lowercase;
+    white-space: nowrap;
+}
+
+/* Tên người dùng */
+.name-pro {
+    font-weight: 600;
+    font-size: 15px;
+    color: #003366; /* Màu tên người dùng đổi sang xanh thẫm */
+    margin-left: 12px !important;
+}

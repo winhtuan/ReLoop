@@ -32,7 +32,7 @@
                 <!-- Primary Top Nav -->
                 <ul class="nav-list primary-nav">
                     <li class="nav-item">
-                        <a href="${pageContext.request.contextPath}/JSP/Admin/dashboard.jsp" class="nav-link">
+                        <a href="${pageContext.request.contextPath}/StatictisServlet" class="nav-link">
                             <span class="material-symbols-rounded">dashboard</span>
                             <span class="nav-label">Dashboard</span>
                         </a>

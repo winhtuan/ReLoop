@@ -1,5 +1,6 @@
 package Model.entity.conversation;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class Message {
@@ -9,13 +10,13 @@ public class Message {
     private String content;
     private boolean isRead;
     private String type;
-    private Date sentAt;
-    private boolean isRecall;
+    private Timestamp sentAt;
+    private boolean is_recall;
 
     public Message() {}
 
     public Message(String messageId, String conversationId, String senderId, String content,
-                    boolean isRead, String type, Date sentAt, boolean isRecall) {
+                    boolean isRead, String type, Timestamp sentAt, boolean isRecall) {
         this.messageId = messageId;
         this.conversationId = conversationId;
         this.senderId = senderId;
@@ -23,7 +24,7 @@ public class Message {
         this.isRead = isRead;
         this.type = type;
         this.sentAt = sentAt;
-        this.isRecall = isRecall;
+        this.is_recall = isRecall;
     }
 
     public String getMessageId() { return messageId; }
@@ -45,8 +46,8 @@ public class Message {
     public void setType(String type) { this.type = type; }
 
     public Date getSentAt() { return sentAt; }
-    public void setSentAt(Date sentAt) { this.sentAt = sentAt; }
+    public void setSentAt(Timestamp sentAt) { this.sentAt = sentAt; }
 
-    public boolean isRecall() { return isRecall; }
-    public void setRecall(boolean recall) { isRecall = recall; }
+    public boolean isRecall() { return is_recall; }
+    public void setRecall(boolean recall) { is_recall = recall; }
 }
