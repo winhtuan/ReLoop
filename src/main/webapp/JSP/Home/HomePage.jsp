@@ -59,7 +59,6 @@
                 preloader.style.pointerEvents = "none";
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
-
         </script>
         <c:if test="${not empty sessionScope.Message}">
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

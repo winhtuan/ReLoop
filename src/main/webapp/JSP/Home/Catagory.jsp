@@ -8,7 +8,7 @@
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
             <a href="shop.html">
-                <img src="img/bg-img/1.jpg" alt="">
+                <img src="img/cate-img/Electronics_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
                     <div class="line"></div>
@@ -21,7 +21,7 @@
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
             <a href="shop.html">
-                <img src="img/bg-img/2.jpg" alt="">
+                <img src="img/cate-img/Vehicles_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
                     <div class="line"></div>
@@ -34,59 +34,7 @@
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
             <a href="shop.html">
-                <img src="img/bg-img/3.jpg" alt="">
-                <!-- Hover Content -->
-                <div class="hover-content">
-                    <div class="line"></div>
-                    <p>From $180</p>
-                    <h4>Home Appliances</h4>
-                </div>
-            </a>
-        </div>
-
-        <!-- Single Catagory -->
-        <div class="single-products-catagory clearfix">
-            <a href="shop.html">
-                <img src="img/bg-img/4.jpg" alt="">
-                <!-- Hover Content -->
-                <div class="hover-content">
-                    <div class="line"></div>
-                    <p>From $180</p>
-                    <h4>Furniture</h4>
-                </div>
-            </a>
-        </div>
-
-        <!-- Single Catagory -->
-        <div class="single-products-catagory clearfix">
-            <a href="shop.html">
-                <img src="img/bg-img/5.jpg" alt="">
-                <!-- Hover Content -->
-                <div class="hover-content">
-                    <div class="line"></div>
-                    <p>From $18</p>
-                    <h4>Fashion</h4>
-                </div>
-            </a>
-        </div>
-
-        <!-- Single Catagory -->
-        <div class="single-products-catagory clearfix">
-            <a href="shop.html">
-                <img src="img/bg-img/6.jpg" alt="">
-                <!-- Hover Content -->
-                <div class="hover-content">
-                    <div class="line"></div>
-                    <p>From $320</p>
-                    <h4>Jewelry</h4>
-                </div>
-            </a>
-        </div>
-
-        <!-- Single Catagory -->
-        <div class="single-products-catagory clearfix">
-            <a href="shop.html">
-                <img src="img/bg-img/7.jpg" alt="">
+                <img src="img/cate-img/Pet_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
                     <div class="line"></div>
@@ -99,7 +47,46 @@
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
             <a href="shop.html">
-                <img src="img/bg-img/8.jpg" alt="">
+                <img src="img/cate-img/Furniture_BG.jpg" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $180</p>
+                    <h4>Furniture</h4>
+                </div>
+            </a>
+        </div>
+
+        <!-- Single Catagory -->
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="img/cate-img/Fashion_BG.jpg" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $18</p>
+                    <h4>Fashion</h4>
+                </div>
+            </a>
+        </div>
+
+        <!-- Single Catagory -->
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="img/cate-img/Home_Appliances_BG.jpg" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $180</p>
+                    <h4>Home Appliances</h4>
+                </div>
+            </a>
+        </div>
+
+        <!-- Single Catagory -->
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="img/cate-img/Digital_Goods_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
                     <div class="line"></div>
@@ -109,10 +96,24 @@
             </a>
         </div>
 
+
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
             <a href="shop.html">
-                <img src="img/bg-img/9.jpg" alt="">
+                <img src="img/cate-img/Jewelry_BG.jpg" alt="">
+                <!-- Hover Content -->
+                <div class="hover-content">
+                    <div class="line"></div>
+                    <p>From $320</p>
+                    <h4>Jewelry</h4>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Single Catagory -->
+        <div class="single-products-catagory clearfix">
+            <a href="shop.html">
+                <img src="img/cate-img/BookDocument_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
                     <div class="line"></div>

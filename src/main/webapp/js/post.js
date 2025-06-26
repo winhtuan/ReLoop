@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+  
     const cards = document.querySelectorAll(".product-card-wrap");
     const perPage = 8;
     const total = cards.length;
@@ -65,3 +66,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showPage(1);
 });
+

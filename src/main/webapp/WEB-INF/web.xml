@@ -26,6 +26,14 @@
         <servlet-class>Controller.s_cancelOrder</servlet-class>
     </servlet>
     <servlet>
+
+        <servlet-name>NewPostPage</servlet-name>
+        <servlet-class>Controller.NewPostPage</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ShippingFeeServlet</servlet-name>
+        <servlet-class>Controller.api.ShippingFeeServlet</servlet-class>
+
         <servlet-name>s_addToCart</servlet-name>
         <servlet-class>Controller.s_addToCart</servlet-class>
     </servlet>
@@ -40,6 +48,7 @@
     <servlet>
         <servlet-name>callLogin</servlet-name>
         <servlet-class>Controller.callLogin</servlet-class>
+
     </servlet>
     <servlet-mapping>
         <servlet-name>s_chatBox</servlet-name>
@@ -58,6 +67,14 @@
         <url-pattern>/s_cancelOrder</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+
+        <servlet-name>NewPostPage</servlet-name>
+        <url-pattern>/NewPostPage</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShippingFeeServlet</servlet-name>
+        <url-pattern>/ShippingFeeServlet</url-pattern>
+
         <servlet-name>s_addToCart</servlet-name>
         <url-pattern>/s_addToCart</url-pattern>
     </servlet-mapping>
@@ -72,6 +89,7 @@
     <servlet-mapping>
         <servlet-name>callLogin</servlet-name>
         <url-pattern>/callLogin</url-pattern>
+
     </servlet-mapping>
     <session-config>
         <session-timeout>

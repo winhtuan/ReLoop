@@ -6,9 +6,7 @@ public class Voucher {
     private String voucherId;
     private String code;
     private String description;
-    private String discountType;
     private int discountValue;
-    private int maxDiscount;
     private int minOrderAmount;
     private Date startDate;
     private Date endDate;
@@ -24,9 +22,7 @@ public class Voucher {
         this.voucherId = voucherId;
         this.code = code;
         this.description = description;
-        this.discountType = discountType;
         this.discountValue = discountValue;
-        this.maxDiscount = maxDiscount;
         this.minOrderAmount = minOrderAmount;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -44,15 +40,9 @@ public class Voucher {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-
-    public String getDiscountType() { return discountType; }
-    public void setDiscountType(String discountType) { this.discountType = discountType; }
-
+    
     public int getDiscountValue() { return discountValue; }
     public void setDiscountValue(int discountValue) { this.discountValue = discountValue; }
-
-    public int getMaxDiscount() { return maxDiscount; }
-    public void setMaxDiscount(int maxDiscount) { this.maxDiscount = maxDiscount; }
 
     public int getMinOrderAmount() { return minOrderAmount; }
     public void setMinOrderAmount(int minOrderAmount) { this.minOrderAmount = minOrderAmount; }
