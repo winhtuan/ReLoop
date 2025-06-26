@@ -57,7 +57,6 @@
                 preloader.style.pointerEvents = "none";
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
-
         </script>
         <c:if test="${not empty requestScope.openLogin}">
             <script>

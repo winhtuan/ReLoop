@@ -28,7 +28,7 @@
     <nav class="amado-nav mt-30 mb-15">
         <ul>
             <li class="active"><a href="${pageContext.request.contextPath}/home">Home</a></li>
-            <li><a href="#">New Post</a></li>
+            <li><a href="${pageContext.request.contextPath}/NewPostPage">New Post</a></li>
             <li><a href="#">Post</a></li>
             <li><a href="#">Shop</a></li>
             <li><a href="${pageContext.request.contextPath}/premium?user_id=${sessionScope.cus.userId}">Premium</a></li>
@@ -105,21 +105,21 @@
         </div>
 
         <c:choose>
-            <c:when test="${sessionScope.user != null}">
+            <c:when test="${cus != null}">
                 <div class="nav-brand" id="join-in-btn">
-                    <c:if test="${sessionScope.cus.isPremium}">
+                    <c:if test="${cus.isPremium}">
                         <div class="avatar-pro-container d-flex align-items-center gap-3">
                             <div class="avatar-wrapper position-relative">
-                                <img src="${sessionScope.cus.srcImg}" alt="Avatar" class="avatar-pro">
+                                <img src="${cus.srcImg}" alt="Avatar" class="avatar-pro">
                                 <span class="badge-pro position-absolute bottom-0 start-50 translate-middle-x">pro</span>
                             </div>
-                            <span class="name-pro">${sessionScope.cus.fullName}</span>
+                            <span class="name-pro">${cus.fullName}</span>
                         </div>
                     </c:if>
-                    <c:if test="${!sessionScope.cus.isPremium}">
+                    <c:if test="${!cus.isPremium}">
                         <a href="#" class="nav-user-toggle d-flex align-items-center gap-3">
-                            <img src="${sessionScope.cus.srcImg}" alt="Avatar" class="user-avatar rounded-circle">
-                            <span class="join-label">${sessionScope.cus.fullName}</span>
+                            <img src="${cus.srcImg}" alt="Avatar" class="user-avatar rounded-circle">
+                            <span class="join-label">${cus.fullName}</span>
                         </a>
                     </c:if>
                     <ul id="menu" class="menu">
@@ -137,6 +137,7 @@
                 </a>
             </c:otherwise>
         </c:choose>
+
     </div>
     <!-- Button Group -->
     <div class="amado-btn-group mt-15 mb-100">

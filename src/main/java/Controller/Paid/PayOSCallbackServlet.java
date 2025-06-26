@@ -2,6 +2,7 @@ package Controller.Paid;
 
 import Model.DAO.auth.UserDao;
 import Model.DAO.commerce.OrderDao;
+import Model.DAO.pay.PaymentDao;
 import Model.entity.commerce.Order;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -13,35 +14,76 @@ import java.util.Date;
 
 public class PayOSCallbackServlet extends HttpServlet {
 
+    public static final String ORDER_STATUS_SHIPPED = "shipping";
+    public static final String ORDER_STATUS_CANCELLED = "cancelled";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Lấy các tham số từ URL
-        String orderCode = request.getParameter("orderCode");  // Lấy orderCode từ URL
-        String status = request.getParameter("status");         // Lấy status từ URL (PAID hoặc failure)
-        // Kiểm tra xem trạng thái thanh toán có phải là "PAID" không
-        if ("PAID".equalsIgnoreCase(status)) {
-            // Cập nhật trạng thái đơn hàng là "Paid"
+        String orderCode = request.getParameter("orderCode");
+        String status = request.getParameter("status");
+        response.setContentType("text/html; charset=UTF-8");
+
+        try {
             OrderDao orderDao = new OrderDao();
-            String formattedOrderCode = String.format("ORD%04d", Integer.valueOf(orderCode));
-            
-            boolean updated = orderDao.updateOrderStatusByOrderId(formattedOrderCode, "paid");
-            
-            if (updated) {
-                Order order = orderDao.getOrderById(formattedOrderCode);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
-                calendar.add(Calendar.DAY_OF_MONTH, 30); // +30 ngày
-                Date expiryDate = calendar.getTime();
-                new UserDao().updatePremiumStatus(order.getUserId(), true, expiryDate);
-                // Nếu cập nhật thành công, chuyển hướng đến trang thành công
-                response.sendRedirect("home");
-            } else {
-                // Nếu cập nhật thất bại, hiển thị lỗi
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to update order status");
+            PaymentDao paymentDao = new PaymentDao();
+
+            if (orderCode == null || !orderCode.matches("\\d+")) {
+                response.getWriter().write("Invalid order code!");
+                return;
             }
-        } else {
-            // Nếu thanh toán thất bại, chuyển hướng đến trang hủy
-            response.sendRedirect("/ReLoop/html/cancel.html");
+
+            String formattedOrderCode = String.format("ORD%04d", Integer.valueOf(orderCode));
+            String paymentId = paymentDao.getPaymentIdByOrderId(formattedOrderCode);
+
+            if ("PAID".equalsIgnoreCase(status)) {
+                if (paymentId == null) {
+                    response.getWriter().write("No payment found for order: " + formattedOrderCode);
+                    return;
+                }
+
+                // 1. Update payment status first
+                boolean paymentUpdated = paymentDao.updatePaymentStatus(paymentId, "paid");
+                if (!paymentUpdated) {
+                    response.getWriter().write("Failed to update payment status: " + paymentId);
+                    return;
+                }
+
+                // 2. Only update order status if payment is updated successfully
+                Order order = orderDao.getOrderById(formattedOrderCode);
+                boolean orderUpdated = false;
+
+                if (order != null && order.getVoucherId() == null && order.getShippingAddress() == null) {
+                    // Premium upgrade order
+                    orderUpdated = orderDao.updateOrderStatusByOrderId(formattedOrderCode, "paid");
+                    // Upgrade user's premium status
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    calendar.add(Calendar.DAY_OF_MONTH, 30);
+                    Date expiryDate = calendar.getTime();
+                    new UserDao().updatePremiumStatus(order.getUserId(), true, expiryDate);
+                } else {
+                    // Normal order: set status to "shipping"
+                    orderUpdated = orderDao.updateOrderStatusByOrderId(formattedOrderCode, ORDER_STATUS_SHIPPED);
+                }
+
+                if (!orderUpdated) {
+                    response.getWriter().write("Failed to update order status: " + formattedOrderCode);
+                    return;
+                }
+
+                // Success
+                response.sendRedirect(request.getContextPath() + "/home?userid=" + order.getUserId());
+
+            } else {
+                // Cancelled or failed payment
+                if (paymentId != null) {
+                    paymentDao.updatePaymentStatus(paymentId, "failed");
+                }
+                orderDao.updateOrderStatusByOrderId(formattedOrderCode, ORDER_STATUS_CANCELLED);
+                response.sendRedirect(request.getContextPath() + "/html/cancel.html");
+            }
+        } catch (Exception e) {
+            response.getWriter().write("System error: " + e.getMessage());
         }
     }
 }

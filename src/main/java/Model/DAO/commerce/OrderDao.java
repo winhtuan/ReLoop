@@ -1,12 +1,15 @@
 package Model.DAO.commerce;
 
 import Model.entity.commerce.Order;
+import Model.entity.pay.Voucher;
 import Utils.DBUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderDao {
 
@@ -37,51 +40,37 @@ public class OrderDao {
     }
 
     // Phương thức để tạo đơn hàng
-    public boolean createOrder(String orderId, String userId, double amount, String status, String shippingAddress, Integer shippingMethod, String voucherId, double discountAmount) {
-
-        // SQL query to insert a new order into the database
+    public boolean createOrder(String orderId, String userId, double amount, String status, String shippingAddress, Integer shippingMethod, String voucherId, double discountAmount, int shipFee) {
         String sql = "INSERT INTO orders (order_id, user_id, total_amount, status, shipping_address, shipping_method, "
-                + "voucher_id, discount_amount, created_at, updated_at) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-
+                + "voucher_id, discount_amount, created_at, updated_at, shipfee) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            // Set values for the prepared statement
-            ps.setString(1, orderId);            // order_id
-            ps.setString(2, userId);             // user_id
-            ps.setDouble(3, amount);             // total_amount
-            ps.setString(4, status);             // status (pending, paid, etc.)
-
-            // Handle shipping address (could be null)
+            ps.setString(1, orderId);
+            ps.setString(2, userId);
+            ps.setDouble(3, amount);
+            ps.setString(4, status);
             if (shippingAddress == null) {
-                ps.setNull(5, Types.VARCHAR);    // shipping_address is null if not provided
+                ps.setNull(5, Types.VARCHAR);
             } else {
-                ps.setString(5, shippingAddress); // shipping_address provided
+                ps.setString(5, shippingAddress);
             }
-
-            // Handle shipping method (could be null or set based on user's choice)
             if (shippingMethod == null) {
-                ps.setNull(6, Types.INTEGER);    // shipping_method is null if not provided
+                ps.setNull(6, Types.INTEGER);
             } else {
-                ps.setInt(6, shippingMethod);   // shipping_method set based on user input
+                ps.setInt(6, shippingMethod);
             }
-
-            // Handle voucher ID (could be null)
             if (voucherId == null) {
-                ps.setNull(7, Types.VARCHAR);    // voucher_id is null if no voucher applied
+                ps.setNull(7, Types.VARCHAR);
             } else {
-                ps.setString(7, voucherId);      // voucher_id is set if a voucher is applied
+                ps.setString(7, voucherId);
             }
-
-            // Set discount_amount (can be modified based on the discount logic)
-            ps.setDouble(8, discountAmount);    // discount_amount (set to 0 if no discount)
-
-            // Execute the update and check if it was successful
+            ps.setDouble(8, discountAmount);
+            ps.setInt(9, shipFee);
             int rows = ps.executeUpdate();
-            return rows > 0;  // If rows affected > 0, return true, indicating success
-
+            return rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();  // Log the exception for debugging
-            return false;         // Return false if there's an error
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -116,6 +105,7 @@ public class OrderDao {
                     order.setDiscountAmount(rs.getInt("discount_amount"));
                     order.setCreatedAt(rs.getTimestamp("created_at"));
                     order.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    order.setShipfee(rs.getInt("shipfee"));
                     return order;
                 }
             }
@@ -127,18 +117,16 @@ public class OrderDao {
     // Thêm mới đơn hàng dựa trên object Order
 
     public boolean insert(Order order) {
-        // Nếu orderId chưa có –> sinh tự động
         if (order.getOrderId() == null || order.getOrderId().isBlank()) {
             order.setOrderId(generateOrderId());
         }
 
-        String sql = "INSERT INTO orders (order_id, user_id, total_amount, status,shipping_address, shipping_method,voucher_id, discount_amount,created_at, updated_at)VALUES(?,?,?,?,?,?,?,?,NOW(),NOW())";
-
+        String sql = "INSERT INTO orders (order_id, user_id, total_amount, status, shipping_address, shipping_method, voucher_id, discount_amount, created_at, updated_at, shipfee) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, generateOrderId());
+            ps.setString(1, order.getOrderId());
             ps.setString(2, order.getUserId());
-            ps.setInt(3, order.getTotalAmount());  
+            ps.setDouble(3, order.getTotalAmount());
             ps.setString(4, order.getStatus());
 
             // shipping_address
@@ -163,14 +151,68 @@ public class OrderDao {
             }
 
             // discount_amount
-            ps.setInt(8, order.getDiscountAmount());
+            ps.setDouble(8, order.getDiscountAmount());
 
+            // shipfee
+            ps.setInt(9, order.getShipfee());
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<Voucher> getAllVoucher() {
+        List<Voucher> list = new ArrayList<>();
+        String sql = "SELECT * FROM vouchers";
+        try (Connection con = DBUtils.getConnect(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Voucher v = new Voucher();
+                v.setVoucherId(rs.getString("voucher_id"));
+                v.setCode(rs.getString("code"));
+                v.setDescription(rs.getString("description"));
+                v.setDiscountValue(rs.getInt("discount_value"));
+                v.setMinOrderAmount(rs.getInt("min_order_amount"));
+                v.setStartDate(rs.getTimestamp("start_date"));
+                v.setEndDate(rs.getTimestamp("end_date"));
+                v.setUsageLimit(rs.getInt("usage_limit"));
+                v.setUsedCount(rs.getInt("used_count"));
+                v.setActive(rs.getBoolean("is_active"));
+                list.add(v);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Voucher getVoucherByCode(String code) {
+        String sql = "SELECT * FROM vouchers WHERE code = ?";
+        try (Connection con = DBUtils.getConnect(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, code);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Voucher v = new Voucher();
+                    v.setVoucherId(rs.getString("voucher_id"));
+                    v.setCode(rs.getString("code"));
+                    v.setDescription(rs.getString("description"));
+                    v.setDiscountValue(rs.getInt("discount_value"));
+                    v.setMinOrderAmount(rs.getInt("min_order_amount"));
+                    v.setStartDate(rs.getTimestamp("start_date"));
+                    v.setEndDate(rs.getTimestamp("end_date"));
+                    v.setUsageLimit(rs.getInt("usage_limit"));
+                    v.setUsedCount(rs.getInt("used_count"));
+                    v.setActive(rs.getBoolean("is_active"));
+                    return v;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

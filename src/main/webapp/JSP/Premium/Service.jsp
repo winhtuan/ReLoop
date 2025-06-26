@@ -62,7 +62,7 @@
                         <form action="createQR" method="post" style="width: 100%;">
                             <input type="hidden" name="paidService_id" value="PRO0001" />
                             <input type="hidden" name="cus" value=${sessionScope.cus} />
-                            <input type="hidden" name="user_id" value=${sessionScope.cus.userId} />
+                            <input type="hidden" name="buyerId" value=${sessionScope.cus.userId} />
 
                             <c:choose>
                                 <c:when test="${cus.isPremium}">
