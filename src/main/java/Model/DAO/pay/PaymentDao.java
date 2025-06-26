@@ -1,5 +1,6 @@
 package Model.DAO.pay;
 
+import Model.entity.pay.Payment;
 import Utils.DBUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -72,4 +73,29 @@ public class PaymentDao {
         return paymentId;
     }
 
+    public Payment getPaymentById(String payId) {
+        String sql = "SELECT * FROM payments WHERE pay_id = ?";
+        Payment payment = null;
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, payId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    payment = new Payment();
+                    payment.setPayId(rs.getString("pay_id"));
+                    payment.setOrderId(rs.getString("order_id"));
+                    payment.setAmount(rs.getInt("amount"));
+                    payment.setStatus(rs.getString("status"));
+                    payment.setPaidAt(rs.getTimestamp("paid_at"));
+                    payment.setCreatedAt(rs.getTimestamp("created_at"));
+                    payment.setUpdatedAt(rs.getTimestamp("updated_at"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return payment;
+    }
 }

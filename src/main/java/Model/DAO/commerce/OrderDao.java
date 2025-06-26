@@ -1,6 +1,7 @@
 package Model.DAO.commerce;
 
 import Model.entity.commerce.Order;
+import Model.entity.commerce.OrderItem;
 
 import Model.entity.pay.Voucher;
 
