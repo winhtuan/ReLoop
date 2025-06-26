@@ -7,6 +7,8 @@
     <div class="container">
         <c:import url="/JSP/Post/CateNav.jsp" />
 
+        <section class="headPost"></section>
+
         <div class="row" id="product-list">
             <c:forEach var="product" items="${sessionScope.allPost}">
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2-4 mb-4 product-card-wrap">
@@ -25,7 +27,13 @@
                             <div class="product-actions">
                                 <button class="btn-action wishlist" title="Thêm vào yêu thích"><ion-icon name="heart-outline"></ion-icon></button>
                                 <button class="btn-action buy-now" title="Mua ngay"><ion-icon name="flash-outline"></ion-icon></button>
-                                <button class="btn-action add-to-cart" title="Thêm vào giỏ hàng"><ion-icon name="cart-outline"></ion-icon></button>
+                              
+                                <form action="s_addToCart" method="post">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="postID" value="${product.productId}">
+                                    <button class="btn-action add-to-cart" title="Thêm vào giỏ hàng"><ion-icon name="cart-outline"></ion-icon></button>
+                                </form>
+
                             </div>
                         </div>
                         <div class="product-info p-3">
@@ -59,7 +67,6 @@
             <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
                 <ul class="pagination" id="pagination"></ul>
             </nav>
-            
         </div>
 
     </div>

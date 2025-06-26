@@ -63,7 +63,9 @@ public class s_cart extends HttpServlet {
                 dao.updateQuantity(userId, u.getProductId(), u.getQuantity());
             }
         }
-
+        Account acc=(Account) request.getSession().getAttribute("user");
+        int cartN = new CartDAO().getTotalQuantityByUserId(acc.getUserId());
+        request.getSession().setAttribute("cartN", cartN);
         response.setStatus(HttpServletResponse.SC_OK);
     }
 

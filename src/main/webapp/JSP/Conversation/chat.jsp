@@ -67,6 +67,6 @@
                 });
             </script>
         </c:if>
-
+            <<script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
     </body>
 </html>

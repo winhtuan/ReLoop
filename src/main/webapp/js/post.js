@@ -1,58 +1,69 @@
 document.addEventListener("DOMContentLoaded", function () {
-        const cards = document.querySelectorAll(".product-card-wrap");
-        const perPage = 8;
-        const total = cards.length;
-        const totalPages = Math.ceil(total / perPage);
+  
+    const cards = document.querySelectorAll(".product-card-wrap");
+    const perPage = 8;
+    const total = cards.length;
+    const totalPages = Math.ceil(total / perPage);
+    let currentPage = 1;
 
-        const pagination = document.getElementById("pagination");
-        const showPage = (page) => {
-          // Hide all cards
-          cards.forEach((card) => (card.style.display = "none"));
-          // Show only cards of this page
-          let start = (page - 1) * perPage;
-          let end = start + perPage;
-          for (let i = start; i < end && i < total; i++) {
+    const pagination = document.getElementById("pagination");
+
+    const showPage = (page) => {
+        currentPage = page;
+        cards.forEach((card) => (card.style.display = "none"));
+        let start = (page - 1) * perPage;
+        let end = start + perPage;
+        for (let i = start; i < end && i < total; i++) {
             cards[i].style.display = "";
-          }
-        };
+        }
+        renderPagination(); // Cập nhật lại nút khi chuyển trang
+        document.querySelector(".headPost")?.scrollIntoView({behavior: "smooth"});
 
-        // Render pagination
-        const renderPagination = () => {
-          let html = "";
-          for (let i = 1; i <= totalPages; i++) {
-            html += `<li class="page-item"><a class="page-link" href="#">${i}</a></li>`;
-          }
-          pagination.innerHTML = html;
+    };
 
-          // Add active class to the first page
-          pagination.querySelector("li").classList.add("active");
-        };
+    const renderPagination = () => {
+        let html = "";
 
-        renderPagination();
-        showPage(1);
+        html += `<li class="page-item ${currentPage === 1 ? "disabled" : ""}">
+               <a class="page-link" href="#" data-page="1">First</a>
+             </li>`;
+        // Previous button
+        html += `<li class="page-item ${currentPage === 1 ? "disabled" : ""}">
+               <a class="page-link" href="#" data-page="${currentPage - 1}"><ion-icon name="arrow-back-outline"></ion-icon></a>
+             </li>`;
 
-        // Listen page click
-        pagination.addEventListener("click", function (e) {
-          if (e.target.tagName === "A") {
+        // Page numbers (hiển thị từ currentPage - 2 đến currentPage + 2)
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+
+        for (let i = startPage; i <= endPage; i++) {
+            html += `<li class="page-item ${i === currentPage ? "active" : ""}">
+                 <a class="page-link" href="#" data-page="${i}">${i}</a>
+               </li>`;
+        }
+
+        // Next button
+        html += `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
+               <a class="page-link" href="#" data-page="${currentPage + 1}"><ion-icon name="arrow-forward-outline"></ion-icon></a>
+             </li>`;
+
+        html += `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
+               <a class="page-link" href="#" data-page="${totalPages}">Last</a>
+             </li>`;
+
+        pagination.innerHTML = html;
+    };
+
+    pagination.addEventListener("click", function (e) {
+        if (e.target.tagName === "A" && !e.target.parentElement.classList.contains("disabled")) {
             e.preventDefault();
-            let pageNum = parseInt(e.target.textContent);
-            showPage(pageNum);
+            const pageNum = parseInt(e.target.getAttribute("data-page"));
+            if (!isNaN(pageNum)) {
+                showPage(pageNum);
+            }
+        }
+    });
 
-            // Set active class
-            Array.from(pagination.children).forEach((li, idx) => {
-              li.classList.toggle("active", idx === pageNum - 1);
-            });
-          }
-        });
-      });
+    showPage(1);
+});
 
-      document.querySelector(".cat-btn-left").onclick = function () {
-        document
-          .getElementById("categoryBar")
-          .scrollBy({ left: -220, behavior: "smooth" });
-      };
-      document.querySelector(".cat-btn-right").onclick = function () {
-        document
-          .getElementById("categoryBar")
-          .scrollBy({ left: 220, behavior: "smooth" });
-      };

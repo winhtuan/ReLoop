@@ -114,7 +114,7 @@
                         <h2>Your cart is empty</h2>
                         <p>Looks like you haven’t added anything yet.</p>
 
-                        <a href="${pageContext.request.contextPath}/JSP/Home/HomePage.jsp" class="browse-btn">
+                        <a href="${pageContext.request.contextPath}/home" class="browse-btn">
                             Start shopping
                         </a>
                     </div>
@@ -184,5 +184,7 @@
             });
 
         </script>
+                    <<script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
+
     </body>
 </html>
