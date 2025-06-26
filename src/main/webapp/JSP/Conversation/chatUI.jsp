@@ -32,6 +32,12 @@
                         </div>
                         <div class="chat-list">
                             <ul id="userList">
+                                <li data-user-id="CUS0003" onclick="selectChatUser('CUS0003', 'Supporter')">
+                                    <img src="${pageContext.request.contextPath}/img/message-img/customer-support.png" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fbb710; margin-right: 5px;"/>
+                                    <div>
+                                        <strong>Supporter</strong><br>
+                                    </div>
+                                </li>
                                 <c:forEach var="u" items="${userList}">
                                     <c:if test="${u.userId != cus.userId}">
                                         <li data-user-id="${u.userId}" onclick="selectChatUser('${u.userId}', '${u.fullName}')">
