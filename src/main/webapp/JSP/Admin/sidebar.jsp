@@ -9,6 +9,32 @@
         <!-- Link Google Fonts For icons -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+        <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; padding: 0; }
+        body { display: flex; flex-direction: row; }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+        .sidebar-nav { flex-grow: 1; }
+        main, .content-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 1rem;
+            flex-grow: 1;
+        }
+    </style>
     </head>
 
     <body>
@@ -141,5 +167,5 @@
         </aside>
     </body>
 
-    <script <script src="${pageContext.request.contextPath}/js/sidebar.js"></script>
+    <script src="${pageContext.request.contextPath}/js/sidebar.js"></script>
     </html>

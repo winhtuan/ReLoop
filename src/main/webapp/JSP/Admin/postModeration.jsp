@@ -87,7 +87,8 @@
             </div>
 
 
-            <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-xl p-6">
+            <div class="w-[90%] max-w-[1600px] mx-auto bg-white shadow-lg rounded-xl p-6">
+
                 <!-- Create Account  -->
                 <div class="flex items-center justify-end mb-4">
                     <!-- Button Create Account -->
@@ -100,7 +101,7 @@
                     <!-- Search -->
                     <div class="flex items-center gap-2">
                         <input type="text" id="searchInput" placeholder="Search by title..."
-                               class="border rounded px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                               class="border rounded px-4 py-2 w-[420px] focus:outline-none focus:ring-2 focus:ring-gray-300" />
                     </div>
                 </div>
 
@@ -134,16 +135,16 @@
                                     <td class="px-4 py-2 text-right pr-[110px]">
                                         <div class="flex justify-end items-center gap-4">
                                             <!-- Unblock button -->
-                                            <button onclick="openModal('approveModal', '${product.productId}', '${product.userId}' )" 
-                                                    type="button" class="group relative cursor-pointer text-red-600 hover:text-red-800">
+                                            <button onclick="openModal('approveModal', '${product.productId}', '${product.userId}')" 
+                                                    type="button" class="group relative cursor-pointer text-green-600 hover:text-red-800">
                                                 <span class="material-symbols-rounded text-xl">check_circle</span>
                                                 <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
                                                     Approval
                                                 </div>
                                             </button>
                                             <!-- Delete button -->
-                                            <button onclick="openModal('rejectModal', '${product.productId}','${product.userId}')"
-                                                    type="button" class="group relative cursor-pointer text-gray-600 hover:text-gray-800">
+                                            <button onclick="openModal('rejectModal', '${product.productId}', '${product.userId}')"
+                                                    type="button" class="group relative cursor-pointer text-red-600 hover:text-gray-800">
                                                 <span class="material-symbols-rounded text-xl">cancel</span>
                                                 <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
                                                     Reject
@@ -278,7 +279,7 @@
                 }
             }
             //Modal
-            function openModal(id, productID ,userId) {
+            function openModal(id, productID, userId) {
                 document.getElementById(id).classList.remove("hidden");
 
                 // Gán userId vào input hidden tương ứng
