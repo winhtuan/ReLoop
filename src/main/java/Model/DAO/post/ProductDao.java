@@ -128,6 +128,53 @@ public class ProductDao {
         return products;
     }
 
+    public int countAllProducts() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM product";
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public List<Product> getListProductInOrderItem(String orderId) {
+        List<Product> list = new ArrayList<>();
+        String sql = "SELECT p.* FROM order_items oi JOIN product p ON oi.product_id = p.product_id WHERE oi.order_id = ?";
+
+        try (Connection con = DBUtils.getConnect(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, orderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setProductId(rs.getString("product_id"));
+                    p.setUserId(rs.getString("user_id"));
+                    p.setCategoryId(rs.getInt("category_id"));
+                    p.setTitle(rs.getString("title"));
+                    p.setDescription(rs.getString("description"));
+                    p.setPrice(rs.getInt("price")); // hoặc rs.getBigDecimal("price") nếu dùng BigDecimal
+                    p.setLocation(rs.getString("location"));
+                    p.setStatus(rs.getString("status"));
+                    p.setModerationStatus(rs.getString("moderation_status"));
+                    p.setIsPriority(rs.getBoolean("is_priority"));
+                    p.setCreatedAt(rs.getTimestamp("created_at"));
+                    p.setState(rs.getString("state"));
+                    p.setQuantity(rs.getInt("quantity"));
+                    ProductImageDao imageDAO = new ProductImageDao();
+                    p.setImages(imageDAO.getImagesByProductId(p.getProductId()));
+                    list.add(p);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<Product> searchProducts(String keyword) {
         List<Product> products = new ArrayList<>();
         String sql = " SELECT p.*, pi.img_id, pi.image_url, pi.is_primary FROM product p LEFT JOIN product_images pi ON p.product_id = pi.product_id WHERE p.title LIKE ?";

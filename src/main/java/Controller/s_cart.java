@@ -26,41 +26,6 @@ import java.util.List;
  */
 public class s_cart extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet s_cart</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet s_cart at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -71,14 +36,6 @@ public class s_cart extends HttpServlet {
         request.getRequestDispatcher("JSP/Home/cartPage.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -93,19 +50,22 @@ public class s_cart extends HttpServlet {
         Gson gson = new Gson();
         List<CartUpdate> updates = gson.fromJson(json.toString(), new TypeToken<List<CartUpdate>>() {
         }.getType());
-        if(updates==null)
+        if (updates == null) {
             return;
+        }
         // Lấy userId từ session
         HttpSession session = request.getSession(false);
         Account ac = (Account) session.getAttribute("user");
-        String userId=ac.getUserId();
+        String userId = ac.getUserId();
         if (userId != null) {
             CartDAO dao = new CartDAO();
             for (CartUpdate u : updates) {
                 dao.updateQuantity(userId, u.getProductId(), u.getQuantity());
             }
         }
-
+        Account acc=(Account) request.getSession().getAttribute("user");
+        int cartN = new CartDAO().getTotalQuantityByUserId(acc.getUserId());
+        request.getSession().setAttribute("cartN", cartN);
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
@@ -122,19 +82,19 @@ public class s_cart extends HttpServlet {
             return quantity;
         }
     }
-    
+
     @Override
-protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    String productId = request.getParameter("productId");
-    Account ac = (Account) request.getSession().getAttribute("user");
-        String userId=ac.getUserId();
-    if (userId != null && productId != null) {
-        new CartDAO().removeItemFromCart(userId, productId);
-        response.setStatus(HttpServletResponse.SC_OK);
-    } else {
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String productId = request.getParameter("productId");
+        Account ac = (Account) request.getSession().getAttribute("user");
+        String userId = ac.getUserId();
+        if (userId != null && productId != null) {
+            new CartDAO().removeItemFromCart(userId, productId);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
     }
-}
 
 }

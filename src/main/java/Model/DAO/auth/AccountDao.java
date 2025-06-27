@@ -115,8 +115,8 @@ public class AccountDao {
 
     public String newAccount(Account account) {
         String id = generateAccountId(); // Tạo acc_id mới
-        String sql = "INSERT INTO Account (acc_id, password, email, regisDate, user_id, verification_token, is_verified, number_post) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Account (acc_id, password, email, regisDate, user_id, verification_token, is_verified) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
 
@@ -160,9 +160,6 @@ public class AccountDao {
 
             // Handle is_verified
             stmt.setInt(7, account.isVerified() ? 1 : 0);
-
-            // Handle number_post
-            stmt.setInt(8, 0);
 
             // Thực thi lệnh INSERT
             stmt.executeUpdate();

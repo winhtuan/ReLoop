@@ -1,6 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -104,61 +106,67 @@
                                 </div>
 
                                 <!-- Add to Cart Form -->
-                                <form class="cart clearfix" action="${pageContext.request.contextPath}/handlebutton" method="post">
-                                    <div class="cart-btn d-flex mb-50">
-                                        <p>Quantity</p>
-                                        <div class="quantity">
-                                            <span class="qty-minus" onclick="var effect = document.getElementById('qty');
+
+                                        <form class="cart clearfix" action="${pageContext.request.contextPath}/s_addToCart" method="post">
+
+                                        <div class="cart-btn d-flex mb-50">
+                                            <p>Quantity</p>
+                                            <div class="quantity">
+                                                <span class="qty-minus" onclick="var effect = document.getElementById('qty');
                                                     var qty = effect.value;
                                                     if (!isNaN(qty) && qty > 1)
                                                         effect.value--;
                                                     return false;"><ion-icon name="chevron-down-outline"></ion-icon></i></span>
-                                            <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
-                                            <span class="qty-plus" onclick="var effect = document.getElementById('qty');
+                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
+                                                <span class="qty-plus" onclick="var effect = document.getElementById('qty');
                                                     var qty = effect.value;
                                                     if (!isNaN(qty))
                                                         effect.value++;
                                                     return false;"><ion-icon name="chevron-up-outline"></ion-icon></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="amado-btn-group">
+                                            <input type="hidden" name="postID" value="${sessionScope.product.productId}">
+                                            <input type="hidden" name="customerId" value="${sessionScope.customerId}">
+
+                                            <button type="submit" name="action" class="amado-btn-custom">
+                                                <span class="btn-icon"><ion-icon name="cart-outline"></ion-icon></span>Add to Cart
+                                            </button>
+
+                                            <button type="submit" name="action" value="buynow" class="amado-btn-custom" style="background-color:#20d34a;">
+                                                <span class="btn-icon"><ion-icon name="flash-outline"></ion-icon></span>Buy Now
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Seller Info Card -->
+                                    <div class="seller-info-horizontal">
+                                        <div class="seller-avatar-hz">
+                                            <img src="${sessionScope.seller.srcImg}" alt="Seller Avatar">
+                                        </div>
+                                        <div class="seller-main-hz">
+                                            <div class="seller-top-row">
+                                                <span class="seller-name-hz">${sessionScope.seller.fullName}</span>
+                                                <span class="seller-rating-hz">
+                                                    <ion-icon name="star-outline"></ion-icon> 4.5 <span class="rating-count">(2)</span>
+                                                </span>
+                                            </div>
+                                            <div class="seller-stats-hz">
+                                                <span>55 sold</span> · <span>4 for sale</span>
+                                            </div>
+                                            <div class="seller-status-hz">
+                                                • Active 1 day ago
+                                            </div>
+                                        </div>
+                                        <div class="seller-contact-hz">
+                                            <form method="post" action="${pageContext.request.contextPath}/UsersServlet">
+                                                <input type="hidden" name="sellerId" value="${sessionScope.product.userId}" />
+                                                <input type="hidden" name="productId" value="${sessionScope.product.productId}" />
+                                                <button type="submit" class="amado-btn-custom">Contact</button>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="amado-btn-group">
-                                        <input type="hidden" name="postID" value="${sessionScope.product.productId}">
-                                        <input type="hidden" name="customerId" value="${sessionScope.customerId}">
-                                        <button type="submit" name="action" value="addtocart" class="amado-btn-custom">
-                                            <span class="btn-icon"><ion-icon name="cart-outline"></ion-icon></span>Add to Cart
-                                        </button>
-                                        <button type="submit" name="action" value="buynow" class="amado-btn-custom" style="background-color:#20d34a;">
-                                            <span class="btn-icon"><ion-icon name="flash-outline"></ion-icon></span>Buy Now
-                                        </button>
-                                    </div>
-                                </form>
-                                <!-- Seller Info Card -->
-                                <div class="seller-info-horizontal">
-                                    <div class="seller-avatar-hz">
-                                        <img src="${sessionScope.seller.srcImg}" alt="Seller Avatar">
-                                    </div>
-                                    <div class="seller-main-hz">
-                                        <div class="seller-top-row">
-                                            <span class="seller-name-hz">${sessionScope.seller.fullName}</span>
-                                            <span class="seller-rating-hz">
-                                                <ion-icon name="star-outline"></ion-icon> 4.5 <span class="rating-count">(2)</span>
-                                            </span>
-                                        </div>
-                                        <div class="seller-stats-hz">
-                                            <span>55 sold</span> · <span>4 for sale</span>
-                                        </div>
-                                        <div class="seller-status-hz">
-                                            • Active 1 day ago
-                                        </div>
-                                    </div>
-                                    <div class="seller-contact-hz">
-                                        <form method="post" action="${pageContext.request.contextPath}/UsersServlet">
-                                            <input type="hidden" name="sellerId" value="${sessionScope.product.userId}" />
-                                            <input type="hidden" name="productId" value="${sessionScope.product.productId}" />
-                                            <button type="submit" class="amado-btn-custom">Contact</button>
-                                        </form>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -194,6 +202,20 @@
                                                 });
 
         </script>
+        <c:if test="${not empty requestScope.messCartAdd}">
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                                                window.addEventListener("DOMContentLoaded", function () {
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Thành công',
+                                                        text: "${fn:escapeXml(messCartAdd)}"
+                                                    });
+                                                });
+            </script>
+            <c:remove var="messCartAdd" scope="request" />
+        </c:if>
+
     </body>
 
 </html>

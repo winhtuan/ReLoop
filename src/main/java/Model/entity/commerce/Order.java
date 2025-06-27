@@ -14,6 +14,7 @@ public class Order {
     private int discountAmount;
     private Date createdAt;
     private Date updatedAt;
+    private int shipfee;
     private List<OrderItem> listItems;
 
     public List<OrderItem> getListItems() {
@@ -41,6 +42,30 @@ public class Order {
         this.updatedAt = updatedAt;
     }
 
+    public Order(String orderId, String userId, int totalAmount, String status, String shippingAddress, Integer shippingMethod, String voucherId, int discountAmount, Date createdAt, Date updatedAt, int shipfee, List<OrderItem> listItems) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.totalAmount = totalAmount;
+        this.status = status;
+        this.shippingAddress = shippingAddress;
+        this.shippingMethod = shippingMethod;
+        this.voucherId = voucherId;
+        this.discountAmount = discountAmount;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.shipfee = shipfee;
+        this.listItems = listItems;
+    }
+
+    public int getShipfee() {
+        return shipfee;
+    }
+
+    public void setShipfee(int shipfee) {
+        this.shipfee = shipfee;
+    }
+
+    
     public String getOrderId() { return orderId; }
     public void setOrderId(String orderId) { this.orderId = orderId; }
 
