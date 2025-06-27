@@ -111,7 +111,6 @@ public class RegisterServlet extends HttpServlet {
         String host = "smtp.gmail.com";
         String from = new AppConfig().get("email.from");
         String pass = new AppConfig().get("email.password");
-
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.port", "587");
@@ -119,8 +118,8 @@ public class RegisterServlet extends HttpServlet {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         props.put("mail.debug", "true");
-
         Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
+            @Override
             protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
                 return new jakarta.mail.PasswordAuthentication(from, pass);
             }
