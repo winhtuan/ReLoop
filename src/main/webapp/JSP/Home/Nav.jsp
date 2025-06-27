@@ -56,7 +56,7 @@
         <div class="fav-nav favourite-container" id="favouriteContainer">
             <c:choose>
                 <c:when test="${sessionScope.user != null}">
-                    <a href="#" id="favouriteLink"><ion-icon name="heart-outline"></ion-icon> 
+                    <a href="${pageContext.request.contextPath}/s_favorite?userId=${sessionScope.user.userId}" ><ion-icon name="heart-outline"></ion-icon> 
                         Favourite
                     </a>                    
                 </c:when>
