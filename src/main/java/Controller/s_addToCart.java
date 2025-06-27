@@ -72,6 +72,11 @@ public class s_addToCart extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if(request.getSession().getAttribute("user")==null)
+        {
+            response.sendRedirect("/ReLoop/callLogin");
+            return;
+        }
         String productId = request.getParameter("postID");
         Account acc = (Account) request.getSession().getAttribute("user");
         String userId = acc.getUserId();

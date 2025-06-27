@@ -243,7 +243,7 @@ function addImageToChatBox(msg) {
     img.src = msg.content;
     img.class = "chat-img";
     return img;
-}
+    }
 
 function handleRecallMessage(msg) {
 
@@ -557,29 +557,29 @@ async function sendImage() {
     const res = await fetch("/ReLoop/api/files", { method: "POST", body: formData });
 
     // nếu server trả lỗi, ném ngoại lệ sớm
-    if (!res.ok) {
+      if (!res.ok) {
       const errTxt = await res.text();      // cố đọc nội dung để log
       throw new Error(`HTTP ${res.status}: ${errTxt}`);
-    }
+      }
 
     const { uploaded } = await res.json();  // server trả { uploaded:[…] }
     if (!(Array.isArray(uploaded) && uploaded.length)) {
-      console.warn("Không có ảnh nào được trả về", uploaded);
-      return;
-    }
+        console.warn("Không có ảnh nào được trả về", uploaded);
+        return;
+      }
 
     // gửi qua WebSocket
     uploaded.forEach(img =>
-      ws.send(JSON.stringify({
+        ws.send(JSON.stringify({
         type: "image",
-        fromUserId: currentUserId,
-        toUserId:   currentChatUserId,
+          fromUserId: currentUserId,
+          toUserId:   currentChatUserId,
         imageUrl:   img.shareLink           // hoặc webContentLink
       }))
     );
   } catch (err) {
-    console.error("Upload failed", err);
-  }
+      console.error("Upload failed", err);
+}
 }
 
 

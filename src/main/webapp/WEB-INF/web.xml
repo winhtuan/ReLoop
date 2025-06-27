@@ -1,62 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0"
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
+    <!-- Welcome page -->
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
-    <servlet>
-        <servlet-name>s_cart</servlet-name>
-        <servlet-class>Controller.s_cart</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>s_cartBuy</servlet-name>
-        <servlet-class>Controller.s_cartBuy</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>s_cancelOrder</servlet-name>
-        <servlet-class>Controller.s_cancelOrder</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>s_addToCart</servlet-name>
-        <servlet-class>Controller.s_addToCart</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>s_driver</servlet-name>
-        <servlet-class>Controller.s_driver</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>s_chatBox</servlet-name>
-        <url-pattern>/s_chatBox</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>s_cart</servlet-name>
-        <url-pattern>/s_cart</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>s_cartBuy</servlet-name>
-        <url-pattern>/s_cartBuy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>s_cancelOrder</servlet-name>
-        <url-pattern>/s_cancelOrder</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>s_addToCart</servlet-name>
-        <url-pattern>/s_addToCart</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>s_driver</servlet-name>
-        <url-pattern>/s_driver</url-pattern>
-    </servlet-mapping>
+
+    <!-- Session timeout -->
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
-    <!--Home-->
+
+    <!-- Context listener -->
     <listener>
         <description>ServletContextListener</description>
         <listener-class>Utils.CleanupListener</listener-class>
     </listener>
+
+    <!-- Home -->
     <servlet>
         <servlet-name>Home</servlet-name>
         <servlet-class>Controller.Home</servlet-class>
@@ -65,47 +29,8 @@
         <servlet-name>Home</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
-    <!--Product Detail-->
-    <servlet>
-        <servlet-name>s_productDetail</servlet-name>
-        <servlet-class>Controller.s_productDetail</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>s_chatBox</servlet-name>
-        <servlet-class>Controller.Conversation.s_chatBox</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>s_productDetail</servlet-name>
-        <url-pattern>/s_productDetail</url-pattern>
-    </servlet-mapping>
-    <!--Login by Google-->
-    <servlet>
-        <servlet-name>s_regisGoogle</servlet-name>
-        <servlet-class>Controller.Auth.s_regisGoogle</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>s_regisGoogle</servlet-name>
-        <url-pattern>/s_regisGoogle</url-pattern>
-    </servlet-mapping>
-    <!--Logout-->
-    <servlet>
-        <servlet-name>s_logout</servlet-name>
-        <servlet-class>Controller.Auth.s_logout</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>s_logout</servlet-name>
-        <url-pattern>/s_logout</url-pattern>
-    </servlet-mapping>
-    <!--Signup-->
-    <servlet>
-        <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>Controller.Auth.RegisterServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>RegisterServlet</servlet-name>
-        <url-pattern>/RegisterServlet</url-pattern>
-    </servlet-mapping>
-    <!--Signin-->
+
+    <!-- Auth -->
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>Controller.Auth.LoginServlet</servlet-class>
@@ -114,7 +39,35 @@
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
     </servlet-mapping>
-    <!--Forgot password-->
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>Controller.Auth.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/RegisterServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>s_logout</servlet-name>
+        <servlet-class>Controller.Auth.s_logout</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_logout</servlet-name>
+        <url-pattern>/s_logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>s_regisGoogle</servlet-name>
+        <servlet-class>Controller.Auth.s_regisGoogle</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_regisGoogle</servlet-name>
+        <url-pattern>/s_regisGoogle</url-pattern>
+    </servlet-mapping>
+
+    <!-- Password -->
     <servlet>
         <servlet-name>ForgotPasswordServlet</servlet-name>
         <servlet-class>Controller.Password.ForgotPasswordServlet</servlet-class>
@@ -123,7 +76,7 @@
         <servlet-name>ForgotPasswordServlet</servlet-name>
         <url-pattern>/ForgotPasswordServlet</url-pattern>
     </servlet-mapping>
-    <!--Confirm password-->
+
     <servlet>
         <servlet-name>ConfirmServlet</servlet-name>
         <servlet-class>Controller.Password.ConfirmServlet</servlet-class>
@@ -132,42 +85,55 @@
         <servlet-name>ConfirmServlet</servlet-name>
         <url-pattern>/ConfirmServlet</url-pattern>
     </servlet-mapping>
-    <!--Search-->
+
+    <!-- Cart -->
     <servlet>
-        <servlet-name>s_search</servlet-name>
-        <servlet-class>Controller.s_search</servlet-class>
+        <servlet-name>s_cart</servlet-name>
+        <servlet-class>Controller.s_cart</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>s_search</servlet-name>
-        <url-pattern>/s_search</url-pattern>
+        <servlet-name>s_cart</servlet-name>
+        <url-pattern>/s_cart</url-pattern>
     </servlet-mapping>
-    <!--User Management-->
+
     <servlet>
-        <servlet-name>UsersServlet</servlet-name>
-        <servlet-class>Controller.Conversation.UsersServlet</servlet-class>
+        <servlet-name>s_cartBuy</servlet-name>
+        <servlet-class>Controller.s_cartBuy</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>UsersServlet</servlet-name>
-        <url-pattern>/UsersServlet</url-pattern>
+        <servlet-name>s_cartBuy</servlet-name>
+        <url-pattern>/s_cartBuy</url-pattern>
     </servlet-mapping>
-    <!--Image Upload-->
+
     <servlet>
-        <servlet-name>UploadImageServlet</servlet-name>
-        <servlet-class>Controller.Conversation.UploadImageServlet</servlet-class>
+        <servlet-name>s_cancelOrder</servlet-name>
+        <servlet-class>Controller.s_cancelOrder</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>UploadImageServlet</servlet-name>
-        <url-pattern>/uploadImage</url-pattern>
+        <servlet-name>s_cancelOrder</servlet-name>
+        <url-pattern>/s_cancelOrder</url-pattern>
     </servlet-mapping>
+
     <servlet>
-        <servlet-name>ImageServlet</servlet-name>
-        <servlet-class>Controller.Conversation.ImageServlet</servlet-class>
+        <servlet-name>s_addToCart</servlet-name>
+        <servlet-class>Controller.s_addToCart</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>ImageServlet</servlet-name>
-        <url-pattern>/images/*</url-pattern>
+        <servlet-name>s_addToCart</servlet-name>
+        <url-pattern>/s_addToCart</url-pattern>
     </servlet-mapping>
-    <!--Paid and Premium-->
+
+    <!-- Order -->
+    <servlet>
+        <servlet-name>s_orderHistory</servlet-name>
+        <servlet-class>Controller.s_orderHistory</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_orderHistory</servlet-name>
+        <url-pattern>/s_orderHistory</url-pattern>
+    </servlet-mapping>
+
+    <!-- Payment -->
     <servlet>
         <servlet-name>Payment</servlet-name>
         <servlet-class>Controller.Paid.Payment</servlet-class>
@@ -176,6 +142,7 @@
         <servlet-name>Payment</servlet-name>
         <url-pattern>/pay</url-pattern>
     </servlet-mapping>
+
     <servlet>
         <servlet-name>Premium</servlet-name>
         <servlet-class>Controller.Paid.Premium</servlet-class>
@@ -184,6 +151,7 @@
         <servlet-name>Premium</servlet-name>
         <url-pattern>/premium</url-pattern>
     </servlet-mapping>
+
     <servlet>
         <servlet-name>CreateQRPaymentServlet</servlet-name>
         <servlet-class>Controller.Paid.CreateQRPaymentServlet</servlet-class>
@@ -192,6 +160,7 @@
         <servlet-name>CreateQRPaymentServlet</servlet-name>
         <url-pattern>/createQR</url-pattern>
     </servlet-mapping>
+
     <servlet>
         <servlet-name>PayOSCallbackServlet</servlet-name>
         <servlet-class>Controller.Paid.PayOSCallbackServlet</servlet-class>
@@ -200,4 +169,98 @@
         <servlet-name>PayOSCallbackServlet</servlet-name>
         <url-pattern>/PayOSCallback</url-pattern>
     </servlet-mapping>
+
+    <!-- Chat -->
+    <servlet>
+        <servlet-name>s_chatBox</servlet-name>
+        <servlet-class>Controller.Conversation.s_chatBox</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_chatBox</servlet-name>
+        <url-pattern>/s_chatBox</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UsersServlet</servlet-name>
+        <servlet-class>Controller.Conversation.UsersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UsersServlet</servlet-name>
+        <url-pattern>/UsersServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <servlet-class>Controller.Conversation.UploadImageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UploadImageServlet</servlet-name>
+        <url-pattern>/uploadImage</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ImageServlet</servlet-name>
+        <servlet-class>Controller.Conversation.ImageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ImageServlet</servlet-name>
+        <url-pattern>/images/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Product -->
+    <servlet>
+        <servlet-name>s_productDetail</servlet-name>
+        <servlet-class>Controller.s_productDetail</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_productDetail</servlet-name>
+        <url-pattern>/s_productDetail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>s_search</servlet-name>
+        <servlet-class>Controller.s_search</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_search</servlet-name>
+        <url-pattern>/s_search</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>NewPostPage</servlet-name>
+        <servlet-class>Controller.NewPostPage</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>NewPostPage</servlet-name>
+        <url-pattern>/NewPostPage</url-pattern>
+    </servlet-mapping>
+
+    <!-- Other -->
+    <servlet>
+        <servlet-name>s_driver</servlet-name>
+        <servlet-class>Controller.s_driver</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>s_driver</servlet-name>
+        <url-pattern>/s_driver</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ShippingFeeServlet</servlet-name>
+        <servlet-class>Controller.api.ShippingFeeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ShippingFeeServlet</servlet-name>
+        <url-pattern>/ShippingFeeServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>callLogin</servlet-name>
+        <servlet-class>Controller.callLogin</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>callLogin</servlet-name>
+        <url-pattern>/callLogin</url-pattern>
+    </servlet-mapping>
+
 </web-app>

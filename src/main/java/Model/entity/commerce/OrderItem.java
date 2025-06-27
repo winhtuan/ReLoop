@@ -1,6 +1,8 @@
 package Model.entity.commerce;
 
 import java.math.BigDecimal;
+import Model.entity.auth.User;
+import Model.entity.post.Product;
 
 public class OrderItem {
 
@@ -10,6 +12,8 @@ public class OrderItem {
     private int price;
     private String productName;
     private String sellerName;
+    private Product product;
+    private User user;
 
     public OrderItem() {
     }
@@ -19,6 +23,22 @@ public class OrderItem {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getOrderId() {
@@ -53,7 +73,6 @@ public class OrderItem {
         this.price = price;
     }
 
-    
     public String getProductName() {
         return productName;
     }

@@ -22,13 +22,14 @@
                 </div>
 
             </div>
-            <div class="login__remember">
+            <div style="display: flex; align-items: center;">
+            <span class="login__remember">
                 <input type="checkbox" id="remember" name="remember" />
                 <label for="remember">Remember me</label>
-            </div>
+            </span>
 
             <a href="${pageContext.request.contextPath}/JSP/Authenticate/forgotPassword.jsp" class="login__forgot">Forgot your password?</a>
-
+            </div>
             <button type="submit" class="login__button">Login</button>
         </form>
 
@@ -46,9 +47,6 @@
                     <img src="${pageContext.request.contextPath}/img/modal-img/icon-facebook.svg" alt="image" class="login__social-img">
                 </a>
 
-                <a href="#" class="login__social-link">
-                    <img src="${pageContext.request.contextPath}/img/modal-img/icon-apple.svg" alt="image" class="login__social-img">
-                </a>
             </div>
         </div>
 

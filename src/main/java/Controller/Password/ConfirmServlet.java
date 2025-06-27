@@ -24,13 +24,13 @@ public class ConfirmServlet extends HttpServlet {
         // Lấy token từ URL
         String token = request.getParameter("token");
         if (token == null || token.isEmpty()) {
-            printError(out, "Invalid verification link!", "JSP/Authenticate/JoinIn.jsp");
+            printError(out, "Invalid verification link!", "/ReLoop/home");
             return;
         }
 
         try (Connection conn = DBUtils.getConnect()) {
             if (conn == null) {
-                printError(out, "Unable to connect to the database!", "JSP/Authenticate/JoinIn.jsp");
+                printError(out, "Unable to connect to the database!", "/ReLoop/home");
                 return;
             }
 
@@ -41,7 +41,7 @@ public class ConfirmServlet extends HttpServlet {
             ResultSet rs = checkStmt.executeQuery();
             rs.next();
             if (rs.getInt(1) == 0) {
-                printError(out, "Invalid or expired verification link!", "JSP/Authenticate/JoinIn.jsp");
+                printError(out, "Invalid or expired verification link!", "/ReLoop/home");
                 return;
             }
 
@@ -52,13 +52,13 @@ public class ConfirmServlet extends HttpServlet {
             int rows = updateStmt.executeUpdate();
 
             if (rows > 0) {
-                printSuccess(out, "Account Verified Successfully!", "Your account has been activated. Sign in to continue.", "login.jsp");
+                printSuccess(out, "Account Verified Successfully!", "Your account has been activated. Sign in to continue.", "/ReLoop/home");
             } else {
-                printError(out, "Failed to verify account!", "JSP/Authenticate/JoinIn.jsp");
+                printError(out, "Failed to verify account!", "/ReLoop/home");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            printError(out, "Error: " + e.getMessage(), "JSP/Authenticate/JoinIn.jsp");
+            printError(out, "Error: " + e.getMessage(), "/ReLoop/home");
         }
     }
 

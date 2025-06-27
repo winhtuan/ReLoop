@@ -1,66 +1,59 @@
 package Controller.Paid;
 
-import Model.DAO.commerce.OrderDao;
 import Model.DAO.pay.PaidServiceDAO;
+import Model.entity.commerce.OrderResult;
 import Model.entity.pay.PaidService;
-import Utils.AppConfig;
+import Service.PayService;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
-import vn.payos.PayOS;
-import vn.payos.type.CheckoutResponseData;
-import vn.payos.type.PaymentData;
 
 public class CreateQRPaymentServlet extends HttpServlet {
-
-    private PayOS payOS = new PayOS(new AppConfig().get("payos.client_id"),
-             new AppConfig().get("payos.api_key"), new AppConfig().get("payos.checksum_key"));
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String paid_id = request.getParameter("paidService_id");
-        String user_id = request.getParameter("user_id");
 
-        // Retrieve the paid service details
-        PaidService premium = new PaidServiceDAO().getPaidServiceById(paid_id);
-        String description = String.format("Purchases %s", premium.getServiceName());
-        int amount = (int) premium.getPrice();
-
-        // Generate orderID using the OrderDao method
-        String orderId = new OrderDao().generateOrderId();  // Generate unique orderID
-
-        // Initial order status
-        String status = "pending"; 
-
-        // Create order in the database
-        boolean created = new OrderDao().createOrder(orderId, user_id, amount, status, null, null, null, 0);
-        if (!created) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to create order");
-            return;
-        }
-        String encodedPaidId = URLEncoder.encode(paid_id, "UTF-8"); // gửi paid Service ID nếu cần
-        // Prepare payment data to be sent to PayOS
-        PaymentData paymentData = PaymentData.builder()
-                .orderCode(Long.valueOf(orderId.substring(3)))  // Pass orderId as orderCode for PayOS
-                .amount(amount)
-                .description(description)
-                .returnUrl("http://localhost:8080/ReLoop/PayOSCallback") 
-                .cancelUrl("http://localhost:8080/ReLoop/html/cancel.html")
-                .build();
+        PayService payService = new PayService();
+        String paidServiceId = request.getParameter("paidService_id");
+        String buyerId = request.getParameter("buyerId");
 
         try {
-            // Generate payment link from PayOS
-            CheckoutResponseData result = payOS.createPaymentLink(paymentData);
-            System.out.println("Redirecting to: " + result.getCheckoutUrl());
-            response.sendRedirect(result.getCheckoutUrl());  // Redirect user to PayOS for payment
+            String payUrl = null;
+            if (paidServiceId != null) {
+                // TRƯỜNG HỢP 1: Thanh toán dịch vụ (nâng cấp premium v.v.)
+                OrderResult orderResult = payService.createPaidServiceOrder(buyerId, paidServiceId);
+                if (orderResult != null) {
+                    PaidService premium = new PaidServiceDAO().getPaidServiceById(paidServiceId);
+                    String desc = "Purchases " + premium.getServiceName();
+                    payUrl = payService.createPayOSPaymentLink(orderResult.orderId, orderResult.amount, desc);
+                }
+
+            } else {
+                // TRƯỜNG HỢP 2: Đặt hàng thông thường
+                OrderResult orderResult = payService.createNormalOrder(request);
+                if (orderResult == null) {
+                    // Trả lỗi rõ ràng khi tổng tiền <= 0 hoặc không tạo được đơn
+                    response.setContentType("text/html;charset=UTF-8");
+                    response.getWriter().write("Lỗi: Tổng tiền phải lớn hơn 0 hoặc không tạo được đơn hàng!");
+                    return;
+                }
+                String desc = "Payment for Reloop order";
+                payUrl = payService.createPayOSPaymentLink(orderResult.orderId, orderResult.amount, desc);
+            }
+
+            if (payUrl != null) {
+                response.sendRedirect(payUrl);
+            } else {
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().write("Lỗi: Không tạo được order hoặc link thanh toán!");
+            }
         } catch (Exception e) {
-            System.err.println("PayOS error: " + e.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Can't create QR code: " + e.getMessage());
+            e.printStackTrace();
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().write("Lỗi: " + e.getMessage());
         }
     }
-
 }

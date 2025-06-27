@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.DAO.auth.UserDao;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ public class Home extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("cus", new UserDao().getUserById(request.getParameter("userid")));
         request.getRequestDispatcher("JSP/Home/HomePage.jsp").forward(request, response);
     }
 

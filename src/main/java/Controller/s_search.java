@@ -51,8 +51,8 @@ public class s_search extends HttpServlet {
             return;
         }
         productList = new ProductDao().searchProducts(keyword);
-        request.getSession().setAttribute("listProduct", productList);
-        request.getRequestDispatcher("JSP/Home/listProduct.jsp").forward(request, response);
+        request.getSession().setAttribute("allPost", productList);
+        request.getRequestDispatcher("JSP/Post/NewPost.jsp").forward(request, response);
         //response.sendRedirect("JSP/Home/shop.html");
     }
 
