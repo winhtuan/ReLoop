@@ -25,9 +25,14 @@
                                      </c:choose>" class="product-image" />
                             </a>
                             <div class="product-actions">
-                                <button class="btn-action wishlist" title="Thêm vào yêu thích"><ion-icon name="heart-outline"></ion-icon></button>
+                                <form action="s_favorite" method="post">
+                                    <input type="hidden" name="userId" value="${sessionScope.user.userId}">
+                                    <input type="hidden" name="productId" value="${product.productId}">
+                                    <button type="submit" class="btn-action wishlist" title="Thêm vào yêu thích"><ion-icon name="heart-outline"></ion-icon></button>
+                                </form>
+
                                 <button class="btn-action buy-now" title="Mua ngay"><ion-icon name="flash-outline"></ion-icon></button>
-                              
+
                                 <form action="s_addToCart" method="post">
                                     <input type="hidden" name="quantity" value="1">
                                     <input type="hidden" name="postID" value="${product.productId}">

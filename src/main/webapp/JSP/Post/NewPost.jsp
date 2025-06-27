@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -52,5 +54,18 @@
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
         </script>
+        <c:if test="${not empty sessionScope.Message}">
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+            window.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thông báo',
+                    text: "${fn:escapeXml(sessionScope.Message)}"
+                });
+            });
+            </script>
+            <c:remove var="Message" scope="session" />
+        </c:if>
     </body>
 </html>

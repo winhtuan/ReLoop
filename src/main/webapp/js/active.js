@@ -180,14 +180,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Xử lý favouriteBox
-    const favouriteLink = document.getElementById("favouriteLink");
-    const favouriteBox = document.getElementById("favouriteBox");
-
-    favouriteLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        favouriteBox.style.display =
-                favouriteBox.style.display === "block" ? "none" : "block";
-    });
+//    const favouriteLink = document.getElementById("favouriteLink");
+//    const favouriteBox = document.getElementById("favouriteBox");
+//
+//    favouriteLink.addEventListener("click", function (e) {
+//        e.preventDefault();
+//        favouriteBox.style.display =
+//                favouriteBox.style.display === "block" ? "none" : "block";
+//    });
 
     // Đóng favouriteBox nếu click ra ngoài
     document.addEventListener("click", function (e) {
