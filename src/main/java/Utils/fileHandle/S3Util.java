@@ -1,4 +1,4 @@
-package Controller.fileHandle;
+package Utils.fileHandle;
 
 import Utils.AppConfig;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;

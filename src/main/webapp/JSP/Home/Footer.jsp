@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+<!--  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/core-style.css" />-->
 <!-- ##### Footer Area Start ##### -->
 <footer class="footer_area clearfix">
     <div class="container">

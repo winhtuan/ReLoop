@@ -1,5 +1,6 @@
 package Model.entity.commerce;
 
+import java.math.BigDecimal;
 import Model.entity.auth.User;
 import Model.entity.post.Product;
 
