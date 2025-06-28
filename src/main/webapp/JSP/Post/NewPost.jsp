@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,6 +17,7 @@
         <link rel="stylesheet" href="css/post.css" />
         <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="css/core-style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
 
     </head>
@@ -41,6 +44,7 @@
         <script src="js/active.js"></script>
         <script src="js/JS_search.js"></script>
         <script src="js/post.js"></script>
+        <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>
@@ -52,5 +56,18 @@
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
         </script>
+        <c:if test="${not empty sessionScope.Message}">
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+            window.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thông báo',
+                    text: "${fn:escapeXml(sessionScope.Message)}"
+                });
+            });
+            </script>
+            <c:remove var="Message" scope="session" />
+        </c:if>
     </body>
 </html>

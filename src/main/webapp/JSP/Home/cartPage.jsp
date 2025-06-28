@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
         <link rel="stylesheet" href="css/avatar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
         <link rel="stylesheet" href="css/css_cart.css"/>
 
     </head>
@@ -121,6 +122,7 @@
                 </c:otherwise>
 
             </c:choose>
+
         </div>
 
         <c:import url="/JSP/Home/Footer.jsp" />
@@ -133,20 +135,20 @@
         <!-- Plugins js -->
         <script src="js/lib_js/plugins.js"></script>
         <!-- js -->
-        <script src="js/active.js"></script>
-        <script src="js/JS_search.js"></script>
+        <script src="${pageContext.request.contextPath}/js/active.js"></script>
+        <script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
+        <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>
-                                                const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
-                                                window.addEventListener("load", function () {
-                                                    const preloader = document.getElementById("preloader");
-                                                    preloader.style.opacity = "0";
-                                                    preloader.style.pointerEvents = "none";
-                                                    setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
-                                                });
-
+            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
+            window.addEventListener("load", function () {
+                const preloader = document.getElementById("preloader");
+                preloader.style.opacity = "0";
+                preloader.style.pointerEvents = "none";
+                setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
+            });
         </script>
         <c:if test="${not empty requestScope.openLogin}">
             <script>
@@ -172,7 +174,7 @@
                     });
                 });
             </script>
-                <c:remove var="message" scope="request" />
+            <c:remove var="message" scope="request" />
         </c:if>
         <script>
             document.addEventListener("DOMContentLoaded", () => {
@@ -184,7 +186,7 @@
             });
 
         </script>
-                    <<script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
+        <<script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
 
     </body>
 </html>

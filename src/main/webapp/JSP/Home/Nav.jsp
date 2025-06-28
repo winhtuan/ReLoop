@@ -56,7 +56,7 @@
         <div class="fav-nav favourite-container" id="favouriteContainer">
             <c:choose>
                 <c:when test="${sessionScope.user != null}">
-                    <a href="#" id="favouriteLink"><ion-icon name="heart-outline"></ion-icon> 
+                    <a href="${pageContext.request.contextPath}/s_favorite?userId=${sessionScope.user.userId}" ><ion-icon name="heart-outline"></ion-icon> 
                         Favourite
                     </a>                    
                 </c:when>
@@ -66,75 +66,9 @@
                     </a>                    
                 </c:otherwise>
             </c:choose>           
-            <!-- Khung hiện yêu thích -->
-            <div id="favouriteBox" class="favourite-box">
-                <p>No Items In Your <strong>Favourite List</strong></p>
-                <!-- Một mục yêu thích -->
-                <div class="favourite-item">
-                    <img src="${pageContext.request.contextPath}/img/product-img/pro-big-1.jpg" alt="Product" class="img-thumbnail">
-
-                    <div class="fav-left-content">
-                        <div class="fav-tittle">
-                            <span><strong>Leather wallet</strong></span>
-                            <span>$99.00</span>
-                        </div>
-                        <div class="fav-posted-by">
-                            <ion-icon name="person-circle-outline"></ion-icon>
-                            <span class="ms-1">Lisa</span>
-                        </div>
-                    </div>
-                    <div class="fav-actions">
-                        <form action="" method="">
-                            <button title="Remove">
-                                <ion-icon name="heart-outline" class="del-fav-item"></ion-icon>
-                            </button>
-                        </form>
-                        <button title="Send">
-                            <ion-icon name="mail-outline" class="mes-fav-item"></ion-icon>
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <div class="not-nav notification-container" id="notificationContainer">
-            <c:choose>
-                <c:when test="${sessionScope.user != null}">
-                    <a href="#" id="notificationLink">
-                        <ion-icon name="notifications-outline"></ion-icon> Notification
-                    </a>                 
-                </c:when>
-                <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/callLogin">
-                        <ion-icon name="notifications-outline"></ion-icon> Notification
-                    </a>               
-                </c:otherwise>
-            </c:choose>
-
-            <!-- Khung hiện thông báo -->
-            <div id="notificationBox" class="notification-box">
-                <p style="text-align: center; font-size: 17px;">No New <strong>Notifications</strong></p>
-
-                <!-- Các dòng thông báo -->
-                <div class="notification-item">
-                    <div class="notification-text">
-                        <p><strong>Message </strong>Hung send</p>
-                        <p>Content message.</p>
-                    </div>
-                </div>
-                <div class="notification-item">
-                    <div class="notification-text">
-                        <p><strong>New Post </strong>From Hung</p>
-                        <p>Product.</p>
-                    </div>
-                </div>
-
-                <!-- Nút xem thêm -->
-                <div id="seeMoreNotifications" style="text-align: center; margin-top: 5px;">
-                    <a href="#" style="font-size: 14px; color: #fbb710; cursor: pointer;">Xem thêm</a>
-                </div>
-            </div>
-        </div>
+        <c:import url="/JSP/Home/Notification.jsp" />
 
         <c:choose>
             <c:when test="${cus != null}">

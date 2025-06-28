@@ -179,23 +179,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Xử lý favouriteBox
-    const favouriteLink = document.getElementById("favouriteLink");
-    const favouriteBox = document.getElementById("favouriteBox");
-
-    favouriteLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        favouriteBox.style.display =
-                favouriteBox.style.display === "block" ? "none" : "block";
-    });
-
-    // Đóng favouriteBox nếu click ra ngoài
-    document.addEventListener("click", function (e) {
-        const container = document.getElementById("favouriteContainer");
-        if (!container.contains(e.target)) {
-            favouriteBox.style.display = "none";
-        }
-    });
 });
 
 /*=============== SHOW HIDE MODAL ===============*/
