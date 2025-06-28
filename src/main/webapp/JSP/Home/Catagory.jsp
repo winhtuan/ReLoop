@@ -47,7 +47,7 @@
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
             <a href="shop.html">
-                <img src="img/cate-img/Furniture_BG.jpg" alt="">
+                <img src="img/cate-img/Furniture_BG.png" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
                     <div class="line"></div>

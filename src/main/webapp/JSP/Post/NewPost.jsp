@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="css/post.css" />
         <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="css/core-style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
 
     </head>
@@ -43,6 +44,7 @@
         <script src="js/active.js"></script>
         <script src="js/JS_search.js"></script>
         <script src="js/post.js"></script>
+        <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>
