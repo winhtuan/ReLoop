@@ -1,7 +1,6 @@
 
 function selectChatUser(userId, username) {
     document.querySelector(".chat-main").style.display = "flex";
-
     currentChatUserId = userId;
 
     currentChatUserName = username;
@@ -239,11 +238,19 @@ function addMessageToChatBox(msg) {
 
 function addImageToChatBox(msg) {
     const msID = msg.messageId;
-    const img = document.createElement("img");
-    img.src = msg.content;
-    img.class = "chat-img";
-    return img;
+    let mediaElement;
+    if (getFileExtension(msg.content) === "mp4") {
+        mediaElement = document.createElement("video");
+        mediaElement.controls = true;
+    } else {
+        mediaElement = document.createElement("img");
     }
+
+    mediaElement.src = msg.content;
+    mediaElement.className = "chat-img";
+
+    return mediaElement;
+}
 
 function handleRecallMessage(msg) {
 
@@ -547,39 +554,41 @@ function recallMessage(meId) {
 }
 
 async function sendImage() {
-  const files = document.getElementById("imageUpload").files;
-  if (files.length === 0) return;
-
-  const formData = new FormData();
-  for (const f of files) formData.append("file", f);   // <-- field “file” trùng servlet
-
-  try {
-    const res = await fetch("/ReLoop/api/files", { method: "POST", body: formData });
-
-    // nếu server trả lỗi, ném ngoại lệ sớm
-      if (!res.ok) {
-      const errTxt = await res.text();      // cố đọc nội dung để log
-      throw new Error(`HTTP ${res.status}: ${errTxt}`);
-      }
-
-    const { uploaded } = await res.json();  // server trả { uploaded:[…] }
-    if (!(Array.isArray(uploaded) && uploaded.length)) {
-        console.warn("Không có ảnh nào được trả về", uploaded);
+    const files = document.getElementById("imageUpload").files;
+    if (files.length === 0)
         return;
-      }
 
-    // gửi qua WebSocket
-    uploaded.forEach(img =>
-        ws.send(JSON.stringify({
-        type: "image",
-          fromUserId: currentUserId,
-          toUserId:   currentChatUserId,
-        imageUrl:   img.shareLink           // hoặc webContentLink
-      }))
-    );
-  } catch (err) {
-      console.error("Upload failed", err);
-}
+    const formData = new FormData();
+    for (const f of files)
+        formData.append("file", f);
+    try {
+        const res = await fetch("/ReLoop/api/files", {method: "POST", body: formData});
+
+        // nếu server trả lỗi, ném ngoại lệ sớm
+        if (!res.ok) {
+            const errTxt = await res.text();      // cố đọc nội dung để log
+            throw new Error(`HTTP ${res.status}: ${errTxt}`);
+        }
+
+        const {uploaded} = await res.json();  // server trả { uploaded:[…] }
+        if (!(Array.isArray(uploaded) && uploaded.length)) {
+            console.warn("Không có ảnh nào được trả về", uploaded);
+            return;
+        }
+
+        // gửi qua WebSocket
+        uploaded.forEach(img =>
+            ws.send(JSON.stringify({
+                type: "image",
+                fromUserId: currentUserId,
+                toUserId: currentChatUserId,
+                imageUrl: img.shareLink, // hoặc webContentLink
+                fileType: img.contentType
+            }))
+        );
+    } catch (err) {
+        console.error("Upload failed", err);
+    }
 }
 
 
@@ -621,4 +630,34 @@ function copyMessage(content) {
                 console.error("Failed to copy message:", err);
                 //alert("Failed to copy message.");
             });
+}
+
+function getFileExtension(url) {
+    if (!url || typeof url !== 'string') {
+        return ''; // Trả về chuỗi rỗng nếu URL không hợp lệ
+    }
+
+    // Tìm vị trí của dấu chấm cuối cùng
+    const lastDotIndex = url.lastIndexOf('.');
+
+    // Nếu không có dấu chấm hoặc dấu chấm là ký tự cuối cùng
+    if (lastDotIndex === -1 || lastDotIndex === url.length - 1) {
+        return '';
+    }
+
+    // Lấy phần chuỗi sau dấu chấm cuối cùng
+    let extension = url.substring(lastDotIndex + 1);
+
+//    const queryStartIndex = extension.indexOf('?');
+//    if (queryStartIndex !== -1) {
+//        extension = extension.substring(0, queryStartIndex);
+//    }
+//
+//    // Xử lý trường hợp có dấu '#' (hash)
+//    const hashStartIndex = extension.indexOf('#');
+//    if (hashStartIndex !== -1) {
+//        extension = extension.substring(0, hashStartIndex);
+//    }
+
+    return extension;
 }

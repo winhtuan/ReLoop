@@ -94,9 +94,8 @@
                             <div id="emojiPicker" style="position: absolute; bottom: 60px; left: 0; display: none; z-index: 1000;"></div>
 
                             <label id="imageUploadLabel" class="chat-btn" for="imageUpload" style="cursor: pointer; font-size: 20px;">
-                                <ion-icon name="images-outline"></ion-icon>
-                            </label>
-                            <input type="file" id="imageUpload" style="display: none;" multiple accept="image/*" onchange="sendImage()" />
+                                <ion-icon name="image-outline"></ion-icon> </label>
+                            <input type="file" id="imageUpload" style="display: none;" multiple accept="image/*,video/*" onchange="sendImage()" />
 
                             <input type="text" id="messageInput" placeholder="Enter message..." onkeydown="handleKeyPress(event)" autocomplete="off" autocorrect="off" autocapitalize="off"/>
                             <button onclick="sendMessages()" class="chat-btn chat-btn-send">
