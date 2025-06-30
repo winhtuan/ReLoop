@@ -149,6 +149,7 @@ public class UserDao {
     }
 
     public static ArrayList<User> listAllCustomers(String uid) {
+        AccountDao accDAO=new AccountDao();
         ArrayList<User> customers = new ArrayList<>();
         String sql = "SELECT u.user_id, u.FullName, u.Address, u.PhoneNumber, u.email "
                 + "FROM conversation c "
@@ -167,7 +168,7 @@ public class UserDao {
                     user.setAddress(rs.getString("Address"));
                     user.setPhoneNumber(rs.getString("PhoneNumber"));
                     user.setEmail(rs.getString("email"));
-
+                    user.setAccount(accDAO.getAccountByEmail(user.getEmail()));
                     customers.add(user);
                 }
             }

@@ -189,7 +189,9 @@ public class AccountDao {
                         regisDate,
                         rs.getString("user_id"),
                         rs.getString("verification_token"),
-                        rs.getBoolean("is_verified")
+                        rs.getBoolean("is_verified"),
+                        rs.getBoolean("is_block"),
+                        rs.getDate("offline_at")
                 );
             }
         } catch (SQLException e) {
@@ -268,6 +270,16 @@ public class AccountDao {
             ps.executeUpdate();
         }
     }
+    public void updateOfflineAt(String userId) {
+    String sql = "UPDATE Account SET offline_at = ? WHERE user_id = ?";
+    try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+        ps.setString(2, userId);
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        System.out.println("Lỗi khi cập nhật offline_at: " + e.getMessage());
+    }
+}
 
     public String getUserId(String email) {
         String sql = "SELECT user_id FROM account WHERE email = ?";
