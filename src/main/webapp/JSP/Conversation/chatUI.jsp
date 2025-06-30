@@ -44,6 +44,7 @@
                                             <img src="${pageContext.request.contextPath}/img/bg-img/1.jpg" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fbb710; margin-right: 5px;"/>
                                             <div>
                                                 <strong>${u.fullName}</strong><br>
+
                                             </div>
                                         </li>
                                     </c:if>
@@ -58,6 +59,7 @@
                                 <img src="https://placehold.co/400" alt="Avatar" class="chat-header-avatar">
                                 <div class="chat-header-info">
                                     <strong><span id="chatWith">[Select user]</span></strong>
+                                    <small class="last-active" datetime="${u.lastActive}">${u.lastActive}</small>
                                     <small>
                                         <c:if test="${not empty sessionScope.chatProductId}">
                                             about Product ID: ${sessionScope.chatProductId}
@@ -236,6 +238,12 @@
         loadChatHistory(${requestScope.sellid});
         </script>
     </c:if>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            timeago.render(document.querySelectorAll('.last-active'));
+        });
+    </script>
 
 </body>
 </html>
