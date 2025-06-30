@@ -1,6 +1,8 @@
 package Controller.Conversation;
 
+import Utils.HttpSessionConfigurator;
 import Model.DAO.auth.UserDao;
+import Model.DAO.commerce.NotificationDAO;
 import Model.DAO.conversation.ConversationDAO;
 import Model.DAO.conversation.MessageDAO;
 import Model.DAO.conversation.blockDAO;
@@ -14,9 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import java.io.StringReader;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -118,6 +118,9 @@ public class chat {
                     String conversationId = new ConversationDAO().getConversation(fromUserId, toUserId).getConversationId();
                     String messageId = MessageDAO.saveMessage(conversationId, fromUserId, content);
                     String timestamp = LocalDateTime.now().toString();
+
+                    // *** TẠO NOTIFICATION ***
+                    new NotificationDAO().createMessageNotification(fromUserId, fromUsername, toUserId, content);
 
                     JsonObject sendMessage = Json.createObjectBuilder()
                             .add("type", "message")

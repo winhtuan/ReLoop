@@ -24,6 +24,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jsp_css/loader.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/avatar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/product-detail.css">
     </head>
 

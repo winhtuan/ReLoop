@@ -3,7 +3,7 @@
 
 <div class="category-bar-container bg-light p-3 rounded mb-4 position-relative">
     <div class="category-bar-title mb-3"><strong>Explore the catalog</strong></div>
-    <button class="cat-btn-left btn btn-light rounded-circle shadow-sm" type="button" aria-label="Prev">
+    <button class="cat-btn-left btn btn-light rounded-circle shadow-sm" id="catBtnLeft" type="button" aria-label="Prev">
         <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M13 17l-5-5 5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
     </button>
     <div class="category-bar d-flex align-items-center" id="categoryBar" style="gap: 32px; overflow-x: auto; scroll-behavior: smooth; padding: 0 48px 8px 48px; white-space: nowrap;">
@@ -48,7 +48,7 @@
             <div style="font-size: 14px">Giveaway</div>
         </a>
     </div>
-    <button class="cat-btn-right btn btn-light rounded-circle shadow-sm" type="button" aria-label="Next">
+    <button class="cat-btn-right btn btn-light rounded-circle shadow-sm" id="catBtnRight" type="button" aria-label="Next">
         <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M7 17l5-5-5-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
     </button>
 </div>

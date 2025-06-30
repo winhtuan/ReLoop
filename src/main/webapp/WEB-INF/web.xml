@@ -9,6 +9,10 @@
         <servlet-name>s_favorite</servlet-name>
         <url-pattern>/s_favorite</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NotificationServlet</servlet-name>
+        <url-pattern>/notification</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
@@ -163,6 +167,10 @@
     <servlet>
         <servlet-name>s_chatBox</servlet-name>
         <servlet-class>Controller.Conversation.s_chatBox</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>NotificationServlet</servlet-name>
+        <servlet-class>Controller.NotificationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>s_chatBox</servlet-name>

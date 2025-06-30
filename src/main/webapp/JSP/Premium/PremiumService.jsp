@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/premium.css">
         <link rel="stylesheet" href="css/avatar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
 
     </head>
@@ -45,6 +46,7 @@
         <script src="js/lib_js/plugins.js"></script>
         <!-- js -->
         <script src="js/active.js"></script>
+        <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

@@ -39,28 +39,27 @@ public class AccountDao {
             if (rs.next()) {
                 String hashedPassword = rs.getString("password");
                 if (BCrypt.checkpw(password, hashedPassword)) {
-                LocalDate regisDate = null;
-                Date date = rs.getDate("regisDate");
-                if (date != null) {
-                    regisDate = date.toLocalDate();
-                }
+                    LocalDate regisDate = null;
+                    Date date = rs.getDate("regisDate");
+                    if (date != null) {
+                        regisDate = date.toLocalDate();
+                    }
 
-                return new Account(
-                        rs.getString("acc_id"),
-                        rs.getString("password"),
-                        rs.getString("email"),
-                        regisDate,
-                        rs.getString("user_id"),
-                        rs.getString("verification_token"),
-                        rs.getBoolean("is_verified")
-                );
+                    return new Account(
+                            rs.getString("acc_id"),
+                            rs.getString("password"),
+                            rs.getString("email"),
+                            regisDate,
+                            rs.getString("user_id"),
+                            rs.getString("verification_token"),
+                            rs.getBoolean("is_verified")
+                    );
+                } else {
+                    return null;
+                }
             }
-            else {
-                return null;
-            }
+            return null;
         }
-        return null;
-    }
     }
 
     public boolean addAccount(String email, String role, String userId) {
@@ -282,8 +281,110 @@ public class AccountDao {
     }
 }
 
-    public static void main(String[] args) throws SQLException {
-        System.out.println(new AccountDao().checkLogin("johnsmith@example.com", "1235"));
+    public String getUserId(String email) {
+        String sql = "SELECT user_id FROM account WHERE email = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email); // Thiết lập giá trị cho dấu hỏi
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("user_id");
+            } else {
+                return null; // Không tìm thấy email
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Boolean checkIsAdmin(String user_id) {
+        String sql = "SELECT role FROM users WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user_id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return "admin".equalsIgnoreCase(role); // true nếu là admin, false nếu không
+            } else {
+                return false; // Không tìm thấy user_id → không phải admin
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Lỗi DB
+        }
+    }
+
+    public Boolean checkIsUser(String user_id) {
+        String sql = "SELECT role FROM users WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user_id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return "user".equalsIgnoreCase(role); // true nếu là admin, false nếu không
+            } else {
+                return false; // Không tìm thấy user_id → không phải admin
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Lỗi DB
+        }
+    }
+
+    public Boolean checkIsshopkeeper(String user_id) {
+        String sql = "SELECT role FROM users WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user_id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return "shopkeeper".equalsIgnoreCase(role); // true nếu là admin, false nếu không
+            } else {
+                return false; // Không tìm thấy user_id → không phải admin
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Lỗi DB
+        }
+    }
+
+    public Boolean checkIssupporter(String user_id) {
+        String sql = "SELECT role FROM users WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user_id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return "supporter".equalsIgnoreCase(role); // true nếu là admin, false nếu không
+            } else {
+                return false; // Không tìm thấy user_id → không phải admin
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Lỗi DB
+        }
+    }
+
+    public static void main(String[] args) {
+        AccountDao dao = new AccountDao();
+        String emailToCheck = "john.doe@example.com"; // Thay bằng email có thật trong DB
+        String userId = dao.getUserId(emailToCheck);
+
+        if (userId != null) {
+            System.out.println("User ID for email " + emailToCheck + ": " + userId);
+        } else {
+            System.out.println("No user found with email: " + emailToCheck);
+        }
     }
 
 }

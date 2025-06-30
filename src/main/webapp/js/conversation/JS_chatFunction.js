@@ -238,6 +238,7 @@ function addMessageToChatBox(msg) {
 
 function addImageToChatBox(msg) {
     const msID = msg.messageId;
+
     let mediaElement;
     if (getFileExtension(msg.content) === "mp4") {
         mediaElement = document.createElement("video");
@@ -558,9 +559,11 @@ async function sendImage() {
     if (files.length === 0)
         return;
 
+
     const formData = new FormData();
     for (const f of files)
         formData.append("file", f);
+
     try {
         const res = await fetch("/ReLoop/api/files", {method: "POST", body: formData});
 
@@ -582,6 +585,7 @@ async function sendImage() {
                 type: "image",
                 fromUserId: currentUserId,
                 toUserId: currentChatUserId,
+
                 imageUrl: img.shareLink, // hoặc webContentLink
                 fileType: img.contentType
             }))

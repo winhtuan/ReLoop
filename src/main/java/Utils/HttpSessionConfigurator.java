@@ -1,8 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package Controller.Conversation;
+package Utils;
 
 // HttpSessionConfigurator.java
 import jakarta.servlet.http.HttpSession;

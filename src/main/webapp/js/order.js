@@ -1,4 +1,3 @@
-const goongApiKey = "2crmPqaYoj9yFY2lmW73PmXeZSAqzHMintJsKJfb";
 const addressInput = document.getElementById('address');
 const feeInput = document.getElementById('shippingFeeInput');
 const statusIcon = document.getElementById('shippingStatus');

@@ -1,6 +1,7 @@
 package Controller.Paid;
 
 import Model.DAO.auth.UserDao;
+import Model.DAO.commerce.NotificationDAO;
 import Model.DAO.commerce.OrderDao;
 import Model.DAO.commerce.OrderItemDAO;
 import Model.DAO.pay.PaymentDao;
@@ -22,6 +23,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -80,7 +82,10 @@ public class PayOSCallbackServlet extends HttpServlet {
                     // Normal order: set status to "shipping"
                     orderUpdated = orderDao.updateOrderStatusByOrderId(formattedOrderCode, ORDER_STATUS_SHIPPED);
                     order.setListItems(new OrderDao().getOrderItems(formattedOrderCode));
-                    User us=(User)request.getSession().getAttribute("cus");
+                    User us = (User) request.getSession().getAttribute("cus");
+                    if (orderUpdated) {
+                        new NotificationDAO().createOrderStatusNotification(us.getUserId(), order.getOrderId(), ORDER_STATUS_SHIPPED);
+                    }
                     sendOrderConfirmationEmail(us.getEmail(), new PaymentDao().getPaymentById(paymentId), order);
                 }
 
@@ -99,7 +104,7 @@ public class PayOSCallbackServlet extends HttpServlet {
                 orderDao.updateOrderStatusByOrderId(formattedOrderCode, ORDER_STATUS_CANCELLED);
                 response.sendRedirect(request.getContextPath() + "/html/cancel.html");
             }
-        } catch (Exception e) {
+        } catch (MessagingException | IOException | NumberFormatException | SQLException e) {
             response.getWriter().write("System error: " + e.getMessage());
         }
     }
@@ -128,7 +133,7 @@ public class PayOSCallbackServlet extends HttpServlet {
         message.setSubject("Order Payment Confirmation");
 
         StringBuilder content = new StringBuilder();
-        content.append("Dear customer " + user.getFullName() + ",\n\n");
+        content.append("Dear customer ").append(user.getFullName()).append(",\n\n");
         content.append("We are pleased to inform you that your order has been paid successfully.\n\n");
 
         content.append("Order Information:\n");
@@ -144,7 +149,7 @@ public class PayOSCallbackServlet extends HttpServlet {
 
         content.append("\n💳 Payment Details:\n");
         content.append("Payment ID: ").append(payment.getPayId()).append("\n");
-        content.append("Amount Paid: $").append( payment.getAmount()).append("\n");
+        content.append("Amount Paid: $").append(payment.getAmount()).append("\n");
         content.append("Payment Date: ").append(payment.getCreatedAt()).append("\n\n");
 
         content.append("Thank you for shopping with us!\n");

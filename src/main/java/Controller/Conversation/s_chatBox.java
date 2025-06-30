@@ -137,7 +137,6 @@ public class s_chatBox extends HttpServlet {
             aiReply = "Lỗi khi gọi API: " + status + ". Phản hồi từ server: " + responseStr;
             System.err.println(aiReply); // In lỗi ra console của server
         }
-
         // 6. Gửi phản hồi về client
         JsonObject result = new JsonObject();
         result.addProperty("response", aiReply.replace("* **", "<br><br>").replace("**", "<br>-"));

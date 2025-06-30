@@ -46,7 +46,7 @@ public class ProductDao {
                         rs.getInt("category_id"),
                         rs.getString("title"),
                         rs.getString("description"),
-                        rs.getInt("price"),
+                        rs.getBigDecimal("price").intValue(),
                         rs.getString("location"),
                         rs.getString("status"),
                         rs.getBoolean("is_priority"),
@@ -94,7 +94,7 @@ public class ProductDao {
                             rs.getInt("category_id"),
                             rs.getString("title"),
                             rs.getString("description"),
-                            rs.getInt("price"),
+                            rs.getBigDecimal("price").intValue(),
                             rs.getString("location"),
                             rs.getString("status"),
                             rs.getBoolean("is_priority"),
@@ -196,7 +196,7 @@ public class ProductDao {
                             rs.getInt("category_id"),
                             rs.getString("title"),
                             rs.getString("description"),
-                            rs.getInt("price"),
+                            rs.getBigDecimal("price").intValue(), // 🔴 chuyển BigDecimal → int
                             rs.getString("location"),
                             rs.getString("status"),
                             rs.getBoolean("is_priority"),
@@ -243,7 +243,7 @@ public class ProductDao {
             stmt.setInt(6, product.getPrice());
             stmt.setString(7, product.getLocation());
             stmt.setString(8, product.getStatus());
-            stmt.setBoolean(9, product.isPriority());
+            stmt.setBoolean(9, product.isIsPriority());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println("Error adding product: " + e.getMessage());
@@ -266,7 +266,7 @@ public class ProductDao {
             stmt.setInt(5, product.getPrice());
             stmt.setString(6, product.getLocation());
             stmt.setString(7, product.getStatus());
-            stmt.setBoolean(8, product.isPriority());
+            stmt.setBoolean(8, product.isIsPriority());
             stmt.setString(9, product.getProductId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
