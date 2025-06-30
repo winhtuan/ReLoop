@@ -1,40 +1,606 @@
-INSERT INTO users (user_id, FullName, role, Address, PhoneNumber, email, is_premium, premium_expiry, balance) VALUES
-('US00001', 'Minh Tuan', 'admin', '123 Main Street, New York', '1234567890', 'johnsmith@example.com', 0, NULL, 1000.00),
-('US00002', 'Alice Johnson', 'shopkeeper', '456 Oak Avenue, San Francisco', '9876543210', 'alicejohnson@example.com', 0, NULL, 500.00),
-('US00003', 'Bob Williams', 'supporter', '789 Pine Road, Chicago', '5555555555', 'bobwilliams@example.com', 0, NULL, 0.00);
-INSERT INTO categories (category_id, name, parent_id) VALUES
-(1, 'Electronics', NULL),
-(2, 'Vehicles', NULL),
-(3, 'Home Appliances', NULL),
-(4, 'Furniture', NULL),
-(5, 'Fashion', NULL),
-(6, 'Jewelry', NULL),
-(7, 'Pets', NULL),
-(8, 'Digital Goods', NULL),
-(9, 'Books & Documents', NULL);
-INSERT INTO vouchers (voucher_id, code, description, discount_type, discount_value, max_discount, min_order_amount, start_date, end_date, usage_limit, used_count, is_active) VALUES
-('VOU001', 'WELCOME10', '10% off for new customers', 'percent', 10.00, 50.00, 100.00, '2025-06-01 00:00:00', '2025-12-31 23:59:59', 100, 0, 1),
-('VOU002', 'SAVE20', 'Save $20 on orders above $200', 'fixed', 20.00, 20.00, 200.00, '2025-06-01 00:00:00', '2025-12-31 23:59:59', 50, 0, 1);
-INSERT INTO shipping_methods (id, name, description, cost, estimated_days, is_active) VALUES
-(1, 'Standard Shipping', 'Delivery within 5-7 business days', 5.00, 7, 1),
-(2, 'Express Shipping', 'Fast delivery within 2-3 business days', 15.00, 3, 1);
-INSERT INTO Account (acc_id, password, email, regisDate, user_id, verification_token, is_verified) VALUES 
-('ACC0001', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'thanhloc20092004@gmail.com', '2025-05-25 00:00:00', 'US00001', '10b249bc-f42d-4df0-95c0-daa80cb2ad3c', 1);
--- pass 12345 
-INSERT INTO conversation (conversation_id, sender_id, receiver_id, product_id)
-VALUES
-('CONV001', 'US00001', 'US00002', 'PROD001');
--- Insert messages
-INSERT INTO Messages (message_id, conversation_id, sender_id, content, isRead, type, SentAt, is_recall)
-VALUES
-('MSG0001', 'CONV001', 'US00001', 'Hello, is this still available?', 0, 'text', NOW(), 0),
-('MSG0002', 'CONV001', 'US00002', 'Yes, it is.', 0, 'text', NOW(), 0);
--- Insert paid_service
-INSERT INTO paid_service (paid_id, service_name, price, start_date, usage_time) VALUES
-('PRO0001', 'Premium', 200000, NOW(), 30),
-('PRO0002', 'Priority Post', 100000, NOW(), 7);
+INSERT INTO users (user_id, FullName, role, Address, PhoneNumber, email, is_premium, premium_expiry, balance, img) VALUES
+('CUS0001', 'John Smitch', 'shopkeeper', '123 Main Street, New York', '1234567890', 'johnsmith@example.com', 0, NULL, 1000.00, 'https://placehold.co/400'),
+('CUS0002', 'John Doe', 'user', '123 Main Street, New York', '1234562890', 'johndoe@example.com', 0, NULL, 1000.00, 'https://placehold.co/400'),
+('CUS0003', 'Alice Johnson', 'supporter', '456 Oak Avenue, San Francisco', '9876543210', 'alicejohnson@example.com', 0, NULL, 500.00, 'https://placehold.co/400'),
+('CUS0004', 'Bob Williams', 'admin', '789 Pine Road, Chicago', '5555555555', 'bobwilliams@example.com', 0, NULL, 0.00, 'https://placehold.co/400'),
+('CUS0005', 'Emma Brown', 'shopkeeper', '112 Maple Drive, Austin', '5551112233', 'emmabrown@example.com', 1, '2025-06-01 00:00:00', 1500.00, 'https://placehold.co/400'),
+('CUS0006', 'Liam Harris', 'user', '789 Elm Street, Miami', '5552334455', 'liamharris@example.com', 0, NULL, 1000.00, 'https://placehold.co/400'),
+('CUS0007', 'Sophia Davis', 'user', '321 Birch Road, Denver', '5555445566', 'sophiadavis@example.com', 0, NULL, 2000.00, 'https://placehold.co/400'),
+('CUS0008', 'Mason Martinez', 'shopkeeper', '654 Pine Avenue, Seattle', '5556677880', 'masonmartinez@example.com', 1, '2025-06-01 00:00:00', 1200.00, 'https://placehold.co/400'),
+('CUS0009', 'Olivia Anderson', 'user', '987 Oak Lane, Los Angeles', '5558899000', 'oliviaanderson@example.com', 0, NULL, 300.00, 'https://placehold.co/400'),
+('CUS0010', 'James Wilson', 'admin', '543 Cedar Street, Boston', '5551122334', 'jameswilson@example.com', 0, NULL, 0.00, 'https://placehold.co/400'),
+('CUS0011', 'Isabella Lee', 'supporter', '678 Maple Drive, Phoenix', '5552233445', 'isabellalee@example.com', 1, '2025-07-01 00:00:00', 800.00, 'https://placehold.co/400'),
+('CUS0012', 'Lucas Scott', 'shopkeeper', '321 Elm Street, Dallas', '5553344556', 'lucasscott@example.com', 0, NULL, 1200.00, 'https://placehold.co/400'),
+('CUS0013', 'Charlotte Walker', 'user', '432 Pine Avenue, Houston', '5554455667', 'charlottewalker@example.com', 0, NULL, 950.00, 'https://placehold.co/400'),
+('CUS0014', 'Henry Adams', 'supporter', '876 Birch Road, Chicago', '5555566778', 'henryadams@example.com', 1, '2025-08-01 00:00:00', 600.00, 'https://placehold.co/400'),
+('CUS0015', 'Amelia Taylor', 'admin', '234 Oak Lane, San Francisco', '5556677881', 'ameliataylor@example.com', 0, NULL, 0.00, 'https://placehold.co/400');
+
+INSERT INTO Account (acc_id, password, email, regisDate, user_id, verification_token, is_verified) VALUES
+('ACC0001', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'johnsmith@example.com', NOW(), 'CUS0001', 'token1', 1),
+('ACC0002', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'johndoe@example.com', NOW(), 'CUS0002', 'token1', 1),
+('ACC0003', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'alicejohnson@example.com', NOW(), 'CUS0003', 'token2', 0),
+('ACC0004', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'bobwilliams@example.com', NOW(), 'CUS0004', 'token3', 1),
+('ACC0005', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'emmabrown@example.com', NOW(), 'CUS0005', 'token4', 1),
+('ACC0006', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'liamharris@example.com', NOW(), 'CUS0006', 'token5', 1),
+('ACC0007', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'sophiadavis@example.com', NOW(), 'CUS0007', 'token6', 1),
+('ACC0008', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'masonmartinez@example.com', NOW(), 'CUS0008', 'token7', 1),
+('ACC0009', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'oliviaanderson@example.com', NOW(), 'CUS0009', 'token8', 0),
+('ACC0010', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'jameswilson@example.com', NOW(), 'CUS0010', 'token9', 1),
+('ACC0011', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'isabellalee@example.com', NOW(), 'CUS0011', 'token10', 1),
+('ACC0012', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'lucasscott@example.com', NOW(), 'CUS0012', 'token11', 1),
+('ACC0013', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'charlottewalker@example.com', NOW(), 'CUS0013', 'token12', 0),
+('ACC0014', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'henryadams@example.com', NOW(), 'CUS0014', 'token13', 1),
+('ACC0015', '$2a$10$btBRXfHjhF8byrYchhbmkuUWNbDML73VKTNbeVxtmapZ8LGKyEP2i', 'ameliataylor@example.com', NOW(), 'CUS0015', 'token14', 1);
+
+-- Cấp 1: Các danh mục cha
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(1, 'Electronics', NULL, 'electronics', 1), -- đồ điện tử
+(2, 'Vehicles', NULL, 'vehicles', 1), -- xe cộ
+(3, 'Home Appliances', NULL, 'home-appliances', 1), -- thiết bị gia dụng
+(4, 'Furniture', NULL, 'furniture', 1), -- nội thất
+(5, 'Fashion', NULL, 'fashion', 1), -- thời trang
+(6, 'Jewelry', NULL, 'jewelry', 1), -- trang sức
+(7, 'Pets', NULL, 'pets', 1), -- thú cưng
+(8, 'Digital Goods', NULL, 'digital-goods', 1), -- sản phẩm điện tử
+(9, 'Books & Documents', NULL, 'books-documents', 1); -- sách & tài liệu
+
+-- Cấp 2: Các danh mục con với `parent_id` tham chiếu đến các danh mục cha
+-- Electronics
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(10, 'Laptop', 1, 'laptop', 2),
+(11, 'Phone', 1, 'phone', 2),
+(12, 'Camera', 1, 'camera', 2),
+(13, 'TV', 1, 'tv', 2),
+(14, 'Accessory', 1, 'accessory', 2);
+
+-- Vehicles
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(15, 'Car', 2, 'car', 2),
+(16, 'Mortorbike', 2, 'mortorbike', 2),
+(17, 'Tram', 2, 'tram', 2),
+(18, 'Components', 2, 'components', 2);
+
+-- Home Appliances
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(19, 'Refrigerators', 3, 'refrigerators', 2),
+(20, 'Washing Machines', 3, 'washing-machines', 2),
+(21, 'Kitchen Appliances', 3, 'kitchen-appliances', 2),
+(22, 'Air-Conditioners', 3, 'air-conditioners', 2),
+(23, 'Blenders', 3, 'blenders', 2);
+
+-- Furniture
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(24, 'Cabinets', 4, 'cabinets', 2),
+(25, 'Tables', 4, 'tables', 2),
+(26, 'Chairs', 4, 'chairs', 2),
+(27, 'Beds', 4, 'beds', 2),
+(28, 'Office Furniture', 4, 'office-furniture', 2);
+
+-- Fashion
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(29, 'Clothing', 5, 'clothing', 2),
+(30, 'Hats & Caps', 5, 'hat', 2),
+(31, 'Shoes', 5, 'shoes', 2),
+(32, 'Bags', 5, 'bags', 2),
+(33, 'Sunglasses', 5, 'sunglasses', 2);
+
+-- Jewelry
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(34, 'Rings', 6, 'rings', 2),
+(35, 'Watches', 6, 'watches', 2),
+(36, 'Earrings', 6, 'earrings', 2),
+(37, 'Necklaces', 6, 'necklaces', 2);
+
+-- Pets
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(38, 'Pet Food', 7, 'pet-food', 2),
+(39, 'Pet Toys', 7, 'pet-toys', 2),
+(40, 'Pet Clothing', 7, 'pet-clothing', 2),
+(41, 'Dogs', 7, 'dogs', 2),
+(42, 'Cats', 7, 'cats', 2),
+(43, 'Birds', 7, 'birds', 2),
+(44, 'Fish', 7, 'fish', 2),
+(45, 'Hamsters', 7, 'hamsters', 2),
+(46, 'Turtles', 7, 'turtles', 2);
+
+-- Digital Goods
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(47, 'Software', 8, 'software', 2),
+(48, 'EBooks', 8, 'ebooks', 2),
+(49, 'Courses', 8, 'courses', 2),
+(50, 'Licenses', 8, 'licenses', 2);
+
+-- Books & Documents
+INSERT INTO categories (category_id, name, parent_id, slug, level) VALUES
+(51, 'Textbooks', 9, 'textbooks', 2),
+(52, 'Novels', 9, 'novels', 2),
+(53, 'Comics', 9, 'comics', 2),
+(54, 'Books', 9, 'books', 2);
 
 INSERT INTO product (product_id, user_id, category_id, title, description, price, location, status, is_priority, created_at, updated_at) VALUES
-('PROD001', 'US00002', NULL, 'Men\'s T-Shirt', 'High-quality cotton men\'s t-shirt', 15.00, 'New York', 'active', 0, NOW(), NOW()),
-('PROD002', 'US00002', NULL, 'Sneaker Shoes', 'Trendy sports sneakers', 50.00, 'San Francisco', 'active', 1, NOW(), NOW()),
-('PROD003', 'US00003', NULL, 'Travel Backpack', 'Waterproof travel backpack', 30.00, 'Chicago', 'active', 0, NOW(), NOW());
+('PRD0001', 'CUS0001', 41, N'shop bán chó ở 151/15 Âu Cơ', N'Chó con bán tại shop 151/15 Âu Cơ, đã tiêm vacxin, sức khỏe tốt.', 1500000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0002', 'CUS0002', 41, N'poodle lai nhật , đã tim vacxin', N'Poodle lai Nhật, đã tiêm vacxin đầy đủ, thân thiện.', 800000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0003', 'CUS0003', 41, N'Cần tìm nhà mới cho cún', N'Cún con khỏe mạnh, cần tìm chủ mới yêu thương.', 2500000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0004', 'CUS0004', 41, N'Corgi nhà đẻ', N'Corgi thuần chủng, nhà đẻ, dễ thương.', 2000000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0005', 'CUS0005', 41, N'chó poodle con lai', N'Poodle con lai, giá rẻ, phù hợp nuôi làm thú cưng.', 300000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0006', 'CUS0006', 41, N'bán chó phóc sóc tại shop 130 đường 2/9 đà nẵng', N'Phốc sóc thuần chủng, bán tại shop 130 đường 2/9 Đà Nẵng.', 1500000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0007', 'CUS0007', 41, N'Chó Labrador', N'Chó Labrador thân thiện, thông minh.', 1500000, N'Quận Ngũ Hành Sơn', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0008', 'CUS0008', 41, N'chó pom thuần chủng', N'Pom thuần chủng, lông dày, nhỏ gọn.', 5500000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0009', 'CUS0009', 41, N'cần tìm chủ mới cho bé corgi', N'Bé corgi cần chủ mới, dễ thương.', 3000000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0010', 'CUS0010', 41, N'Tìm nhà mới cho bé', N'Bé chó cần tìm nhà mới, sức khỏe tốt.', 3500000, N'Không có', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0011', 'CUS0011', 41, N'Chó con cần tìm chủ, freeship', N'Chó con cần tìm chủ mới, hỗ trợ freeship.', 50000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0012', 'CUS0012', 41, N'malinois becgie bỉ', N'Chó Malinois Becgie Bỉ, thông minh, trung thành.', 5000000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0013', 'CUS0013', 41, N'Thuần, xinh đẹp , phốc sốc thái. 55 thái thị bôi', N'Phốc sóc Thái thuần chủng, lông dày, ngoại hình đẹp.', 6800000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0014', 'CUS0014', 41, N'poodle bò sữa xinh iuuu', N'Poodle bò sữa, ngoại hình dễ thương.', 3333333, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0015', 'CUS0015', 41, N'Chó Phốc Hươu 1 tháng tuổi có fix nhẹ', N'Chó Phốc Hươu 1 tháng tuổi, giá có thể thương lượng.', 1100000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0016', 'CUS0001', 41, N'chó corgi đực 3 tháng nặng 10kg , poodle cái', N'Chó corgi đực 3 tháng tuổi, nặng 10kg, poodle cái.', 2500000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0017', 'CUS0002', 41, N'2be chó  đã tiêm ngừa đủ 2mui bé 4ky5 và bé 4ky', N'2 bé chó đã tiêm ngừa đầy đủ, cân nặng 4.5kg và 4kg.', 4500000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0018', 'CUS0003', 41, N'bé Poodle Bò sữa đễ thương ngoan', N'Poodle bò sữa dễ thương, ngoan ngoãn.', 1550000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0019', 'CUS0004', 41, N'Chó Phú Quốc_Còn 1 Bé Cuối Cực RẺ_Chân Huyền Đề', N'Chó Phú Quốc, còn 1 bé cuối, chân huyền đề.', 600000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0020', 'CUS0005', 41, N'có việc gấp cần thanh lý hết giá nhẹ nhàng', N'Thanh lý chó giá rẻ do có việc gấp.', 500000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0021', 'CUS0006', 41, N'corgi cute xinh iuuuuu55 thái thị bôi, đà nẵng', N'Corgi dễ thương, xinh xắn, địa chỉ 55 Thái Thị Bôi.', 4343434, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0022', 'CUS0001', 16, N'Drim thái 1997 rin đẹp', N'Xe Drim Thái 1997, zin đẹp, giấy tờ đầy đủ.', 18500000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0023', 'CUS0002', 16, N'Ex xuống áo 2010 đủ màu nợ xấu trả trước 9 triệu', N'Exciter 2010, nhiều màu, hỗ trợ trả góp.', 26800000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0024', 'CUS0003', 16, N'Cần bán xe Vespa ie phun xăng điện tử biển số 43', N'Vespa ie phun xăng điện tử, biển số 43, giấy tờ đầy đủ.', 6900000, N'Quận Ngũ Hành Sơn', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0025', 'CUS0004', 16, N'ab biển số 92 giấy tờ đầy đủ máy êm ru cần bán', N'Xe AB biển số 92, máy êm, giấy tờ đầy đủ.', 6900000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0026', 'CUS0005', 11, N'Xiaomi Mi 10 Pro', N'Smartphone Xiaomi Mi 10 Pro, camera 108MP.', 3500000, N'Không có', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0027', 'CUS0006', 11, N'(Đà Nẵng) Oppo A3x 99% full cn pin trâu nhanh 45w', N'Oppo A3x, pin trâu, sạc nhanh 45W, máy 99%.', 2500000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0028', 'CUS0007', 11, N'(Đà Nẵng) Oppo F11 Ram|256 keng bh full cn', N'Oppo F11, RAM lớn, bảo hành đầy đủ.', 1600000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0029', 'CUS0008', 11, N'iPhone 15 pro tặng Air-pod góp bao nợ xấu', N'iPhone 15 Pro, tặng kèm AirPods, hỗ trợ góp.', 13490000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0030', 'CUS0009', 25, N'Sofa vải cao cấp + Dài 2.0 mét mới 100%', N'Sofa vải cao cấp, dài 2m, mới 100%.', 4900000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0031', 'CUS0010', 25, N'Bộ bàn ghế gỗ đẹp, chắc chắn', N'Bộ bàn ghế gỗ, thiết kế đẹp, chắc chắn.', 3500000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0032', 'CUS0011', 25, N'Sofa góc + vải cao cấp + KT 2.4x1.5mét mới 100%', N'Sofa góc, vải cao cấp, kích thước 2.4x1.5m, mới 100%.', 7000000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0033', 'CUS0012', 54, N'COMBO 2 SÁCH TOÁN VĂN ANH TỰ LUYỆN, ĐỀ CƯƠNG 7', N'Combo 2 sách Toán Văn Anh tự luyện, đề cương lớp 7.', 250000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0034', 'CUS0013', 54, N'Sách mới 99%, đa số chưa đọc.', N'Sách mới 99%, đa số chưa đọc.', 45000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0035', 'CUS0014', 54, N'Thanh lý thùng truyện hơn 75q', N'Thanh lý thùng truyện tranh hơn 75 quyển.', 250000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0036', 'CUS0001', 54, N'COMBO 2 SÁCH TOÁN 7 PHÁT TRIỂN NĂNG LỰC T1,2', N'Combo 2 sách Toán 7 phát triển năng lực tập 1, 2.', 126000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0037', 'CUS0002', 54, N'trọn bộ 2 tập novel Mỹ nhân', N'Trọn bộ 2 tập tiểu thuyết Mỹ nhân.', 90000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0038', 'CUS0003', 54, N'truyện tranh Đến ngày gặp anh (like new)', N'Truyện tranh Đến ngày gặp anh, tình trạng gần như mới.', 80000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0039', 'CUS0004', 54, N'Sách Thế Giới Phẳng T5', N'Sách Thế Giới Phẳng tập 5.', 150000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0040', 'CUS0005', 54, N'Tru Tiên tập 5 - Tiêu Đỉnh', N'Tru Tiên tập 5, dịch giả Tiêu Đỉnh.', 100000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0041', 'CUS0006', 54, N'Tru Tiên tập 1 - Đào Bạch Liên dịch', N'Tru Tiên tập 1, dịch giả Đào Bạch Liên.', 100000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0042', 'CUS0007', 54, N'Tru Tiên tập 6 - Đạo Bạch Liên dịch', N'Tru Tiên tập 6, dịch giả Đạo Bạch Liên.', 100000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0043', 'CUS0008', 54, N'Tru Tiên tập 4 - Đạo Bạch Liên', N'Tru Tiên tập 4, dịch giả Đạo Bạch Liên.', 100000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0044', 'CUS0009', 54, N'Tru Tiên tập 3 - Đào Bạch Liên Địch', N'Tru Tiên tập 3, dịch giả Đào Bạch Liên.', 100000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0045', 'CUS0010', 54, N'Tru Tiên tập 2 - Đào Bạch Liên', N'Tru Tiên tập 2, dịch giả Đào Bạch Liên.', 100000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0046', 'CUS0011', 3, N'Bán Quạt Daikio nước 2 Tầng', N'Quạt Daikio nước 2 tầng, làm mát hiệu quả.', 2500000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0047', 'CUS0012', 3, N'Quạt hơi nước lớn Daikio DK-5000D 45L –đã dùng 95%', N'Quạt hơi nước lớn Daikio DK-5000D dung tích 45L, đã qua sử dụng 95%.', 1800000, N'Không có', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0048', 'CUS0001', 3, N'Quạt hơi nươc dư ra', N'Quạt hơi nước dư, còn mới.', 350000, N'Quận Sơn Trà', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0049', 'CUS0002', 3, N'Quạt Hơi Nước', N'Quạt hơi nước, làm mát hiệu quả.', 1200000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0050', 'CUS0003', 3, N'Quạt làm mát Daikio DK-5000C', N'Quạt làm mát Daikio DK-5000C, công suất lớn.', 1350000, N'Quận Sơn Trà', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0051', 'CUS0004', 3, N'cần bán quạt hơi nước', N'Quạt hơi nước đã qua sử dụng, còn tốt.', 2500000, N'Không có', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0052', 'CUS0005', 3, N'Bán lại cây quạt chạy êm', N'Quạt chạy êm, còn mới.', 150000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0053', 'CUS0006', 3, N'Cần bán quạt hơi nước đã qua sử dụng.', N'Quạt hơi nước đã qua sử dụng, giá rẻ.', 500000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0054', 'CUS0007', 3, N'quạt hơi nước Daikiosan không dùng cần pass', N'Quạt hơi nước Daikiosan, ít dùng, cần pass lại.', 800000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0055', 'CUS0008', 3, N'quạt', N'Quạt điện, giá tốt', 123456, N'Quận Sơn Trà', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0056', 'CUS0009', 3, N'QUẠT HƠI NƯỚC 40L MỚI 95%', N'Quạt hơi nước dung tích 40L, còn mới 95%.', 2500000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0057', 'CUS0010', 3, N'quạt hơi nước', N'Quạt hơi nước, làm mát nhanh.', 500000, N'Quận Ngũ Hành Sơn', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0058', 'CUS0011', 3, N'quạt ít dùng', N'Quạt điện, ít sử dụng.', 550000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0059', 'CUS0012', 29, N'Áo dệt kim 2 mảnh', N'Áo dệt kim 2 mảnh, thời trang nữ.', 40000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0060', 'CUS0013', 29, N'Váy hoa nhí cúp ngực màu hồng size S', N'Váy hoa nhí, màu hồng, size S.', 49000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0061', 'CUS0014', 29, N'Áo lệch vai màu quả mơ mặc 1l', N'Áo lệch vai màu quả mơ, mặc 1 lần.', 30000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0062', 'CUS0015', 29, N'Áo thun babytee đỏ chưa mặc lần nào', N'Áo thun babytee đỏ, chưa mặc.', 30000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0063', 'CUS0001', 31, N'Reebok chính hãng', N'Giày Reebok chính hãng, chất lượng tốt.', 400000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0064', 'CUS0002', 29, N'Set AGUJA áo phối lưới NEW', N'Set AGUJA áo phối lưới, hàng mới.', 149000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0065', 'CUS0003', 29, N'pass hết tất cả', N'Tranh phục nữ, pass hết tất cả.', 490000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0066', 'CUS0004', 29, N'pass hết tất cả', N'Tranh phục nữ, pass hết tất cả.', 490000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0067', 'CUS0005', 29, N'Kaki Pants Uniqlo', N'Quần kaki Uniqlo, hàng chính hãng.', 70000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0068', 'CUS0006', 29, N'Cargo Pants Korea', N'Quần cargo Hàn Quốc, thời trang.', 70000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0069', 'CUS0007', 29, N'Jean Stand Ard', N'Quần jean Stand Ard, bền đẹp.', 70000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0070', 'CUS0008', 29, N'Jean Real Standard', N'Quần jean Real Standard, chất lượng.', 70000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0071', 'CUS0009', 29, N'Jean Lolita', N'Quần jean Lolita, kiểu dáng trẻ trung.', 80000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0072', 'CUS0010', 29, N'Jean Mc.Apache', N'Quần jean Mc.Apache, hàng đẹp.', 80000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0073', 'CUS0011', 29, N'Jean Lolita E.1965', N'Quần jean Lolita E.1965, thời trang.', 80000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0074', 'CUS0012', 29, N'Jean Blue Ed Win 503 Trip', N'Quần jean Blue Ed Win 503 Trip.', 90000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0075', 'CUS0013', 29, N'H&M chính hãng', N'Quần áo H&M chính hãng.', 250000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0076', 'CUS0014', 29, N'bộ thể thao đồ đôi nam nữ', N'Bộ thể thao đồ đôi nam nữ.', 200000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0077', 'CUS0015', 29, N'bộ thể thao nam thun lạnh', N'Bộ thể thao nam thun lạnh.', 180000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0078', 'CUS0001', 29, N'bán ao thun mỹ . a em 70-80 kg đẹp', N'Áo thun Mỹ, dành cho nam 70-80kg.', 50000, N'Quận Thanh Khê', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0079', 'CUS0001', 31, N'Giày hiệu Nike chính hãng 100 % size42', N'Giày Nike chính hãng, size 42, chất lượng tốt.', 280000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0080', 'CUS0002', 31, N'Giầy Adidas chính hãng sz 40', N'Giày Adidas chính hãng, size 40.', 1200000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0081', 'CUS0003', 31, N'giày NIKE jodan size 41 độ mới 98%', N'Giày Nike Jordan, size 41, độ mới 98%.', 600000, N'Quận Sơn Trà', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0082', 'CUS0004', 31, N'giày yonex chính hãng size 38 độ mới 97%', N'Giày Yonex chính hãng, size 38, độ mới 97%.', 650000, N'Quận Sơn Trà', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0083', 'CUS0005', 31, N'giày NIKE chính hãng size 40.5 độ mới 97%', N'Giày Nike chính hãng, size 40.5, độ mới 97%.', 400000, N'Quận Sơn Trà', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0084', 'CUS0006', 31, N'Giày Lecop chính hãng Pháp - Size 40', N'Giày Lecop chính hãng Pháp, size 40.', 480000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0085', 'CUS0007', 31, N'Dép sách tay Tommy', N'Dép sách tay Tommy, hàng hiệu.', 1000000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0086', 'CUS0008', 31, N'Cần bán đôi helly hansen', N'Giày Helly Hansen, cần bán.', 750000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0087', 'CUS0009', 31, N'Giày sneaker The North Face chính hãng.', N'Giày sneaker The North Face chính hãng.', 680000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0088', 'CUS0010', 31, N'Giày Skechers chống thấm nước. Mới', N'Giày Skechers chống thấm nước, mới.', 690000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0089', 'CUS0011', 31, N'Khui kiện VIP Giày D.IOR  Size 41', N'Giày D.IOR VIP, size 41.', 1100000, N'Quận Liên Chiểu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0090', 'CUS0012', 31, N'Giày Cầu lông Mizuno wave claw neo 3 size 42', N'Giày cầu lông Mizuno Wave Claw Neo 3, size 42.', 2700000, N'Quận Cẩm Lệ', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0091', 'CUS0013', 31, N'Cần bán đôi sperry size 41', N'Giày Sperry size 41, cần bán.', 550000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0092', 'CUS0014', 31, N'Giày lười size 43 -43,5 da thật, đế đúc.', N'Giày lười da thật, size 43-43.5, đế đúc.', 300000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27'),
+('PRD0093', 'CUS0015', 31, N'Cần bán đôi Valentino size 41.41,5', N'Giày Valentino size 41-41.5, cần bán.', 550000, N'Quận Hải Châu', 'active', 0, '2025-06-10 20:50:27', '2025-06-10 20:50:27');
+INSERT INTO product_images (img_id, product_id, image_url, is_primary) VALUES
+(1, 'PRD0001', 'https://cdn.chotot.com/UALbzikAtjwyXAyK4nzIQkJG39AxsN82tHagPrd5fsw/preset:listing/plain/af6c2f2a19d8984d938d14829271d602-2922019014056172369.jpg', 1),
+(2, 'PRD0002', 'https://cdn.chotot.com/6bTSyJ08LrD_ywsCZobUIz7IGfVJIaYcGh2kCDsuR-E/preset:listing/plain/c08853fec451e7e13acead7ec9dba1b3-2934986213258618389.jpg', 1),
+(3, 'PRD0003', 'https://cdn.chotot.com/QNISX_gJ4JcdxBi-BXspklehRPjNcHsbmeN1MlGvThI/preset:listing/plain/577380cebac39e3cc4fcda8ab8503d0c-2935268844303962609.jpg', 1),
+(4, 'PRD0004', 'https://cdn.chotot.com/CR93yfxlZoJXuk3HNItCZ4bKuBNRVnp0nsk3g51j-OU/preset:listing/plain/13691c9733920d993ef4dcc6418f9110-2935262639749166287.jpg', 1),
+(5, 'PRD0005', 'https://cdn.chotot.com/TJFOKCU-7Xd8jzuw_lRuOzgTACVWv_BjJWMAmiIMNXc/preset:listing/plain/0aa161d6144f8a11203b29e14a814c23-2935252203932009242.jpg', 1),
+(6, 'PRD0006', 'https://cdn.chotot.com/RwFKpjzF-gyWW9F2Qa09-s1K2EhVfuqq1WNhD6Lrc3I/preset:listing/plain/87a38482bf658aa8e08871a2389ec46c-2935250973760804839.jpg', 1),
+(7, 'PRD0007', 'https://cdn.chotot.com/MD8e4N56aWkT2qXleM5WQN0s2B_hLY8G2yLfTx4Qrrw/preset:listing/plain/375dc19d59cc37537c595db3fe9aff27-2935243908380591465.jpg', 1),
+(8, 'PRD0008', 'https://cdn.chotot.com/G9WUXOYIxXvgCU2rH2yNw-0D-F9NO-cRA3aQ4NfflOA/preset:listing/plain/91fcad2d6ab1a7af0c0f1d7efb4bd01d-2934787852460430790.jpg', 1),
+(9, 'PRD0009', 'https://cdn.chotot.com/oYLlzNffQSv6CuCMMS0Ht6WhXBe6x9pP0fw85fVTT7U/preset:listing/plain/28c075752ccbc21131dba9516550692a-2935210692995863507.jpg', 1),
+(10, 'PRD0010', 'https://cdn.chotot.com/VnGlmfThAoMZkGHHx7Pij7YKXMoZqvA4KT4_fiynJq0/preset:listing/plain/55dfd14da8fa89d9266848613407ac64-2935199225220552679.jpg', 1),
+(11, 'PRD0011', 'https://cdn.chotot.com/1E2ZSuvmyJ-b6VEbwyUVkToAuo_UFCOW3L7hUhoqybM/preset:listing/plain/56007da424aae4d5ce108d10074d98ea-2935111493861393712.jpg', 1),
+(12, 'PRD0012', 'https://cdn.chotot.com/GNaomQGmmTTgYJVPbqdWmNv7XSP3o6kGH9oL5jGJuc8/preset:listing/plain/2c4641598e099d4f579250c4f5f2d21c-2934050329725155349.jpg', 1),
+(13, 'PRD0013', 'https://cdn.chotot.com/uk0RysyPTR-PgwL7_ZYmXemK_yoi2oEoZNHqi7-b8YA/preset:listing/plain/05416e936b075e1cb0a65aa4224d5080-2934064706989897749.jpg', 1),
+(14, 'PRD0014', 'https://cdn.chotot.com/WnSF23f8kS7dRxfk8zXPAj5KHeqnfojWHcHpbSlQBag/preset:listing/plain/40cf77f93e62565e5888792f94cf4009-2935104549200547367.jpg', 1),
+(15, 'PRD0015', 'https://cdn.chotot.com/FnYIK0Q-HyL5hBKaz-ULLZXyLitmh_KQ3pC8cjmxAEs/preset:listing/plain/16fe174576c67ca2df173827408d524f-2935069476957247463.jpg', 1),
+(16, 'PRD0016', 'https://cdn.chotot.com/srQ0oFsogcV9X4xSOB7pt1MrR1F6UmMGC1aykwReA5s/preset:listing/plain/7ff6e018c372977bee0b2edf581db0ee-2935066668762943015.jpg', 1),
+(17, 'PRD0017', 'https://cdn.chotot.com/ABH2Nkabg2CuoTVKi2ONHpMZJGrllYFxFD550K50Yo4/preset:listing/plain/024fa5328bbdb2bec73e3139ecd5c351-2935055723568495020.jpg', 1),
+(18, 'PRD0018', 'https://cdn.chotot.com/jzvOAIT8NXfKm1w9Wu-4_MKuLc6qOHaGnAZCwd38Wn0/preset:listing/plain/2eaddc977cde32be844f4f90d8c870a1-2935223455926144551.jpg', 1),
+(19, 'PRD0019', 'https://cdn.chotot.com/6xr0eP0Y7k_30CZtgV-1E2f-FEb9nbSBgBgOiJwuUmo/preset:listing/plain/3682273494d17d7f346689fbc179946d-2934979271616026599.jpg', 1),
+(20, 'PRD0020', 'https://cdn.chotot.com/ZEEBJS57n7D98QtzEYdNt11sBso9iGis_834pou-64k/preset:listing/plain/ef754ebb2952b56662077a66c2af252e-2934790560098079139.jpg', 1),
+(21, 'PRD0021', 'https://cdn.chotot.com/PAX_inTe1SD3pTPlAUke3yXLD9dtyrHeK5H1vzGSLqg/preset:listing/plain/fe18471c4530caf049254ea8b07f2565-2934368748684038563.jpg', 1),
+(22, 'PRD0022', 'https://cdn.chotot.com/BFPtGqw6jns90J2q02nYEc0OrP15Z9pZTceRvUx_iZ4/preset:listing/plain/7e7acd0a75e7763821f1e25ed79260d4-2929701480908764330.jpg', 1),
+(23, 'PRD0023', 'https://cdn.chotot.com/8i3IZfuJ9HkDup1Sh5dRuWKRzj4GhLdrZushZigww8o/preset:listing/plain/efb6514e98d6be9ed14b75811e64e819-2933616500125899890.jpg', 1),
+(24, 'PRD0024', 'https://cdn.chotot.com/lrWsMtX-RHZy-JbKyz8QOhKRyUZqzOnmzknQ1bI2Q0k/preset:listing/plain/43a7ce585b28f2428fbe302b1b5bfaee-2932777614291503487.jpg', 1),
+(25, 'PRD0025', 'https://cdn.chotot.com/agk7Ib_P4m9yQ_2uHSe-mLpG3fQOOARBUV8z2hHt-es/preset:listing/plain/a946a774f09cfd5d6e6ffa56aec1cc6f-2925682423635954489.jpg', 1),
+(26, 'PRD0026', 'https://cdn.chotot.com/KUFU8rp0mwrScwO0GGoExwZXXkOSA_01yJDl9v6RoOs/preset:listing/plain/eb528d461481326c82db316deac5e9e0-2935347448964119636.jpg', 1),
+(27, 'PRD0027', 'https://cdn.chotot.com/IlYFMZo50cmMcxqxtIkeSxeb1YdtEy74DVB_-bQgDks/preset:listing/plain/c3c02895bee5e39089ca4fba12837a26-2935141028345206759.jpg', 1),
+(28, 'PRD0028', 'https://cdn.chotot.com/Ryvt7TYmf3WtLL05tYeOYowRF8eDxBIUSIuiPT65AxU/preset:listing/plain/320bea6a8851f3f2d1ee3a92a0bedc61-2934521381673737199.jpg', 1),
+(29, 'PRD0029', 'https://cdn.chotot.com/zDvjMP9d47bU51fJvu2AikODDcEloR1_PwGNxliQbFo/preset:listing/plain/9850937ae11790dae27ef0cb14965b5c-2887971550404339844.jpg', 1),
+(30, 'PRD0030', 'https://cdn.chotot.com/8TiHbRfT6NCHx2mVx-_gqDVLszZvGTUXHOjk3rXro04/preset:listing/plain/82b9dfbe718196c90f5af4ce67391c4a-2934961839507325153.jpg', 1),
+(31, 'PRD0031', 'https://cdn.chotot.com/B6NWNi1vQdDJinlM9oUBHsGk6IZgFUOuYPn2kexgM7c/preset:listing/plain/acd002882ce5039579ca395120e28bd2-2932341482600856197.jpg', 1),
+(32, 'PRD0032', 'https://cdn.chotot.com/663h9rqrDd_BWrcKBGC8JAlIIfAVYhTDDIpUuxFD4zQ/preset:listing/plain/0d2d8a22d6a9db902d114e30a566a678-2934963029329727015.jpg', 1),
+(33, 'PRD0033', 'https://cdn.chotot.com/0AkOPXiSGeEkpa6pHyRfox0_CEBDh6aZ3fo9B3YdraA/preset:listing/plain/04ac2c63d1e911186a783af1c25c30e4-2935264915285888551.jpg', 1),
+(34, 'PRD0034', 'https://cdn.chotot.com/Y8CMSJC3CDbH5J6ouffJiY5Y6QMRnWnH961u_WCY8BE/preset:listing/plain/21dc661c6c66d6d0f165a82cbb11da4a-2935253374203088423.jpg', 1),
+(35, 'PRD0035', 'https://cdn.chotot.com/Xg7H4FZWYQr-hvUtVSnB0CuuAZy_wwGCt4Oyuz_EZ5Q/preset:listing/plain/0b3027cb3ce953c386efdacb68604bf5-2935211300752882282.jpg', 1),
+(36, 'PRD0036', 'https://cdn.chotot.com/YysoAw12vuCDPqaAN-naV4d7RZoSSGO_scEvFTynI5U/preset:listing/plain/a066ec3e2a32de719ec2796cd6097f38-2935262204483917799.jpg', 1),
+(37, 'PRD0037', 'https://cdn.chotot.com/QifZl0aGrFKqPzODPNHg3LZtJWzoAOhvE6HiU1E-Acg/preset:listing/plain/c64a23d5d82980177a6f61b3348131ab-2935141142441985385.jpg', 1),
+(38, 'PRD0038', 'https://cdn.chotot.com/DetCCyVAF328_8H3Fpjc1chKvXFj6Qsv9rjARXgEYiA/preset:listing/plain/1b2345ed29004a8b3133bd162d9c7848-2935140887531149287.jpg', 1),
+(39, 'PRD0039', 'https://cdn.chotot.com/3g42Bm3div0hSCrDFEQM5_hnKBly4BaacoY2WQzRq08/preset:listing/plain/3fa6c17876c796675c497f8c537044a6-2935101509928633648.jpg', 1),
+(40, 'PRD0040', 'https://cdn.chotot.com/e7S_SqRkZol_scIKSaeKJ2144MtjdObD5TsxLl6Eu1g/preset:listing/plain/bd5826d8857a3a4291f4695c227e2b62-2935101086647141680.jpg', 1),
+(41, 'PRD0041', 'https://cdn.chotot.com/H9hMV-I_fd0y-fbo7RHvq-7prk8rDuNlebevvlVywTo/preset:listing/plain/3662015c66f4083b62e07e7a7ab890f0-2935101023210887143.jpg', 1),
+(42, 'PRD0042', 'https://cdn.chotot.com/_v1tEn9QKMSZazzz3N9afBNJcwUW-5oKOXS_AVvn-Zs/preset:listing/plain/6e51d14890aa9d5074e31bb63a5e907e-2935100952242308400.jpg', 1),
+(43, 'PRD0043', 'https://cdn.chotot.com/MKrnAJbm52sFo743q17vIQZxXqi-s-21D83-frYdSeE/preset:listing/plain/0a402a5a7c90bdf5ad8fe1412749374c-2935100891256014128.jpg', 1),
+(44, 'PRD0044', 'https://cdn.chotot.com/UHy3Y7u3fRHaDQb5-JxjzIovhln6Q5oc_Yq7DyATU8w/preset:listing/plain/7a15f73fa1e904add3ea43792ceb5b2f-2935100824856251943.jpg', 1),
+(45, 'PRD0045', 'https://cdn.chotot.com/vtFqetlcRQSEQeZYetX7oLuCxDhs0SkpRgbizuc6YuM/preset:listing/plain/aabe213f25e74decca1833d64e84067f-2935100762706139111.jpg', 1),
+(46, 'PRD0046', 'https://cdn.chotot.com/hPGTVhVytgFQh_6z4KRFbi745bC2Y9jtNcatF_DyBD8/preset:listing/plain/a4f387127d8504ee8e6b0fff064dc73e-2932034279421059671.jpg', 1),
+(47, 'PRD0047', 'https://cdn.chotot.com/TNwBk9GyMl8JYaOI7Bm0E95RvjJKMsX_9lYehzGqK5Y/preset:listing/plain/2632b47e99a66d6e1032cc9d9f75c476-2935291355654096233.jpg', 1),
+(48, 'PRD0048', 'https://cdn.chotot.com/WVor5g4Iz2_j3klQOGnO15W4s8Ofxe29NW1EXBKVfi8/preset:listing/plain/12cef783d46ff654252bd0c7b21eec86-2935290250227764775.jpg', 1),
+(49, 'PRD0049', 'https://cdn.chotot.com/ztKiTSteIbDP5dTL9YEdLnG8wd1pbyfl6e__Ld7aCbI/preset:listing/plain/61ecc4c645ceac1a48414f392d9d4505-2935280772132034535.jpg', 1),
+(50, 'PRD0050', 'https://cdn.chotot.com/w92hA2GVwVw4YJSZsBMhbjndXOlRDIQpEhCwBURQ5D4/preset:listing/plain/669f582566fff5139af2def9772dfbfa-2935268330233255911.jpg', 1),
+(51, 'PRD0051', 'https://cdn.chotot.com/0Kgqd1Cmp8jgfz2_WHq_Mc0so560I7UzLU3QjDM2h1k/preset:listing/plain/859a06a77f9005202f2f11d209b5d72c-2935268548441834857.jpg', 1),
+(52, 'PRD0052', 'https://cdn.chotot.com/Y9q0Y3Uj6jcXV9JlqXmS0YvUsy4q-AUuZ_Ow7IIQTEI/preset:listing/plain/4cb75da478b475d7b5d56e58c3a12dd8-2935257976002233114.jpg', 1),
+(53, 'PRD0053', 'https://cdn.chotot.com/wfgPySSTKadsupBHTUWFoFdIVVZgABv1-HDiRKt1Ylg/preset:listing/plain/8893b7852b232dfb4ed024b692a48ef7-2935253244766241562.jpg', 1),
+(54, 'PRD0054', 'https://cdn.chotot.com/-pD2cYjR6foJKiN3jQvoVH9DWieHShjz3tXCQ-YLTjE/preset:listing/plain/9f774cfce2641fb7e54d4f0a004971d0-2935251587906293287.jpg', 1),
+(55, 'PRD0055', 'https://cdn.chotot.com/fHxP92c2du6JURAP9fltBKEDOh4DdPzpP5rmjH0ZMpc/preset:listing/plain/4abad72f9148d64c557ce0768ea50c54-2935236300878652638.jpg', 1),
+(56, 'PRD0056', 'https://cdn.chotot.com/afCj_Il2yAoteFsM4BvMlMYEQTgczW9ea6ZK9wFqQJA/preset:listing/plain/534d87032f292656b9ae90fe4e9c1762-2935232155890175527.jpg', 1),
+(57, 'PRD0057', 'https://cdn.chotot.com/4FMPD4uKTPgHk3cEDACtkTjbf3qn5BkRf_6juvd2HrA/preset:listing/plain/f77c0ab67aeb4eda3e23b77171f60884-2935225643836421470.jpg', 1),
+(58, 'PRD0058', 'https://cdn.chotot.com/hNoLevuvzPwNV-m0tiwHhQemrLfaO3LKVqx_gK6SP1w/preset:listing/plain/06cad1143cadb01aa7a4ca40898b5cb9-2935142563816572265.jpg', 1),
+(59, 'PRD0059', 'https://cdn.chotot.com/Nq_cjwRtxi3mpYSppUopCaZ39Pwha6NXtwkgN_PkJ6w/preset:listing/plain/fd1c998a13d65f0928fdb7f17350f592-2935312219177670631.jpg', 1),
+(60, 'PRD0060', 'https://cdn.chotot.com/VYAv5YfY5DC4b33tOWGp3lFlrMwX2IeEwjIvZcN_uzA/preset:listing/plain/61375ff08fb1f10c2958f2de4401c1e9-2935311327566122535.jpg', 1),
+(61, 'PRD0061', 'https://cdn.chotot.com/7B7mXQEwVWymRmQjPvxfO1Q2kLr6mpO0EIpxP3yRmmM/preset:listing/plain/420ee7edad92362528eb108203801f54-2935307820516956135.jpg', 1),
+(62, 'PRD0062', 'https://cdn.chotot.com/r3kHWRJW2tJQ6HkY7GszNN1DScg9ueZzrDWQGOMDrP8/preset:listing/plain/32199448adf5cb4d957557d6731cbca3-2935307438981795367.jpg', 1),
+(63, 'PRD0063', 'https://cdn.chotot.com/us5EmDiZPrKo6N_DBe6aO_HHKBSYf0E-qR7VckiN0MY/preset:listing/plain/1620e3ff04bf0259991f8f99e54244b0-2935306623824776743.jpg', 1),
+(64, 'PRD0064', 'https://cdn.chotot.com/ioT4lDTRGrMdqIsTfW85kMD8viEVYfs1L9YIZIEydks/preset:listing/plain/005eca8b5dc74d4eb59103732ff9ffde-2935305143498490897.jpg', 1),
+(65, 'PRD0065', 'https://cdn.chotot.com/8gPAEBJkgXM4TSK-NjgXd1cOmBVPlobMf8Fki0M8_ZE/preset:listing/plain/a60aa93d6ddcbac6edcfa62f4b56fcb3-2935299993860293649.jpg', 1),
+(66, 'PRD0066', 'https://cdn.chotot.com/RjCLbNi9MIBFg9VU_pRO9fp6mxegbg32MyAW4fg7eBQ/preset:listing/plain/254558cf873244b3fa5658f55e4c4fa0-2935299778848169243.jpg', 1),
+(67, 'PRD0067', 'https://cdn.chotot.com/v06D_YXzwrxD9G827qmVTbcrJHMWyjmseok3WZeJWM0/preset:listing/plain/b4acb5b000e9c7136b6e644b83d17859-2935290034054284305.jpg', 1),
+(68, 'PRD0068', 'https://cdn.chotot.com/ED8Q_ojO05R874khKWouiLBAME-eVNQ0XV-6bNhfhmY/preset:listing/plain/25cb1eefcf44ea43841bf5c7d0f582c5-2935289451522379320.jpg', 1),
+(69, 'PRD0069', 'https://cdn.chotot.com/X884sE85ShkskKWAuWZOJd10msbLmfkAEG_11dVizN8/preset:listing/plain/5b3adb29aa84a847941e7c7dc9acada3-2935288993509529575.jpg', 1),
+(70, 'PRD0070', 'https://cdn.chotot.com/tjzk759V2RBbaBWovqwz0JIyQIhrAOxfXiQ9cyiOyps/preset:listing/plain/33b9a329a07a6eb92e7c9d7000ac7b4d-2935288448304959015.jpg', 1),
+(71, 'PRD0071', 'https://cdn.chotot.com/aA5FALYj4b0rPtVmZq2jcOZv5qGnBg2e8H0bWjciHns/preset:listing/plain/84926db0f6fa35914630b66aac785bcf-2935287943766887992.jpg', 1),
+(72, 'PRD0072', 'https://cdn.chotot.com/iksZC72Nq7pwZfX94l2j7LEI2xn4T4mmR7OxIpF3FZQ/preset:listing/plain/f39db93a8e3aee82cf9fc141b7494f03-2935287166595613713.jpg', 1),
+(73, 'PRD0073', 'https://cdn.chotot.com/QDUb-Lvx_M_L4o2iEhx840NibrABFF5797Jrmf9Qbkg/preset:listing/plain/bf9fcd8687bfdc8f985784fbaec3d3fe-2935286296794028007.jpg', 1),
+(74, 'PRD0074', 'https://cdn.chotot.com/16nwHIJRRF2W5vHMdEK0gIroxqZmh4j25LYdDvjiNs8/preset:listing/plain/c6757a1b9008a268901ece967a7a754e-2935285464933390311.jpg', 1),
+(75, 'PRD0075', 'https://cdn.chotot.com/s7xZ1xtgvw8rOn4DpINNaU7SykSngNMQ2C--7zgn5vQ/preset:listing/plain/458d60d5580df5fa6f50b074f235cbd3-2935283707306721511.jpg', 1),
+(76, 'PRD0076', 'https://cdn.chotot.com/I3p9GyXc93kk2sRrounfLtL3QWh6iokvDs6z0KDBgxo/preset:listing/plain/1b79e9d87429206c20ed68cbc0650062-2935281335892594215.jpg', 1),
+(77, 'PRD0077', 'https://cdn.chotot.com/iVdh9nEZ9l6NXs08d8FPlIYG0TOfQ29GCQxAi_5QSr8/preset:listing/plain/0e34cdce0d72ca3bf4f62a388383c377-2935281218046610983.jpg', 1),
+(78, 'PRD0078', 'https://cdn.chotot.com/b-MVpzp_LO27-BHclCGSWaxTWXyQGBxETAVviuP2hJs/preset:listing/plain/a05b9bd8534f2bac768f9732236d3d20-2935278819295937553.jpg', 1),
+(79, 'PRD0079', 'https://cdn.chotot.com/Chq6wEOCUvINmd4oBUBYjPsPHbQH5QocWlnf-pp8-lo/preset:listing/plain/04dd3abae81c34ad296060c4485f18c5-2935346118699374567.jpg', 1),
+(80, 'PRD0080', 'https://cdn.chotot.com/dhLLtl_1MauV3Slxymk8ToE5zokjDrxJmNP4Hc7Be9o/preset:listing/plain/c0f75160f5648994e1fb0e8098311d47-2935342460569026678.jpg', 1),
+(81, 'PRD0081', 'https://cdn.chotot.com/atCZ3TnG15WW2hHNSi4adLyj5EQniXvyOuTXNJvXQyI/preset:listing/plain/f3210a9807ef31738067bdf732d6eab7-2935339363710785511.jpg', 1),
+(82, 'PRD0082', 'https://cdn.chotot.com/U6i1-X9Lq9MbszZNDnq6Z_kAJvxfrMmWu93K204uYyA/preset:listing/plain/6ebf625b3347d24cb0c83329e66e5018-2935338182550113831.jpg', 1),
+(83, 'PRD0083', 'https://cdn.chotot.com/Vdz4QMZbn4pjjbkyVXVniBFoMasnUpC_VUDjgjiPGqo/preset:listing/plain/fe221d3eb6f0af56f0ff784c4fcd437a-2935337573581894366.jpg', 1),
+(84, 'PRD0084', 'https://cdn.chotot.com/DmWYvIP0XwoZBooboAXgOwY7oVfO7ypJp9Aa7Ks-36U/preset:listing/plain/b578af5f00232b408fae0991b6a864f8-2935282131032011355.jpg', 1),
+(85, 'PRD0085', 'https://cdn.chotot.com/RkGoJxA4j33p72o0Jsh1VTVQoJAYTt-MjVOZBEbkYkA/preset:listing/plain/20f0a3c80718f52c015d7744daa69696-2934942478457709209.jpg', 1),
+(86, 'PRD0086', 'https://cdn.chotot.com/iG02DKl9H0teXCehIKygHkkVbHrTttP74vMpFTdxnP4/preset:listing/plain/9a5187e83110ceef7c8fb5d5b60d8663-2935249450792734247.jpg', 1),
+(87, 'PRD0087', 'https://cdn.chotot.com/1K8WGc5k_OZOrEcg-8Qaqk_eAOK7pAbcaawdmYJrs-8/preset:listing/plain/0448569085abcd03d2a128c5321ef585-2935244891294712849.jpg', 1),
+(88, 'PRD0088', 'https://cdn.chotot.com/V2Zn3dKWTtPeP9sOBc4UJEoABRecWMPhYGNm50sX4fU/preset:listing/plain/447a386ef1ede2fc6a3679125c046038-2935244756822049809.jpg', 1),
+(89, 'PRD0089', 'https://cdn.chotot.com/Rx2e4n5h20RrLXUp94QAR4u4j-XGfSRl-Bpm3f6FK1I/preset:listing/plain/e18a6c4da7f62cb216f69c351b109c56-2935239372854576145.jpg', 1),
+(90, 'PRD0090', 'https://cdn.chotot.com/z62qWMjUDiwK9iTKX5OC2vRTxg11DyRks2brpCK0C68/preset:listing/plain/6a55562539df06d11a7bd495d9ab9ccf-2935236463602549777.jpg', 1),
+(91, 'PRD0091', 'https://cdn.chotot.com/5z4vBDFVV-An2x5nEt31C6GBbDcdYv1YPfaWFKwBe0k/preset:listing/plain/ee906645141388c97e267ded879acadf-2935218872512084396.jpg', 1),
+(92, 'PRD0092', 'https://cdn.chotot.com/ZJeA_Im5bN4BRFLHeEelvw9-Nt-hBo7wEV-5t_isMOI/preset:listing/plain/7361119749a7f8d1f4cada0e11c556f3-2934953585880782823.jpg', 1),
+(93, 'PRD0093', 'https://cdn.chotot.com/u9JWJfweGkiOAqrx75zqH4imGuyUHvuTJ-jSmWylMQM/preset:listing/plain/c92e664a68d316eaeca0636fa58698a7-2935212509139521063.jpg', 1);
+
+INSERT INTO conversation (conversation_id, sender_id, receiver_id, product_id) VALUES
+('CON0001', 'CUS0001', 'CUS0002', 'PRD0001'),
+('CON0002', 'CUS0002', 'CUS0003', 'PRD0002'),
+('CON0003', 'CUS0003', 'CUS0001', 'PRD0003');
+
+-- Messages for conversation 1
+INSERT INTO Messages (message_id, conversation_id, sender_id, content, isRead, type, SentAt, is_recall) VALUES
+('MSG0001', 'CON0001', 'CUS0001', 'Chào bạn, sản phẩm này còn không?', 1, 'text', '2025-06-14 21:00:00', 0),
+('MSG0002', 'CON0001', 'CUS0002', 'Còn bạn nhé!', 1, 'text', '2025-06-14 21:01:00', 0),
+('MSG0003', 'CON0002', 'CUS0002', 'Bạn có thể gửi thêm ảnh sản phẩm không?', 1, 'text', '2025-06-14 21:05:00', 0),
+('MSG0004', 'CON0002', 'CUS0003', 'Đây là ảnh nhé.', 1, 'text', '2025-06-14 21:06:00', 0),
+('MSG0005', 'CON0003', 'CUS0003', 'Sản phẩm này bảo hành bao lâu?', 1, 'text', '2025-06-14 21:10:00', 0),
+('MSG0006', 'CON0003', 'CUS0001', 'Bảo hành 6 tháng bạn nhé.', 0, 'text', '2025-06-14 21:11:00', 0);
+
+-- Các category là đồ vật
+INSERT INTO category_state_options (category_id, options)
+SELECT category_id, '["mới", "cũ", "hư hỏng nhẹ"]'
+FROM categories
+WHERE category_id IN (10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,47,48,49,50,51,52,53,54);
+
+-- Các category là vật sống
+INSERT INTO category_state_options (category_id, options)
+SELECT category_id, '["trưởng thành", "con non"]'
+FROM categories
+WHERE category_id IN (41,42,43,44,45,46);
+
+-- Laptop (category_id = 10)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(10, 'Brand', 'select', '["Acer", "Apple", "Asus", "Dell", "Honor", "HP", "Lenovo", "Microsoft", "MSI", "Other"]', TRUE),
+(10, 'RAM (GB)', 'select', '["2GB", "4GB", "8GB", "16GB", "32GB", "64GB"]', TRUE),
+(10, 'Storage Capacity', 'select', '["128GB", "250GB", "256GB", "320GB", "480GB", "500GB", "512GB", "640GB", "700GB", "750GB", "1TB"]', TRUE),
+(10, 'Storage Type', 'select', '["HDD", "SSD", "Hybrid"]', TRUE),
+(10, 'Processor (CPU)', 'select', '["Intel Core i3", "Intel Core i5", "Intel Core i7", "Intel Core i9", "AMD Ryzen 3", "AMD Ryzen 5", "AMD Ryzen 7", "AMD Ryzen 9", "Apple M1", "Apple M2", "Other"]', TRUE),
+(10, 'Graphics Card (GPU)', 'select', '["Intel UHD", "Intel Iris", "NVIDIA", "AMD", "Other"]', TRUE),
+(10, 'Screen Size', 'select', '["9 - 10.9 inch", "11 - 12.9 inch", "13 - 14.9 inch", "15 - 16.9 inch", "17 - 18.9 inch", "19 - 20.9 inch", "Other"]', TRUE),
+(10, 'Operating System', 'select', '["Windows", "macOS", "Linux", "Other"]', TRUE),
+(10, 'Battery Condition', 'select', '["Good", "Average", "Needs Replacement"]', TRUE),
+(10, 'Warranty Policy', 'select', '["Out of Warranty", "1 month", "2 months", "3 months", "4-6 months", "7-12 months", "13-24 months", "Still Under Warranty"]', TRUE);
+
+-- Phone (category_id = 11)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(11, 'Brand', 'select', '["Apple", "Huawei", "Oppo", "Realme", "Samsung", "Vivo", "Xiaomi", "Other"]', TRUE),
+(11, 'Color', 'select', '["Silver", "Black", "Red", "Pink", "White", "Gold", "Gray", "Blue", "Green", "Purple", "Other"]', TRUE),
+(11, 'Internal Storage (ROM)', 'select', '["8GB", "16GB", "32GB", "64GB", "128GB", "256GB", "512GB", "1TB", "2TB", "Other"]', TRUE),
+(11, 'RAM', 'select', '["2GB", "4GB", "6GB", "8GB", "12GB"]', TRUE),
+(11, 'Warranty Policy', 'select', '["Out of Warranty", "1 month", "2 months", "3 months", "4-6 months", "7-12 months", "13-24 months", "Still Under Warranty"]', TRUE);
+
+-- Camera (category_id = 12)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(12, 'Camera Type', 'select', '["DSLR", "Mirrorless", "Compact", "GoPro", "Other"]', TRUE),
+(12, 'Brand', 'select', '["Canon", "Nikon", "Sony", "Fujifilm", "Panasonic", "Other"]', TRUE),
+(12, 'Warranty Policy', 'select', '["Out of Warranty", "1 month", "2 months", "3 months", "4-6 months", "7-12 months", "13-24 months", "Still Under Warranty"]', TRUE);
+
+-- TV (category_id = 13)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(13, 'Brand', 'select', '["Sony", "Samsung", "LG", "TCL", "Panasonic", "Sharp", "Other"]', TRUE),
+(13, 'Size', 'select', '["32 inch", "40 inch", "43 inch", "50 inch", "55 inch", "65 inch", "75 inch", "Other"]', TRUE),
+(13, 'Warranty Policy', 'select', '["Out of Warranty", "1 month", "2 months", "3 months", "4-6 months", "7-12 months", "13-24 months", "Still Under Warranty"]', TRUE);
+
+-- Accessory (category_id = 14)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(14, 'Accessory Type', 'select', '["Monitor", "Mouse", "Keyboard", "Headphones", "Charging Cable", "Power Bank", "Other"]', TRUE),
+(14, 'Warranty Policy', 'select', '["Out of Warranty", "1 month", "2 months", "3 months", "4-6 months", "7-12 months", "13-24 months", "Still Under Warranty"]', TRUE);
+
+-- Car (category_id = 15)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(15, 'Brand', 'select', '["Audi", "Bentley", "BMW", "Cadillac", "Ferrari", "Ford", "Honda", "Hyundai", "Jeep", "Kia", "Lamborghini", "Lexus", "Mazda", "Mercedes", "Mitsubishi", "Nissan", "Porsche", "Rolls Royce", "Suzuki", "Tesla", "Toyota", "VinFast", "Other"]', TRUE),
+(15, 'Year of Manufacture', 'select', '["Before 1980", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]', TRUE),
+(15, 'Seating Capacity', 'select', '["2", "4", "5", "6", "7", "8", "9", "10", "12", "14", "16"]', TRUE),
+(15, 'Color', 'select', '["Silver", "Black", "Red", "Pink", "White", "Gold", "Gray", "Blue", "Green", "Purple", "Other"]', TRUE),
+(15, 'Fuel Type', 'select', '["Petrol", "Diesel", "Electric", "Hybrid"]', TRUE),
+(15, 'Transmission', 'select', '["Manual", "Automatic", "Semi-automatic"]', TRUE),
+(15, 'Origin', 'select', '["Vietnam", "India", "South Korea", "Thailand", "Taiwan", "Japan", "China", "USA", "Germany", "Other"]', TRUE),
+(15, 'Mileage (km)', 'number', NULL, TRUE);
+
+-- Motorbike (category_id = 16)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(16, 'Brand', 'select', '["Air Blade", "Honda", "Lead", "Suzuki", "Vision", "Yamaha", "Other"]', TRUE),
+(16, 'Engine Displacement (cc)', 'select', '["50", "110", "125", "150", "175", "250+"]', TRUE),
+(15, 'Registration Year', 'select', '["Before 1980", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]', TRUE),
+(16, 'Motorbike Type', 'select', '["Manual", "Scooter", "Clutch"]', TRUE),
+(16, 'Origin', 'select', '["Vietnam", "India", "South Korea", "Thailand", "Taiwan", "Japan", "China", "USA", "Germany", "Other"]', TRUE),
+(16, 'License Plate', 'text', NULL, FALSE),
+(16, 'Mileage (km)', 'number', NULL, FALSE);
+
+-- Tram (category_id = 17)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(17, 'Vehicle Type', 'select', '["Electric Bicycle", "Electric Scooter"]', TRUE),
+(17, 'Battery Condition', 'select', '["Good", "Normal", "Needs Replacement"]', TRUE),
+(17, 'Motor Power', 'select', '["Below 200W", "200 - 250W", "251 - 350W", "351 - 500W", "501 - 1000W", "Above 1000W"]', TRUE),
+(17, 'Origin', 'select', '["Vietnam", "India", "South Korea", "Thailand", "Taiwan", "Japan", "China", "USA", "Germany", "Other"]', TRUE),
+(17, 'Usage Duration', 'text', NULL, FALSE);
+
+-- Components (category_id = 18)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(18, 'Component Type', 'select', '["Motorbike Parts", "Car Parts", "Electric Vehicle Parts", "Other Parts"]', TRUE),
+(18, 'Origin', 'select', '["Vietnam", "India", "South Korea", "Thailand", "Taiwan", "Japan", "China", "USA", "Germany", "Other"]', TRUE);
+
+-- Refrigerators (category_id = 19)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(19, 'Brand', 'select', '["Samsung", "LG", "Panasonic", "Sharp", "Electrolux", "Toshiba"]', TRUE),
+(19, 'Capacity', 'select', '["100L", "150L", "200L", "300L", "400L", "500L+"]', TRUE),
+(19, 'Refrigerator Type', 'select', '["Single Door", "Double Door", "Side by Side", "Bottom Freezer"]', TRUE),
+(19, 'Origin', 'select', '["Vietnam", "India", "South Korea", "Thailand", "Taiwan", "Japan", "China", "USA", "Germany", "Other"]', TRUE),
+(19, 'Warranty Policy', 'select', '["Out of Warranty", "1 month", "2 months", "3 months", "4-6 months", "7-12 months", "13-24 months", "Still Under Warranty"]', TRUE);
+
+-- Washing Machines (category_id = 20)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(20, 'Brand', 'select', '["Samsung", "LG", "Panasonic", "Toshiba", "Electrolux", "Aqua"]', TRUE),
+(20, 'Machine Type', 'select', '["Top Load", "Front Load"]', TRUE),
+(20, 'Washing Capacity', 'select', '["7kg", "8kg", "9kg", "10kg", "12kg+"]', TRUE),
+(20, 'Origin', 'select', '["Vietnam", "India", "South Korea", "Thailand", "Taiwan", "Japan", "China", "USA", "Germany", "Other"]', TRUE),
+(20, 'Warranty Policy', 'select', '["Out of Warranty", "1 month", "2 months", "3 months", "4-6 months", "7-12 months", "13-24 months", "Still Under Warranty"]', TRUE);
+
+-- Kitchen Appliances (category_id = 21)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(21, 'Appliance Type', 'select', '["Microwave", "Gas Stove", "Induction Cooker", "Rice Cooker", "Blender", "Other"]', TRUE),
+(21, 'Brand', 'text', NULL, TRUE),
+(21, 'Origin', 'select', '["Vietnam", "India", "South Korea", "Thailand", "Taiwan", "Japan", "China", "USA", "Germany", "Other"]', TRUE);
+
+-- Air-Conditioners (category_id = 22)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(22, 'Brand', 'select', '["Daikin", "Panasonic", "LG", "Toshiba", "Samsung", "Other"]', TRUE),
+(22, 'Cooling Capacity', 'select', '["1HP", "1.5HP", "2HP", "2.5HP"]', TRUE),
+(22, 'AC Type', 'select', '["1-Way", "2-Way", "Inverter"]', TRUE),
+(22, 'Origin', 'select', '["Vietnam", "India", "South Korea", "Thailand", "Taiwan", "Japan", "China", "USA", "Germany", "Other"]', TRUE),
+(22, 'Warranty Policy', 'select', '["Out of Warranty", "1 month", "2 months", "3 months", "4-6 months", "7-12 months", "13-24 months", "Still Under Warranty"]', TRUE);
+
+-- Blenders (category_id = 23)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(23, 'Brand', 'select', '["Philips", "Panasonic", "Sunhouse", "Bluestone", "Kangaroo", "Toshiba", "Other"]', TRUE),
+(23, 'Capacity', 'select', '["<1L", "1L", "1.5L", "2L+"]', FALSE),
+(23, 'Appliance Type', 'select', '["Blender", "Juicer", "Meat Grinder", "Other"]', TRUE);
+
+-- Cabinets (category_id = 24)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(24, 'Cabinet Type', 'select', '["Wardrobe", "Kitchen Cabinet", "Shoe Cabinet", "Display Cabinet"]', TRUE),
+(24, 'Material', 'select', '["Wood", "Plastic", "Iron", "Stainless Steel", "Other"]', TRUE);
+
+-- Tables (category_id = 25)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(25, 'Table Type', 'select', '["Study Table", "Office Desk", "Dining Table", "Coffee Table", "Dressing Table", "Other"]', TRUE),
+(25, 'Material', 'select', '["Wood", "Glass", "Plastic", "Metal"]', TRUE);
+
+-- Chairs (category_id = 26)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(26, 'Chair Type', 'select', '["Sofa", "Dining Chair", "Office Chair", "Folding Chair", "Gaming Chair", "Other"]', TRUE),
+(26, 'Material', 'select', '["Wood", "Leather", "Fabric", "Plastic", "Metal"]', TRUE);
+
+-- Beds (category_id = 27)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(27, 'Bed Type', 'select', '["Single Bed", "Double Bed", "Bunk Bed", "Folding Bed"]', TRUE),
+(27, 'Material', 'select', '["Wood", "Iron", "Plastic", "Stainless Steel"]', TRUE);
+
+-- Office Furniture (category_id = 28)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(28, 'Furniture Type', 'select', '["Desk", "Chair", "File Cabinet", "Partition", "Storage Cabinet", "Other"]', TRUE),
+(28, 'Material', 'select', '["Wood", "Plastic", "Metal", "Mixed", "Other"]', TRUE),
+(28, 'Quantity', 'number', NULL, TRUE);
+
+-- Clothing (category_id = 29)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(29, 'Clothing Type', 'select', '["Shirt", "Pants", "Dress", "Skirt", "Jacket", "Sportswear", "Other"]', TRUE);
+
+-- Hats & Caps (category_id = 30)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(30, 'Hat Type', 'select', '["Cap", "Bucket Hat", "Beanie", "Wide-Brim Hat", "Helmet", "Other"]', TRUE),
+(30, 'Material', 'select', '["Cotton", "Fleece", "Wool", "Plastic", "Leather"]', TRUE);
+
+-- Shoes (category_id = 31)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(31, 'Shoe Type', 'select', '["Sneakers", "Dress Shoes", "Sandals", "High Heels", "Boots", "Other"]', TRUE),
+(31, 'Size', 'select', '["35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "Other"]', TRUE);
+
+-- Bags (category_id = 32)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(32, 'Bag Type', 'select', '["Handbag", "Crossbody Bag", "Backpack", "Travel Bag", "Laptop Bag", "Other"]', TRUE),
+(32, 'Material', 'select', '["Leather", "Fabric", "Nylon", "Canvas", "Other"]', TRUE);
+
+-- Sunglasses (category_id = 33)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(33, 'Sunglasses Type', 'select', '["Standard", "Fashion", "Polarized", "Sport"]', TRUE);
+
+-- Rings (category_id = 34)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(34, 'Ring Type', 'select', '["Wedding Ring", "Couple Ring", "Fashion Ring", "Feng Shui Ring", "Other"]', TRUE),
+(34, 'Material', 'select', '["Gold", "Silver", "Platinum", "Titanium", "Alloy", "Other"]', TRUE),
+(34, 'Size', 'select', '["10", "12", "14", "16", "18", "20", "22", "24", "Other"]', TRUE);
+
+-- Watches (category_id = 35)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(35, 'Watch Type', 'select', '["Mechanical", "Quartz", "Smartwatch", "Digital", "Other"]', TRUE);
+
+-- Earrings (category_id = 36)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(36, 'Earring Type', 'select', '["Studs", "Drop", "Gemstone", "Hoop", "Cuff", "Other"]', TRUE);
+
+-- Necklaces (category_id = 37)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(37, 'Necklace Type', 'select', '["Thin Chain", "Thick Chain", "Gemstone Pendant", "Name Engraved", "Beaded", "Other"]', TRUE),
+(37, 'Material', 'select', '["Gold", "Silver", "Platinum", "Alloy", "Pearl", "Other"]', TRUE);
+
+-- Pet Food (category_id = 38)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(38, 'Pet Type', 'select', '["Dog", "Cat", "Bird", "Fish", "Hamster", "Turtle"]', TRUE);
+
+-- Pet Toys (category_id = 39)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(39, 'Toy Type', 'select', '["Chew Toy", "Ball", "Squeaky Toy", "Treat-Dispensing Toy", "Other"]', TRUE),
+(39, 'Material', 'select', '["Plastic", "Fabric", "Rubber", "Wool", "Wood", "Other"]', TRUE),
+(39, 'Suitable For', 'select', '["Dog", "Cat", "Other"]', TRUE);
+
+-- Pet Clothing (category_id = 40)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(40, 'Clothing Type', 'select', '["Shirt", "Dress", "Raincoat", "Head Accessory", "Seasonal Outfit", "Other"]', TRUE),
+(40, 'Size', 'select', '["XS", "S", "M", "L", "XL", "XXL"]', TRUE),
+(40, 'Material', 'select', '["Cotton", "Wool", "Nylon", "Denim", "Other"]', TRUE),
+(40, 'Suitable For', 'select', '["Dog", "Cat", "Other"]', TRUE);
+
+-- Dogs (category_id = 41)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(41, 'Breed', 'select', '["Alaskan Malamute", "Pekingese", "German Shepherd", "Bulldog", "Chihuahua", "Chow Chow", "Corgi", "Vietnamese Native Dog", "Golden Retriever", "Husky", "Japanese Spitz", "Dachshund", "Pomeranian", "Poodle", "Pug", "Shiba Inu", "Doberman", "Samoyed", "Rottweiler", "Phu Quoc Ridgeback", "Malinois", "Other"]', TRUE),
+(41, 'Age Group', 'select', '["Puppy (under 3 months)", "Young (under 1 year)", "Adult (over 1 year)", "Unknown"]', TRUE),
+(41, 'Gender', 'select', '["Male", "Female"]', TRUE),
+(41, 'Health Condition', 'select', '["Healthy", "Vaccinated", "Needs treatment"]', TRUE);
+
+-- Cats (category_id = 42)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(42, 'Breed', 'select', '["British Longhair", "British Shorthair", "Persian", "Bengal", "Golden", "Maine Coon", "Munchkin", "Tabby", "Sphynx", "Siamese", "Scottish Fold", "Russian Blue", "Toyger", "Somali", "Himalayan", "Other"]', TRUE),
+(42, 'Age Group', 'select', '["Kitten (under 3 months)", "Young (under 1 year)", "Adult (over 1 year)", "Unknown"]', TRUE),
+(42, 'Gender', 'select', '["Male", "Female"]', TRUE),
+(42, 'Health Condition', 'select', '["Healthy", "Vaccinated", "Needs treatment"]', TRUE);
+
+-- Birds (category_id = 43)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(43, 'Species', 'select', '["Oriental Magpie-Robin", "Hwamei", "Budgerigar", "Mynah", "Dove", "Parrot", "Red-whiskered Bulbul", "Other"]', TRUE);
+
+-- Fish (category_id = 44)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(44, 'Species', 'select', '["Koi", "Betta", "Goldfish", "Flowerhorn", "Guppy", "Neon Tetra", "Other"]', TRUE);
+
+-- Hamsters (category_id = 45)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(45, 'Breed', 'select', '["Bear", "Robo", "Winter White", "Campbell", "Other"]', TRUE),
+(45, 'Age Group', 'select', '["Under 1 month", "1–3 months", "Over 3 months"]', TRUE),
+(45, 'Gender', 'select', '["Male", "Female"]', TRUE),
+(45, 'Health Condition', 'select', '["Healthy", "Under treatment", "Unknown"]', TRUE);
+
+-- Turtles (category_id = 46)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(46, 'Species', 'select', '["Red-eared Slider", "Yellow Turtle", "Mountain Turtle", "Rock Turtle", "Other"]', TRUE),
+(46, 'Shell Size (cm)', 'number', NULL, FALSE),
+(46, 'Estimated Age (years)', 'number', NULL, FALSE),
+(46, 'Health Condition', 'select', '["Healthy", "Under treatment", "Unknown"]', TRUE);
+
+-- Software (category_id = 47)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(47, 'Software Type', 'select', '["Operating System", "Office Suite", "Antivirus", "Graphic Design", "Programming", "Other"]', TRUE),
+(47, 'License Form', 'select', '["License Key", "Installer File", "Login Account", "Other"]', TRUE),
+(47, 'Supported Platforms', 'select', '["Windows", "macOS", "Linux", "Cross-platform"]', TRUE);
+
+-- EBooks (category_id = 48)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(48, 'Genre', 'select', '["Novel", "Business", "Self-help", "Educational", "Comics", "Other"]', TRUE),
+(48, 'Format', 'select', '["PDF", "ePub", "MOBI", "Word"]', TRUE),
+(48, 'Language', 'text', NULL, FALSE);
+
+-- Courses (category_id = 49)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(49, 'Field of Study', 'select', '["IT - Programming", "Design", "Marketing", "Language", "Soft Skills", "Other"]', TRUE),
+(49, 'Learning Mode', 'select', '["Online", "Offline", "Self-learning (Video)", "PDF Materials"]', TRUE),
+(49, 'Duration', 'text', NULL, FALSE);
+
+-- Licenses (category_id = 50)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(50, 'License Type', 'select', '["Windows License", "Office License", "Other Software License", "Hosting/Domain", "Other"]', TRUE),
+(50, 'Validity Period', 'select', '["1 Month", "6 Months", "1 Year", "Lifetime", "Other"]', TRUE),
+(50, 'Delivery Format', 'select', '["Key Code", "Login Account", "Other"]', TRUE);
+
+-- Textbooks (category_id = 51)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(51, 'Education Level', 'select', '["Primary", "Secondary", "High School", "University", "Postgraduate"]', TRUE),
+(51, 'Subject', 'text', NULL, FALSE);
+
+-- Novels (category_id = 52)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(52, 'Genre', 'select', '["Romance", "Detective", "Science Fiction", "Horror", "Historical", "Fantasy", "Other"]', TRUE),
+(52, 'Language', 'text', NULL, FALSE);
+
+-- Comics (category_id = 53)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(53, 'Comic Type', 'select', '["Manga", "Manhua", "Manhwa", "Vietnamese Comic", "US Comic", "Other"]', TRUE),
+(53, 'Series Type', 'select', '["Single Volume", "Complete Series"]', TRUE);
+
+-- Books (category_id = 54)
+INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
+(54, 'Genre', 'select', '["Life Skills", "Business", "Programming", "Marketing", "Medicine", "Education", "Other"]', TRUE),
+(54, 'Language', 'text', NULL, FALSE);

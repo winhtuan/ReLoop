@@ -1,14 +1,19 @@
 package Model.DAO.post;
 
 import Model.entity.post.Product;
+import Model.entity.post.ProductAttributeValue;
+import Model.entity.post.ProductImage;
 import Utils.DBUtils;
 import java.util.Collections;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class ProductDao {
+
+    private static final Logger LOGGER = Logger.getLogger(ProductDao.class.getName());
 
     public String generateProductId() {
         String sql = "SELECT product_id FROM product ORDER BY product_id DESC LIMIT 1"; // MySQL dùng LIMIT 1
@@ -248,7 +253,7 @@ public class ProductDao {
             if (state != null && !state.isEmpty()) {
                 ps.setString(index++, state);
             }
-            
+
             ProductImageDao imageDAO = new ProductImageDao(conn); // Khởi tạo ProductImageDao
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -270,4 +275,113 @@ public class ProductDao {
         return products;
     }
 
+    public String saveProduct(Product product, List<ProductAttributeValue> attributeValues, List<ProductImage> images) throws SQLException {
+        String generatedProductId = null;
+        Connection conn = null;
+
+        try {
+            conn = DBUtils.getConnect();
+            conn.setAutoCommit(false);
+
+            // Lưu product
+            String sqlProduct = "INSERT INTO product (user_id, category_id, title, description, price, location, state, status, is_priority, updated_at) " +
+                               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            try (PreparedStatement ps = conn.prepareStatement(sqlProduct)) {
+                LOGGER.info("Executing SQL: " + sqlProduct);
+                LOGGER.info("Setting parameters: userId=" + product.getUserId() + ", categoryId=" + product.getCategoryId() +
+                            ", title=" + product.getTitle() + ", description=" + product.getDescription() +
+                            ", price=" + product.getPrice() + ", location=" + product.getLocation() +
+                            ", state=" + product.getState() + ", status=" + product.getStatus() +
+                            ", isPriority=" + product.isPriority());
+
+                ps.setString(1, product.getUserId());
+                ps.setInt(2, product.getCategoryId());
+                ps.setString(3, product.getTitle());
+                ps.setString(4, product.getDescription());
+                ps.setBigDecimal(5, product.getPrice());
+                ps.setString(6, product.getLocation());
+                ps.setString(7, product.getState());
+                ps.setString(8, product.getStatus());
+                ps.setBoolean(9, product.isPriority());
+
+                int affectedRows = ps.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Creating product failed, no rows affected.");
+                }
+
+                // Lấy product_id từ bảng product
+                String sqlGetId = "SELECT product_id FROM product WHERE user_id = ? AND category_id = ? AND title = ? AND created_at = (SELECT MAX(created_at) FROM product WHERE user_id = ?)";
+                try (PreparedStatement psGetId = conn.prepareStatement(sqlGetId)) {
+                    psGetId.setString(1, product.getUserId());
+                    psGetId.setInt(2, product.getCategoryId());
+                    psGetId.setString(3, product.getTitle());
+                    psGetId.setString(4, product.getUserId());
+                    try (ResultSet rs = psGetId.executeQuery()) {
+                        if (rs.next()) {
+                            generatedProductId = rs.getString("product_id");
+                            product.setProductId(generatedProductId);
+                            LOGGER.info("Retrieved productId: " + generatedProductId);
+                        } else {
+                            throw new SQLException("Failed to retrieve generated product ID.");
+                        }
+                    }
+                }
+            }
+
+            // Lưu attribute values
+            if (attributeValues != null && !attributeValues.isEmpty()) {
+                String sqlAttr = "INSERT INTO product_attribute_value (product_id, attr_id, value) VALUES (?, ?, ?)";
+                try (PreparedStatement ps = conn.prepareStatement(sqlAttr)) {
+                    for (ProductAttributeValue attrValue : attributeValues) {
+                        ps.setString(1, generatedProductId);
+                        ps.setInt(2, attrValue.getAttributeId());
+                        ps.setString(3, attrValue.getValue());
+                        ps.addBatch();
+                    }
+                    ps.executeBatch();
+                    LOGGER.info("Inserted " + attributeValues.size() + " attribute values.");
+                }
+            }
+
+            // Lưu ảnh với img_id tự động từ trigger
+            if (images != null && !images.isEmpty()) {
+                String sqlImage = "INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?)";
+                try (PreparedStatement ps = conn.prepareStatement(sqlImage)) {
+                    for (int i = 0; i < images.size(); i++) {
+                        ProductImage image = images.get(i);
+                        ps.setString(1, generatedProductId);
+                        ps.setString(2, image.getImageUrl());
+                        ps.setBoolean(3, i == 0); // Ảnh đầu tiên là primary
+                        ps.addBatch();
+                    }
+                    ps.executeBatch();
+                    LOGGER.info("Inserted " + images.size() + " images.");
+                }
+            }
+
+            conn.commit();
+            return generatedProductId;
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    LOGGER.severe("Rollback successful due to: " + e.getMessage());
+                } catch (SQLException rollbackEx) {
+                    LOGGER.severe("Rollback failed: " + rollbackEx.getMessage());
+                }
+            }
+            LOGGER.severe("SQL Error: " + e.getMessage());
+            throw e;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                    LOGGER.info("Connection closed.");
+                } catch (SQLException e) {
+                    LOGGER.severe("Failed to close connection: " + e.getMessage());
+                }
+            }
+        }
+    }
 }
