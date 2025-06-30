@@ -67,3 +67,16 @@ document.addEventListener("DOMContentLoaded", function () {
     showPage(1);
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    const categoryBar = document.getElementById("categoryBar");
+    const btnLeft = document.getElementById("catBtnLeft");
+    const btnRight = document.getElementById("catBtnRight");
+    const scrollAmount = 150; // Số px cuộn mỗi lần (tùy chỉnh nếu muốn)
+
+    btnLeft.addEventListener("click", function() {
+        categoryBar.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+    btnRight.addEventListener("click", function() {
+        categoryBar.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+});

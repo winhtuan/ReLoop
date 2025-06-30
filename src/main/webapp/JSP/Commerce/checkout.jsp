@@ -185,6 +185,7 @@
                 ];
             </script>
             <script>
+                const goongApiKey = "${sessionScope.goongapi}";
                 let productTotal = ${amount};
                 if (isNaN(productTotal))
                     productTotal = 0;
