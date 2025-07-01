@@ -122,7 +122,7 @@
 
         <c:choose>
             <c:when test="${sessionScope.user != null}">
-                <a href="#" class="item-btn-custom">
+                <a href="${pageContext.request.contextPath}/upPostServlet" class="item-btn-custom">
                     <ion-icon name="document-text-outline" class="btn-icon"></ion-icon>
                     <span>Up Post</span>
                 </a>                    

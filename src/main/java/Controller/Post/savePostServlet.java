@@ -131,10 +131,23 @@ public class savePostServlet extends HttpServlet {
         product.setTitle((String) data.get("productTitle"));
         Object priceObj = data.get("productPrice");
         if (priceObj != null) {
-            product.setPrice((int) priceObj); // Chuyển đổi linh hoạt
+            if (priceObj instanceof Number) {
+                // Nếu là số (Double, Integer), ép kiểu về int
+                product.setPrice(((Number) priceObj).intValue());
+            } else if (priceObj instanceof String) {
+                // Nếu là String, parse sang int
+                try {
+                    product.setPrice(Integer.parseInt((String) priceObj));
+                } catch (NumberFormatException e) {
+                    LOGGER.warning("Cannot parse productPrice: " + priceObj);
+                }
+            } else {
+                LOGGER.warning("productPrice is of unknown type: " + priceObj.getClass().getName());
+            }
         } else {
             LOGGER.warning("productPrice is null");
         }
+
         product.setDescription((String) data.get("productDescription"));
         product.setLocation((String) data.get("productLocation"));
         product.setState((String) data.get("productState"));
