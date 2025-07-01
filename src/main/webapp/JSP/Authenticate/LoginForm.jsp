@@ -22,13 +22,15 @@
                 </div>
 
             </div>
-            <div style="display: flex; align-items: center;">
-            <span class="login__remember">
-                <input type="checkbox" id="remember" name="remember" />
-                <label for="remember">Remember me</label>
-            </span>
+            <div style="display: flex; align-items: center;" class="login__row">
+                <span class="login__remember">
+                    <label class="login__remember" for="remember">
+                        <input type="checkbox" name="remember" />
+                        Remember me
+                    </label>
+                </span>
 
-            <a href="${pageContext.request.contextPath}/JSP/Authenticate/forgotPassword.jsp" class="login__forgot">Forgot your password?</a>
+                <a href="${pageContext.request.contextPath}/JSP/Authenticate/forgotPassword.jsp" class="login__forgot">Forgot your password?</a>
             </div>
             <button type="submit" class="login__button">Login</button>
         </form>
@@ -50,9 +52,9 @@
             </div>
         </div>
 
-        <p class="login__switch">
-            Don't have an account? 
-            <button id="loginButtonRegister">Create Account</button>
-        </p>
+        <div class="login__switch">
+            Chưa có tài khoản? 
+            <button type="button" id="loginButtonRegister">Create account</button>
+        </div>
     </div>
 </div>
