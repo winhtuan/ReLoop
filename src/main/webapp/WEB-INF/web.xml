@@ -23,8 +23,8 @@
     </listener>
     <!-- Home -->
     <listener>
-        <description>HttpSessionListener</description>
-        <listener-class>Controller.Auth.SessionListener</listener-class>
+        <description>HttpSessionConfigurator</description>
+        <listener-class>Utils.HttpSessionConfigurator</listener-class>
     </listener>
     <servlet>
         <servlet-name>Home</servlet-name>

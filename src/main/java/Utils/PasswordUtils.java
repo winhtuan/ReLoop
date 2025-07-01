@@ -29,8 +29,5 @@ public class PasswordUtils {
             throw new RuntimeException("Hashing error", e);
         }
     }
-    public static void main(String[] args) {
-        System.out.println(hashPassword("123"));
-    }
 }
 

@@ -4,7 +4,6 @@
  */
 package Model.DAO.commerce;
 
-import static Model.DAO.post.ProductDao.productList;
 import Model.entity.post.Product;
 import Model.entity.post.ProductImage;
 import Utils.DBUtils;

@@ -1,6 +1,5 @@
 package Model.entity.post;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -40,10 +39,7 @@ public class Product {
         this.updatedAt = updatedAt;
         this.images = images;
     }
-    @Override
-    public String toString() {
-        return "Product{" + "productId=" + productId + ", userId=" + userId + ", categoryId=" + categoryId + ", title=" + title + ", description=" + description + ", price=" + price + ", location=" + location + ", status=" + status + ", moderationStatus=" + moderationStatus + ", isPriority=" + isPriority + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", state=" + state + ", quantity=" + quantity + ", images=" + images + '}';
-    }
+
     public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
         this.productId = productId;
         this.userId = userId;
@@ -216,5 +212,3 @@ public class Product {
 }
 
    
-
-
