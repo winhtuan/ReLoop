@@ -43,6 +43,18 @@
     </nav>
     <!-- Cart Menu -->
     <div class="cart-fav-search">
+        <div class="category-dropdown-container">
+            <a href="#" class="category-nav">
+                <ion-icon name="menu-outline"></ion-icon> CATEGORY
+            </a>
+
+            <div class="category-dropdown">
+                <div class="category-container">
+                    <jsp:include page="/JSP/Home/Category.jsp" />
+                </div>
+            </div>
+        </div>
+
         <a href="#" class="search-nav"><ion-icon name="search-outline"></ion-icon> Search</a>
                 <c:choose>
                     <c:when test="${sessionScope.user != null}">
@@ -107,6 +119,7 @@
     </div>
     <!-- Button Group -->
     <div class="amado-btn-group mt-15 mb-100">
+
         <c:choose>
             <c:when test="${sessionScope.user != null}">
                 <a href="#" class="item-btn-custom">
