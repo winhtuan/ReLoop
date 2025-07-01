@@ -223,7 +223,6 @@
                     setTimeout(() => preloader.style.display = "none", 500);
                 });
 
-                // ✅ Định nghĩa hàm ngoài event listener
                 function selectVou() {
                     const select = document.getElementById("voucherSelect");
                     const input = document.getElementById("voucherInput");

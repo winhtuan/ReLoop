@@ -31,7 +31,14 @@
                                     <button type="submit" class="btn-action wishlist" title="Thêm vào yêu thích"><ion-icon name="heart-outline"></ion-icon></button>
                                 </form>
 
-                                <button class="btn-action buy-now" title="Mua ngay"><ion-icon name="flash-outline"></ion-icon></button>
+                                <form action="s_cartBuy" method="post">
+                                    <input type="hidden" name="productIds" value="${product.productId}" />
+                                    <input type="hidden" name="qty_${product.productId}" value="1" />
+                                    <button type="submit" class="btn-action buy-now" title="Mua ngay">
+                                        <ion-icon name="flash-outline"></ion-icon>
+                                    </button>
+                                </form>
+
 
                                 <form action="s_addToCart" method="post">
                                     <input type="hidden" name="quantity" value="1">
