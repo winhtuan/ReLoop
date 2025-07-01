@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <div class="category-container">
     <ul class="main-category-list">
         <c:forEach var="cat" items="${categoryList}">

@@ -131,7 +131,7 @@ public class savePostServlet extends HttpServlet {
         product.setTitle((String) data.get("productTitle"));
         Object priceObj = data.get("productPrice");
         if (priceObj != null) {
-            product.setPrice(new BigDecimal(String.valueOf(priceObj))); // Chuyển đổi linh hoạt
+            product.setPrice((int) priceObj); // Chuyển đổi linh hoạt
         } else {
             LOGGER.warning("productPrice is null");
         }
@@ -139,7 +139,7 @@ public class savePostServlet extends HttpServlet {
         product.setLocation((String) data.get("productLocation"));
         product.setState((String) data.get("productState"));
         product.setStatus("active");
-        product.setPriority(false);
+        product.setIsPriority(false);
 
         List<ProductAttributeValue> attributeValues = new ArrayList<>();
         @SuppressWarnings("unchecked")

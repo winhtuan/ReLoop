@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -310,7 +311,7 @@ public class ProductDao {
                 p.setProductId(rs.getString("product_id"));
                 p.setTitle(rs.getString("title"));
                 p.setDescription(rs.getString("description"));
-                p.setPrice(rs.getBigDecimal("price"));
+                p.setPrice(rs.getInt("price"));
                 p.setCreatedAt(rs.getTimestamp("created_at"));
                 // Thêm các field khác tùy vào Product class bạn
 
@@ -358,14 +359,14 @@ public class ProductDao {
                 ps.setString(index++, state);
             }
 
-            ProductImageDao imageDAO = new ProductImageDao(conn); // Khởi tạo ProductImageDao
+            ProductImageDao imageDAO = new ProductImageDao(); // Khởi tạo ProductImageDao
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Product p = new Product();
                     p.setProductId(rs.getString("product_id"));
                     p.setTitle(rs.getString("title"));
-                    p.setPrice(rs.getBigDecimal("price"));
+                    p.setPrice(rs.getInt("price"));
                     p.setState(rs.getString("state"));
                     p.setLocation(rs.getString("location"));
                     p.setImages(imageDAO.getImagesByProductId(rs.getString("product_id")));
@@ -396,17 +397,17 @@ public class ProductDao {
                             ", title=" + product.getTitle() + ", description=" + product.getDescription() +
                             ", price=" + product.getPrice() + ", location=" + product.getLocation() +
                             ", state=" + product.getState() + ", status=" + product.getStatus() +
-                            ", isPriority=" + product.isPriority());
+                            ", isPriority=" + product.isIsPriority());
 
                 ps.setString(1, product.getUserId());
                 ps.setInt(2, product.getCategoryId());
                 ps.setString(3, product.getTitle());
                 ps.setString(4, product.getDescription());
-                ps.setBigDecimal(5, product.getPrice());
+                ps.setInt(5, product.getPrice());
                 ps.setString(6, product.getLocation());
                 ps.setString(7, product.getState());
                 ps.setString(8, product.getStatus());
-                ps.setBoolean(9, product.isPriority());
+                ps.setBoolean(9, product.isIsPriority());
 
                 int affectedRows = ps.executeUpdate();
                 if (affectedRows == 0) {

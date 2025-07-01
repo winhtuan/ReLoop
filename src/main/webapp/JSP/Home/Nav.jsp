@@ -50,7 +50,7 @@
 
             <div class="category-dropdown">
                 <div class="category-container">
-                    <jsp:include page="/JSP/Home/Category.jsp" />
+                   <c:import url="/JSP/Home/SearchCategory.jsp" />
                 </div>
             </div>
         </div>

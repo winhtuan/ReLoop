@@ -2,7 +2,6 @@ package Controller;
 
 import Model.DAO.post.CategoryDAO;
 import Model.entity.post.Category;
-import Model.DAO.auth.UserDao;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
