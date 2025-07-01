@@ -93,6 +93,7 @@
                         <li><a href="#" id="menu-item"><ion-icon name="newspaper-outline"></ion-icon>Manager Post</a></li>
                         <li><a href="${pageContext.request.contextPath}/UsersServlet" id="menu-item"><ion-icon name="chatbubble-ellipses-outline"></ion-icon>Message</a></li>
                         <li><a href="#" id="menu-item"><ion-icon name="document-text-outline"></ion-icon>Profile</a></li>
+                        <li><a href="https://docs.google.com/forms/d/1GZUnTuEUHixIWl1RRyBxBUaxV7aaOy6R5-Z9v5OcJgs" target="_blank" id="menu-item" ><ion-icon name="flag" style="color: gold;"></ion-icon> Report Website</a></li>
                         <li><a href="${pageContext.request.contextPath}/s_logout" id="menu-item" class="text-danger"><ion-icon name="log-out"></ion-icon> Log Out</a></li>
                     </ul>
                 </div>
