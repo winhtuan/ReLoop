@@ -20,10 +20,16 @@
                     <label for="password" class="login__label">Password</label>
                     <i class="ri-eye-off-fill login__icon login__password" id="loginPassword"></i>
                 </div>
+
             </div>
+            <div style="display: flex; align-items: center;">
+            <span class="login__remember">
+                <input type="checkbox" id="remember" name="remember" />
+                <label for="remember">Remember me</label>
+            </span>
 
-            <a href="JSP/Authenticate/forgotPassword.jsp" class="login__forgot">Forgot your password?</a>
-
+            <a href="${pageContext.request.contextPath}/JSP/Authenticate/forgotPassword.jsp" class="login__forgot">Forgot your password?</a>
+            </div>
             <button type="submit" class="login__button">Login</button>
         </form>
 
@@ -33,17 +39,14 @@
                 AppConfig appConfig = new AppConfig();
             %>
             <div class="login__social-links">
-                <a class="login__social-link" href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=<%= appConfig.get("google.redirect_uri") %>&response_type=code&client_id=<%= appConfig.get("google.client_id") %>&approval_prompt=force">
-                    <img src="img/modal-img/icon-google.svg" alt="image" class="login__social-img">
+                <a class="login__social-link" href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=<%= appConfig.get("google.redirect_uri")%>&response_type=code&client_id=<%= appConfig.get("google.client_id")%>&approval_prompt=force">
+                    <img src="${pageContext.request.contextPath}/img/modal-img/icon-google.svg" alt="image" class="login__social-img">
                 </a>
 
-                <a class="login__social-link" href="https://www.facebook.com/v20.0/dialog/oauth?client_id=<%= appConfig.get("facebook.app_id") %>&redirect_uri=http://localhost:8080/ReLoop/LoginServlet&state=facebook&scope=email">
-                    <img src="img/modal-img/icon-facebook.svg" alt="image" class="login__social-img">
+                <a class="login__social-link" href="https://www.facebook.com/v20.0/dialog/oauth?client_id=<%= appConfig.get("facebook.app_id")%>&redirect_uri=http://localhost:8080/ReLoop/LoginServlet&state=facebook&scope=email">
+                    <img src="${pageContext.request.contextPath}/img/modal-img/icon-facebook.svg" alt="image" class="login__social-img">
                 </a>
 
-                <a href="#" class="login__social-link">
-                    <img src="img/modal-img/icon-apple.svg" alt="image" class="login__social-img">
-                </a>
             </div>
         </div>
 

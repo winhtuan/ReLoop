@@ -1,6 +1,8 @@
 -- Tạo database và chọn
 CREATE DATABASE reloop_v2;
 USE reloop_v2;
+SET SQL_SAFE_UPDATES = 0;
+
 -- 1. users
 CREATE TABLE users (
     user_id CHAR(7) NOT NULL PRIMARY KEY CHECK (user_id LIKE 'CUS____'),
@@ -34,7 +36,7 @@ CREATE TABLE categories (
     level INT DEFAULT 0,
     CONSTRAINT FK_categories_parent FOREIGN KEY (parent_id) REFERENCES categories(category_id) ON DELETE NO ACTION
 );
-SELECT * FROM categories;
+
 -- 4. vouchers
 CREATE TABLE vouchers (
     voucher_id CHAR(7) NOT NULL PRIMARY KEY CHECK (voucher_id LIKE 'VOU____'),
@@ -72,7 +74,7 @@ CREATE TABLE Account (
     CONSTRAINT FK_Account_User FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- 7. PasswordResetToken
+-- 6. Bảng PasswordResetToken
 CREATE TABLE PasswordResetToken (
     reset_id CHAR(7) NOT NULL PRIMARY KEY CHECK (reset_id LIKE 'RST____'),
     user_id CHAR(7) NOT NULL,
@@ -132,6 +134,8 @@ CREATE TABLE product (
     CONSTRAINT FK_product_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT FK_product_category FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
 );
+alter table product add column state varchar(50);
+alter table product add column quantity int;
 
 -- 12. orders
 CREATE TABLE orders (
@@ -149,6 +153,9 @@ CREATE TABLE orders (
     CONSTRAINT FK_orders_shipping_method FOREIGN KEY (shipping_method) REFERENCES shipping_methods(id) ON DELETE SET NULL,
     CONSTRAINT FK_orders_voucher FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id) ON DELETE SET NULL
 );
+alter table orders add column shipfee int;
+ALTER TABLE orders
+MODIFY COLUMN status ENUM('pending', 'paid', 'shipping', 'delivered', 'cancelled', 'refunded');
 
 CREATE INDEX idx_orders_user_id ON orders(user_id);
 
@@ -203,11 +210,12 @@ CREATE TABLE cart_items (
     cart_id CHAR(7) NOT NULL,
     product_id CHAR(7) NOT NULL,
     quantity INT CHECK (quantity > 0),
+	price int,
     PRIMARY KEY (cart_id, product_id),
     CONSTRAINT FK_cart_items_cart FOREIGN KEY (cart_id) REFERENCES cart(cart_id) ON DELETE CASCADE,
     CONSTRAINT FK_cart_items_product FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
-
+alter table cart_items add column price int;
 CREATE INDEX idx_cart_items_cart_id ON cart_items(cart_id);
 
 -- 18. order_items
@@ -247,22 +255,28 @@ CREATE TABLE Messages (
     CONSTRAINT FK_Messages_sender FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-alter table product add column state varchar(50) NOT NULL;
-
-UPDATE product SET state = 'mới' WHERE product_id IN ('PRD0004', 'PRD0010', 'PRD0011', 'PRD0012', 'PRD0031', 'PRD0033', 'PRD0035', 'PRD0049', 'PRD0053', 'PRD0055', 'PRD0057', 'PRD0059', 'PRD0063', 'PRD0065', 'PRD0082', 'PRD0083', 'PRD0084', 'PRD0089');
-UPDATE product SET state = 'cũ' WHERE product_id IN ('PRD0001', 'PRD0002', 'PRD0003', 'PRD0006', 'PRD0007', 'PRD0008', 'PRD0009', 'PRD0013', 'PRD0014', 'PRD0017', 'PRD0018', 'PRD0020', 'PRD0021', 'PRD0023', 'PRD0024', 'PRD0025', 'PRD0026', 'PRD0027', 'PRD0028', 'PRD0029', 'PRD0030', 'PRD0032', 'PRD0034', 'PRD0036', 'PRD0037', 'PRD0038', 'PRD0039', 'PRD0040', 'PRD0041', 'PRD0042', 'PRD0043', 'PRD0044', 'PRD0045', 'PRD0046', 'PRD0047', 'PRD0048', 'PRD0050', 'PRD0051', 'PRD0052', 'PRD0054', 'PRD0056', 'PRD0058', 'PRD0060', 'PRD0061', 'PRD0062', 'PRD0064', 'PRD0066', 'PRD0067', 'PRD0068', 'PRD0069', 'PRD0070', 'PRD0071', 'PRD0072', 'PRD0073', 'PRD0074', 'PRD0075', 'PRD0076', 'PRD0077', 'PRD0078', 'PRD0079', 'PRD0080', 'PRD0081', 'PRD0085', 'PRD0086', 'PRD0087', 'PRD0088', 'PRD0090', 'PRD0091', 'PRD0092', 'PRD0093');
-UPDATE product SET state = 'hư hỏng nhẹ' WHERE product_id IN ('PRD0005', 'PRD0015', 'PRD0016', 'PRD0019', 'PRD0022');
-create table notification(
-	noti_id CHAR(7) NOT NULL PRIMARY KEY CHECK (noti_id LIKE 'NOT____'),
+CREATE TABLE notification (
+    noti_id CHAR(7) NOT NULL PRIMARY KEY CHECK (noti_id LIKE 'NOT____'),
     user_id CHAR(7) NOT NULL,
-    content text,
+    title VARCHAR(255),
+    content TEXT,
+    link VARCHAR(255),
+    type VARCHAR(50),          
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_read BOOLEAN DEFAULT FALSE,
-    CONSTRAINT FK_notic_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_noti_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-select * from product;
-select * from product_images;
-select * from categories;
+CREATE TABLE user_vouchers (
+    user_voucher_id CHAR(7) NOT NULL PRIMARY KEY CHECK (user_voucher_id LIKE 'UVU____'),
+    user_id CHAR(7) NOT NULL,
+    voucher_id CHAR(7) NOT NULL,
+    assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_used TINYINT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_user_vouchers_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT FK_user_vouchers_voucher FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id) ON DELETE CASCADE,
+    UNIQUE (user_id, voucher_id)
+);
+
 UPDATE product
 SET moderation_status = 'approved'
 WHERE moderation_status = 'pending';
@@ -305,22 +319,3 @@ CREATE TABLE product_images_sequence (
     last_number INT
 );
 
--- Khởi tạo với số 0
-INSERT INTO product_sequence (id, last_number) VALUES (1, 93);
-INSERT INTO product_images_sequence (id, last_number) VALUES (1, 93);
-
--- Gán 10 sản phẩm đầu tiên là "con non"
-UPDATE product
-SET state = 'con non'
-WHERE product_id IN (
-  'PRD0001', 'PRD0002', 'PRD0003', 'PRD0006', 'PRD0007',
-  'PRD0008', 'PRD0009', 'PRD0012', 'PRD0013', 'PRD0014', 'PRD0017'
-);
-
--- Gán 10 sản phẩm còn lại là "trưởng thành"
-UPDATE product
-SET state = 'trưởng thành'
-WHERE product_id IN (
-  'PRD0018', 'PRD0020', 'PRD0021', 'PRD0005', 'PRD0015',
-  'PRD0016', 'PRD0019', 'PRD0004', 'PRD0010', 'PRD0011'
-);

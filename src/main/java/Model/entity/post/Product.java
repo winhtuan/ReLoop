@@ -90,8 +90,7 @@ public class Product {
     public void setImages(List<ProductImage> images) {
         this.images = images;
     }
-
-    public String getProductId() { return productId; }
+  public String getProductId() { return productId; }
     public void setProductId(String productId) { this.productId = productId; }
 
     public String getUserId() { return userId; }

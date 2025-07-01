@@ -1,4 +1,4 @@
-package Utils;
+    package Utils;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -20,5 +20,9 @@ public class DBUtils {
             System.out.println("Error: " + e.getMessage());
         }
         return null;
+    }
+}
+    public static void main(String[] args) {
+        System.out.println(getConnect());
     }
 }

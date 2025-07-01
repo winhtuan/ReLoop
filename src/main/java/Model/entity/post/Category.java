@@ -1,13 +1,15 @@
 package Model.entity.post;
 
 public class Category {
+
     private int categoryId;
     private String name;
     private Integer parentId; // Dùng Integer vì có thể NULL
     private String slug;
     private int level;
 
-    public Category() {}
+    public Category() {
+    }
 
     public Category(int categoryId, String name, Integer parentId, String slug, int level) {
         this.categoryId = categoryId;
@@ -42,7 +44,7 @@ public class Category {
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
-
+  
     public String getSlug() {
         return slug;
     }
@@ -58,5 +60,4 @@ public class Category {
     public void setLevel(int level) {
         this.level = level;
     }
-
 }

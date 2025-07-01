@@ -9,35 +9,26 @@ BEGIN
         UPDATE vouchers SET is_active = 0 WHERE voucher_id = NEW.voucher_id;
     END IF;
 END$$
-
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER set_premium_expiry_on_insert
-BEFORE INSERT ON users
+-- post
+CREATE TRIGGER set_priority_on_insert
+BEFORE INSERT ON product
 FOR EACH ROW
 BEGIN
-    IF NEW.is_premium = 1 AND NEW.usage_time > 0 THEN  -- Sử dụng usage_time thay vì use_time
-        SET NEW.premium_expiry = DATE_ADD(NOW(), INTERVAL NEW.usage_time DAY);
-    END IF;
-END$$
-DELIMITER ;
-CREATE TRIGGER set_premium_expiry_on_update
-BEFORE UPDATE ON users
-FOR EACH ROW
-BEGIN
-    IF NEW.is_premium = 1 AND NEW.usage_time > 0 AND (NEW.premium_expiry IS NULL OR NEW.premium_expiry <= NOW()) THEN
-        SET NEW.premium_expiry = DATE_ADD(NOW(), INTERVAL NEW.usage_time DAY);
-    END IF;
-END$$
-
-CREATE TRIGGER update_is_premium
-BEFORE UPDATE ON users
-FOR EACH ROW
-BEGIN
-    IF NEW.premium_expiry IS NOT NULL AND NEW.premium_expiry > NOW() AND NEW.usage_time > 0 THEN  -- Sử dụng usage_time thay vì use_time
-        SET NEW.is_premium = 1;
+    IF NEW.price >= 1000 THEN
+        SET NEW.is_priority = 1;
     ELSE
-        SET NEW.is_premium = 0;
+        SET NEW.is_priority = 0;
+    END IF;
+END$$
+
+CREATE TRIGGER set_priority_on_update
+BEFORE UPDATE ON product
+FOR EACH ROW
+BEGIN
+    IF NEW.price >= 1000 THEN
+        SET NEW.is_priority = 1;
+    ELSE
+        SET NEW.is_priority = 0;
     END IF;
 END$$
 

@@ -21,6 +21,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
 import Model.DAO.auth.UserDao;
+import Utils.AppConfig;
 import Utils.DBUtils;
 import java.time.LocalDate;
 
@@ -41,7 +42,7 @@ public class RegisterServlet extends HttpServlet {
 
         try (Connection conn = DBUtils.getConnect()) {
             if (conn == null) {
-                printError(out, "Unable to connect to the database!", "JSP/Authenticate/signup.jsp");
+                printError(out, "Unable to connect to the database!", "/ReLoop/home");
                 return;
             }
 
@@ -51,7 +52,7 @@ public class RegisterServlet extends HttpServlet {
             ResultSet emailRs = checkEmailStmt.executeQuery();
             emailRs.next();
             if (emailRs.getInt(1) > 0) {
-                printError(out, "This email is already in use!", "JSP/Authenticate/signup.jsp");
+                printError(out, "This email is already in use!", "/ReLoop/home?regis=true");
                 return;
             }
 
@@ -59,7 +60,7 @@ public class RegisterServlet extends HttpServlet {
             String username = baseUsername;
 
             if (new AccountDao().isEmailExist(email)) {
-                printError(out, "This email is already in use!", "JSP/Authenticate/signup.jsp");
+                printError(out, "This email is already in use!", "/ReLoop/home?regis=true");
                 return;
             }
 
@@ -91,26 +92,25 @@ public class RegisterServlet extends HttpServlet {
             if (newAccId != null) {
                 boolean emailSent = sendConfirmationEmail(email, token);
                 if (emailSent) {
-                    printSuccess(out, "Registration Successful!", "Please check your email (" + email + ") to verify your account.", "/JSP/Authenticate/JoinIn.jsp");
+                    printSuccess(out, "Registration Successful!", "Please check your email (" + email + ") to verify your account.", "/ReLoop/home");
                 } else {
-                    printError(out, "Unable to send verification email!", "signup.jsp");
+                    printError(out, "Unable to send verification email!", "/ReLoop/home?regis=true");
                 }
             } else {
-                printError(out, "Registration failed!", "JSP/Authenticate/signup.jsp");
+                printError(out, "Registration failed!", "/ReLoop/home?regis=true");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            printError(out, "Error: " + e.getMessage(), "JSP/Authenticate/signup.jsp");
+            printError(out, "Error: " + e.getMessage(), "/ReLoop/home?regis=true");
         }
     }
 
     // Phương thức gửi email xác nhận
     private boolean sendConfirmationEmail(String email, String token) {
         String host = "smtp.gmail.com";
-        String from = "tindtde180794@fpt.edu.vn";
-        String pass = "lxhp ujyd bxqc iqyi";
-
+        String from = new AppConfig().get("email.from");
+        String pass = new AppConfig().get("email.password");
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.port", "587");
@@ -118,8 +118,8 @@ public class RegisterServlet extends HttpServlet {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         props.put("mail.debug", "true");
-
         Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
+            @Override
             protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
                 return new jakarta.mail.PasswordAuthentication(from, pass);
             }

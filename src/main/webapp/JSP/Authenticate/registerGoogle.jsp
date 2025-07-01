@@ -109,7 +109,7 @@
         <section class="text-center">
             <div class="mb-5">
                 <h2 class="text-3xl font-bold text-gray-800">Complete Your Registration</h2>
-                <p class="text-gray-600 mt-2">Welcome to Luxury Car Booking</p>
+                <p class="text-gray-600 mt-2">Welcome to ReLoop</p>
             </div>
             <c:if test="${not empty requestScope.erormess}">
                 <div class="error-message">
