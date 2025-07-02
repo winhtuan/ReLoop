@@ -119,7 +119,7 @@
                     <div class="flex justify-end gap-3">
                         <button onclick="closeModal('approveModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
                         <form action="ProductReportServlet" method="post">
-                            <input type="hidden" name="reportId" id="approveProductId">
+                            <input type="hidden" name="reportId" id="approveReportId">
                             <input type="hidden" name="action" value="approve">
                             <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Yes</button>
                         </form>
@@ -134,8 +134,8 @@
                     <div class="flex justify-end gap-3">
                         <!-- Đổi method="port" thành post -->
                         <button onclick="closeModal('deleteModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                        <form action="DeleteAccountServlet" method="post">
-                            <input type="hidden" name="user_id" id="AccountManageServlet">
+                        <form action="#" method="post">
+                            <input type="hidden" name="user_id" id="deleteReportId">
                             <input type="hidden" name="origin" value="delete" />
                             <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Confirm</button>
                         </form>
@@ -227,9 +227,9 @@
 
                 // Gán userId vào input hidden tương ứng
                 if (id === 'approveModal') {
-                    document.getElementById('approveProductId').value = userId;
+                    document.getElementById('approveReportId').value = userId;
                 } else if (id === 'deleteModal') {
-                    document.getElementById('deleteUserId').value = userId;
+                    document.getElementById('deleteReportId').value = userId;
                 }
             }
 

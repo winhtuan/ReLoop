@@ -88,6 +88,7 @@ public class ProductReportServlet extends HttpServlet {
                 db.deleteReportById(productId);
             }
         }
+        response.sendRedirect("ProductReportPost");
     }
 
     /**
