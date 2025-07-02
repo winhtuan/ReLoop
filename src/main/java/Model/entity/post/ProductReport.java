@@ -11,12 +11,13 @@ public class ProductReport {
     private String description;
     private Date reportedAt;
     private String status;
+    private String handlerId;
+    private String handlerName;
 
     public ProductReport() {
     }
 
-    public ProductReport(String reportId, String productId, String userId, String reason,
-            String description, Date reportedAt, String status) {
+    public ProductReport(String reportId, String productId, String userId, String reason, String description, Date reportedAt, String status, String handlerId, String handlerName) {
         this.reportId = reportId;
         this.productId = productId;
         this.userId = userId;
@@ -24,7 +25,27 @@ public class ProductReport {
         this.description = description;
         this.reportedAt = reportedAt;
         this.status = status;
+        this.handlerId = handlerId;
+        this.handlerName = handlerName;
     }
+
+    public String getHandlerId() {
+        return handlerId;
+    }
+
+    public void setHandlerId(String handlerId) {
+        this.handlerId = handlerId;
+    }
+
+    public String getHandlerName() {
+        return handlerName;
+    }
+
+    public void setHandlerName(String handlerName) {
+        this.handlerName = handlerName;
+    }
+
+    
 
     public String getReportId() {
         return reportId;
@@ -41,8 +62,6 @@ public class ProductReport {
     public void setProductId(String productId) {
         this.productId = productId;
     }
-
-   
 
     public String getReason() {
         return reason;
@@ -88,5 +107,5 @@ public class ProductReport {
     public String toString() {
         return "ProductReport{" + "reportId=" + reportId + ", productId=" + productId + ", userId=" + userId + ", reason=" + reason + ", description=" + description + ", reportedAt=" + reportedAt + ", status=" + status + '}';
     }
-    
+
 }

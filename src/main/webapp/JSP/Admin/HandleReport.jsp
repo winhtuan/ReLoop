@@ -66,11 +66,12 @@
                             <tr>
                                 <th class="px-4 py-2 border-b">Report ID</th>
                                 <th class="px-4 py-2 border-b">Product ID</th>
-                                <th class="px-4 py-2 border-b">User ID</th>
+                                <th class="px-4 py-2 border-b">Reporter ID</th>
                                 <th class="px-4 py-2 border-b">Reason</th>
                                 <th class="px-4 py-2 border-b">Reported At</th>
                                 <th class="px-4 py-2 border-b">Status</th>
-                                <th class="px-4 py-2 border-b text-right pr-[100px]">Actions</th>
+                                <th class="px-4 py-2 border-b">Handler ID</th> <!-- 👈 mới -->
+                                <th class="px-4 py-2 border-b">Handler Name</th> <!-- 👈 mới -->
                             </tr>
                         </thead>
                         <tbody id="reportTableBody" class="text-gray-800">
@@ -81,33 +82,18 @@
                                     <td class="px-4 py-2">${report.userId}</td>
                                     <td class="px-4 py-2">${report.reason}</td>
                                     <td class="px-4 py-2">
-                            <fmt:formatDate value="${report.reportedAt}" pattern="dd/MM/yyyy" />
-                            </td>
-                            <td class="px-4 py-2">${report.status}</td>
-                            <td class="px-4 py-2 text-right pr-[80px]">
-                                <div class="flex justify-end items-center gap-4">
-<!--                                     Action button: mark as handled 
-                                    <button onclick="handleReport('${report.reportId}')" 
-                                            type="button" class="group relative cursor-pointer text-green-600 hover:text-green-800">
-                                        <span class="material-symbols-rounded text-xl">check_circle</span>
-                                        <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
-                                            Mark as Resolved
-                                        </div>
-                                    </button>
-                                     Delete button 
-                                    <button onclick="openModal('deleteModal', '${report.reportId}')"
-                                            type="button" class="group relative cursor-pointer text-gray-600 hover:text-gray-800">
-                                        <span class="material-symbols-rounded text-xl">delete</span>
-                                        <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
-                                            Delete
-                                        </div>
-                                    </button>
-                                </div>-->
-                            </td>
-                            </tr>
-                        </c:forEach>
+                                        <fmt:formatDate value="${report.reportedAt}" pattern="dd/MM/yyyy" />
+                                    </td>
+                                    <td class="px-4 py-2">${report.status}</td>
+                                    <td class="px-4 py-2">${report.handlerId}</td> <!-- 👈 mới -->
+                                    <td class="px-4 py-2">${report.handlerName}</td> <!-- 👈 mới -->
+                                        <!-- Bạn có thể thêm nút hành động lại nếu cần -->
+                                    </td>
+                                </tr>
+                            </c:forEach>
                         </tbody>
                     </table>
+
 
                     <div id="pagination" class="mt-6 flex justify-center"></div>
                 </div>

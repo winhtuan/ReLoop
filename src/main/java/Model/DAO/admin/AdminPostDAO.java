@@ -287,57 +287,53 @@ public class AdminPostDAO {
 
         return list;
     }
-
     public List<ProductReport> getActionTakenReports() {
-        List<ProductReport> list = new ArrayList<>();
-        String sql = "SELECT report_id, product_id, reporter_id, reason, description, reported_at, status "
-                + "FROM product_reports WHERE status = 'action_taken'";
+    List<ProductReport> list = new ArrayList<>();
+    String sql = "SELECT report_id, product_id, reporter_id, reason, description, reported_at, status, " +
+                 "handler_id, handler_name " +
+                 "FROM product_reports WHERE status = 'action_taken'";
 
-        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ProductReport report = new ProductReport();
-                report.setReportId(rs.getString("report_id"));
-                report.setProductId(rs.getString("product_id"));
-                report.setUserId(rs.getString("reporter_id"));
-                report.setReason(rs.getString("reason"));
-                report.setDescription(rs.getString("description"));
-                report.setReportedAt(rs.getDate("reported_at"));
-                report.setStatus(rs.getString("status"));
+    try (Connection conn = DBUtils.getConnect();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-                list.add(report);
-            }
-        } catch (SQLException e) {
-            System.out.println("Lỗi khi lấy danh sách báo cáo sản phẩm action_taken: " + e.getMessage());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            ProductReport report = new ProductReport();
+            report.setReportId(rs.getString("report_id"));
+            report.setProductId(rs.getString("product_id"));
+            report.setUserId(rs.getString("reporter_id"));
+            report.setReason(rs.getString("reason"));
+            report.setDescription(rs.getString("description"));
+            report.setReportedAt(rs.getDate("reported_at"));
+            report.setStatus(rs.getString("status"));
+            report.setHandlerId(rs.getString("handler_id"));     // 👈 thêm dòng này
+            report.setHandlerName(rs.getString("handler_name")); // 👈 và dòng này
+
+            list.add(report);
         }
-
-        return list;
+    } catch (SQLException e) {
+        System.out.println("Lỗi khi lấy danh sách báo cáo sản phẩm action_taken: " + e.getMessage());
     }
 
-    public boolean markReportAsActionTaken(String reportId) {
-        String sql = "UPDATE product_reports SET status = 'action_taken' WHERE report_id = ? AND status = 'pending'";
+    return list;
+}
+
+    public boolean markReportAsActionTaken(String reportId, String handlerId, String handlerName) {
+        String sql = "UPDATE product_reports "
+                + "SET status = 'action_taken', handler_id = ?, handler_name = ? "
+                + "WHERE report_id = ? AND status = 'pending'";
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, reportId);
-            int rowsAffected = ps.executeUpdate();
 
-            return rowsAffected > 0; // true nếu có ít nhất 1 dòng bị ảnh hưởng
+            ps.setString(1, handlerId);
+            ps.setString(2, handlerName);
+            ps.setString(3, reportId);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
         } catch (SQLException e) {
             System.out.println("Lỗi khi cập nhật trạng thái báo cáo: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public boolean revertReportToPending(String reportId) {
-        String sql = "UPDATE product_reports SET status = 'pending' WHERE report_id = ? AND status = 'action_taken'";
-
-        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, reportId);
-            int rowsAffected = ps.executeUpdate();
-
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            System.out.println("Lỗi khi chuyển trạng thái báo cáo về pending: " + e.getMessage());
             return false;
         }
     }

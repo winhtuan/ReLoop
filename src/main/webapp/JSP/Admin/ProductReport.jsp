@@ -64,7 +64,7 @@
                             <tr>
                                 <th class="px-4 py-2 border-b">Report ID</th>
                                 <th class="px-4 py-2 border-b">Product ID</th>
-                                <th class="px-4 py-2 border-b">User ID</th>
+                                <th class="px-4 py-2 border-b">Reporter ID</th>
                                 <th class="px-4 py-2 border-b">Reason</th>
                                 <th class="px-4 py-2 border-b">Reported At</th>
                                 <th class="px-4 py-2 border-b">Description</th>

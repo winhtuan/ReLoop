@@ -5,6 +5,7 @@
 package Controller.Admin;
 
 import Model.DAO.admin.AdminPostDAO;
+import Model.entity.auth.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -75,10 +77,13 @@ public class ProductReportServlet extends HttpServlet {
         AdminPostDAO db = new AdminPostDAO();
         String action = request.getParameter("action");
         String productId = request.getParameter("reportId");
-
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("cus");
+        String handler_name = user.getFullName();
+        String handler_id = user.getUserId();
         if (productId != null && !productId.isEmpty()) {
             if ("approve".equals(action)) {
-                db.markReportAsActionTaken(productId);
+                db.markReportAsActionTaken(productId,handler_id,handler_name);
             } else if ("delete".equals(action)) {
                 db.deleteReportById(productId);
             }
