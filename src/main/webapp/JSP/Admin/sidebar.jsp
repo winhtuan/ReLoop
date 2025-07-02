@@ -129,10 +129,10 @@
                                 <a class="nav-link dropdown-title">Report</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link dropdown-link">Product Reports</a>
+                                <a href="${pageContext.request.contextPath}/ProductReportPost" class="nav-link dropdown-link">Product Reports</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link dropdown-link">Handle Reports</a>
+                                <a href="${pageContext.request.contextPath}/HandleReportPost" class="nav-link dropdown-link">Handle Reports</a>
                             </li>
                         </ul>
                     </li>

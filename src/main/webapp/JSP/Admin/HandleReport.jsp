@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -44,59 +46,12 @@
         <main class="flex-1">
             <div class="header bg-white flex items-center px-6 py-4 gap-3 pb-[100px]">
                 <span class="material-symbols-rounded text-gray-600 text-3xl">person_search</span>
-                <h1 class="text-2xl font-semibold text-gray-800">Post Manager</h1>
+                <h1 class="text-2xl font-semibold text-gray-800">Report Manager</h1>
             </div>
-
-            <!-- Hiển thị thông báo thành công/thất bại -->
-            <div class="max-w-7xl mx-auto px-4 mt-4">
-                <c:if test="${param.msg == 'delete_success'}">
-                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
-                        ✅ Account deleted successfully!
-                    </div>
-                </c:if>
-                <c:if test="${param.msg == 'delete_failed'}">
-                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
-                        ❌ Failed to delete account. Please try again.
-                    </div>
-                </c:if>
-                <c:if test="${param.msg == 'created'}">
-                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
-                        ✅ Account created successfully!
-                    </div>
-                </c:if>
-                <c:if test="${param.msg == 'create_acc_fail'}">
-                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
-                        ❌ Failed to create account. Please try again.
-                    </div>
-                </c:if>
-                <c:if test="${param.msg == 'create_user_fail'}">
-                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
-                        ❌ Failed to create user record. Please try again.
-                    </div>
-                </c:if>
-                <c:if test="${param.msg == 'role_updated'}">
-                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
-                        ✅ Role updated successfully!
-                    </div>
-                </c:if>
-                <c:if test="${param.msg == 'role_update_failed'}">
-                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4 shadow">
-                        ❌ Failed to update role. Please try again.
-                    </div>
-                </c:if>
-            </div>
-
 
             <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-xl p-6">
                 <!-- Create Account  -->
                 <div class="flex items-center justify-end mb-4">
-                    <!-- Button Create Account -->
-                    <!--                    <button onclick="openModal('createModal')"
-                                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
-                                            <span class="material-symbols-rounded">add</span>
-                                            <span>Create Account</span>
-                                        </button>-->
-
                     <!-- Search -->
                     <div class="flex items-center gap-2">
                         <input type="text" id="searchInput" placeholder="Search by title..."
@@ -109,82 +64,66 @@
                     <table class="min-w-full text-sm text-left border border-gray-200">
                         <thead class="bg-gray-100 text-gray-700 uppercase">
                             <tr>
-                                <th class="px-4 py-2 border-b">Image</th>
-                                <th class="px-4 py-2 border-b">productId</th>
-                                <th class="px-4 py-2 border-b">userId</th>
-                                <th class="px-4 py-2 border-b">title</th>
-                                <th class="px-4 py-2 border-b">description</th>
-                                <th class="px-4 py-2 border-b">price</th>
-                                <th class="px-4 py-2 border-b">moderationStatus</th>
-                                <th class="px-4 py-2 border-b text-right pr-[110px]">Actions</th>
+                                <th class="px-4 py-2 border-b">Report ID</th>
+                                <th class="px-4 py-2 border-b">Product ID</th>
+                                <th class="px-4 py-2 border-b">User ID</th>
+                                <th class="px-4 py-2 border-b">Reason</th>
+                                <th class="px-4 py-2 border-b">Reported At</th>
+                                <th class="px-4 py-2 border-b">Status</th>
+                                <th class="px-4 py-2 border-b text-right pr-[100px]">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="postTableBody" class="text-gray-800">
-                            <c:forEach var="product" items="${rejectedPosts}">
+                        <tbody id="reportTableBody" class="text-gray-800">
+                            <c:forEach var="report" items="${Reports}">
                                 <tr class="border-b">
+                                    <td class="px-4 py-2">${report.reportId}</td>
+                                    <td class="px-4 py-2">${report.productId}</td>
+                                    <td class="px-4 py-2">${report.userId}</td>
+                                    <td class="px-4 py-2">${report.reason}</td>
                                     <td class="px-4 py-2">
-                                        <img src="${imageMap[product.productId]}" class="rounded w-[60px] h-auto" />
-                                    </td>
-                                    <td class="px-4 py-2">${product.productId}</td>
-                                    <td class="px-4 py-2">${product.userId}</td>
-                                    <td class="px-4 py-2">${product.title}</td>
-                                    <td class="px-4 py-2">${product.description}</td>
-                                    <td class="px-4 py-2">${product.price}</td>
-                                    <td class="px-4 py-2">${product.moderationStatus}</td>
-                                    <td class="px-4 py-2 text-right pr-[110px]">
-                                        <div class="flex justify-end items-center gap-4">
-                                            <!-- Unblock button -->
-                                            <button onclick="openModal('approveModal', '${product.productId}')" 
-                                                    type="button" class="group relative cursor-pointer text-red-600 hover:text-red-800">
-                                                <span class="material-symbols-rounded text-xl">check_circle</span>
-                                                <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
-                                                    Approval
-                                                </div>
-                                            </button>
-                                            <!-- Delete button -->
-                                            <button onclick="openModal('rejectModal', '${product.productId}')"
-                                                    type="button" class="group relative cursor-pointer text-gray-600 hover:text-gray-800">
-                                                <span class="material-symbols-outlined">delete</span>
-                                                <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
-                                                    delete
-                                                </div>
-                                            </button>
+                            <fmt:formatDate value="${report.reportedAt}" pattern="dd/MM/yyyy" />
+                            </td>
+                            <td class="px-4 py-2">${report.status}</td>
+                            <td class="px-4 py-2 text-right pr-[80px]">
+                                <div class="flex justify-end items-center gap-4">
+<!--                                     Action button: mark as handled 
+                                    <button onclick="handleReport('${report.reportId}')" 
+                                            type="button" class="group relative cursor-pointer text-green-600 hover:text-green-800">
+                                        <span class="material-symbols-rounded text-xl">check_circle</span>
+                                        <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
+                                            Mark as Resolved
                                         </div>
-                                    </td>
-                                </tr>
-                            </c:forEach>
+                                    </button>
+                                     Delete button 
+                                    <button onclick="openModal('deleteModal', '${report.reportId}')"
+                                            type="button" class="group relative cursor-pointer text-gray-600 hover:text-gray-800">
+                                        <span class="material-symbols-rounded text-xl">delete</span>
+                                        <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
+                                            Delete
+                                        </div>
+                                    </button>
+                                </div>-->
+                            </td>
+                            </tr>
+                        </c:forEach>
                         </tbody>
                     </table>
+
                     <div id="pagination" class="mt-6 flex justify-center"></div>
                 </div>
             </div>
-            <!-- Approve Modal -->
-            <div id="approveModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
+            <!-- Delete Modal -->
+            <div id="deleteModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Approval</h2>
-                    <p class="text-gray-600 mb-6">Are you sure you want to approve this product?</p>
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Delete</h2>
+                    <p class="text-gray-600 mb-6">Are you sure you want to delete this Post?</p>
                     <div class="flex justify-end gap-3">
-                        <button onclick="closeModal('approveModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                        <form action="RejectPostServlet" method="post">
-                            <input type="hidden" name="productId" id="approveProductId">
-                            <input type="hidden" name="action" value="approve">
-                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Yes</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!--Reject Modal-->                        
-            <div id="rejectModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Rejection</h2>
-                    <p class="text-gray-600 mb-6">Are you sure you want to delete this product?</p>
-                    <div class="flex justify-end gap-3">
-                        <button onclick="closeModal('rejectModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                        <form action="RejectPostServlet" method="post">
-                            <input type="hidden" name="productId" id="rejectProductId">
-                            <input type="hidden" name="action" value="delete">
-                            <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Yes</button>
+                        <!-- Đổi method="port" thành post -->
+                        <button onclick="closeModal('deleteModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
+                        <form action="DeleteAccountServlet" method="post">
+                            <input type="hidden" name="user_id" id="deleteUserId">
+                            <input type="hidden" name="origin" value="AccountManageServlet" />
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Confirm</button>
                         </form>
                     </div>
                 </div>
@@ -195,7 +134,7 @@
 
         <script>
             const searchInput = document.getElementById("searchInput");
-            const rows = Array.from(document.querySelectorAll("#postTableBody tr"));
+            const rows = Array.from(document.querySelectorAll("#reportTableBody tr"));
             const rowsPerPage = 10;
             let currentPage = 1;
             let filteredRows = [...rows]; // lưu tất cả dòng ban đầu
@@ -273,10 +212,10 @@
                 document.getElementById(id).classList.remove("hidden");
 
                 // Gán userId vào input hidden tương ứng
-                if (id === 'approveModal') {
-                    document.getElementById('approveProductId').value = userId;
-                } else if (id === 'rejectModal') {
-                    document.getElementById('rejectProductId').value = userId;
+                if (id === 'blockModal') {
+                    document.getElementById('blockUserId').value = userId;
+                } else if (id === 'deleteModal') {
+                    document.getElementById('deleteUserId').value = userId;
                 }
             }
 
@@ -323,8 +262,8 @@
             searchInput.addEventListener("keyup", () => {
                 const keyword = searchInput.value.trim().toLowerCase();
                 filteredRows = rows.filter(row => {
-                    const title = row.children[4]?.textContent.toLowerCase() || "";
-                    const content = row.children[5]?.textContent.toLowerCase() || "";
+                    const title = row.children[1]?.textContent.toLowerCase() || "";
+                    const content = row.children[2]?.textContent.toLowerCase() || "";
                     return title.includes(keyword) || content.includes(keyword);
                 });
 
