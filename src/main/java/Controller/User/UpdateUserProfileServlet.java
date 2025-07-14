@@ -2,30 +2,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package Controller.Admin;
+package Controller.User;
 
-import Model.DAO.admin.AdminPostDAO;
+import Model.DAO.auth.UserDao;
 import Model.entity.auth.User;
-import Model.entity.post.Product;
-import Model.entity.post.ProductImage;
+import Utils.fileHandle.S3Util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import jakarta.servlet.http.Part;
+import java.io.InputStream;
 
 /**
  *
- * @author Admin
+ * @author ACER
  */
-@WebServlet(name = "RejectPost", urlPatterns = {"/RejectPost"})
-public class RejectPost extends HttpServlet {
+@MultipartConfig
+@WebServlet(name = "UpdateUserProfileServlet", urlPatterns = {"/UpdateUserProfileServlet"})
+public class UpdateUserProfileServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +44,10 @@ public class RejectPost extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RejectPost</title>");
+            out.println("<title>Servlet UpdateUserProfileServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RejectPost at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateUserProfileServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,7 +65,7 @@ public class RejectPost extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doPost(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -79,35 +79,56 @@ public class RejectPost extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         AdminPostDAO ad = new AdminPostDAO();
-        List<Product> productList = ad.getRejectPost();
 
-// Duyệt từng product để lấy ảnh
-        Map<String, String> imageMap = new HashMap<>();
-        for (Product p : productList) {
-            List<ProductImage> images = ad.image(p.getProductId());
-            if (images != null && !images.isEmpty()) {
-                imageMap.put(p.getProductId(), images.get(0).getImageUrl()); // lấy 1 ảnh đầu
-            } else {
-                imageMap.put(p.getProductId(), "https://via.placeholder.com/60");
-            }
+         // Lấy session người dùng
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("JoinIn.jsp");
+            return;
         }
 
-        request.setAttribute("rejectedPosts", productList);
-        request.setAttribute("imageMap", imageMap);
-        HttpSession session = request.getSession(false);
-            if(session != null){
-                User user = (User) session.getAttribute("cus");
-                if(user.getFullName() != null && user.getPhoneNumber() != null && user.getAddress() != null){
-                    request.getRequestDispatcher("/JSP/Admin/rejectPost.jsp").forward(request, response);
-                }else{
-                    request.getRequestDispatcher("s_userProfile").forward(request, response);
-                }
-            }else{
-                request.getRequestDispatcher("/JSP/Admin/JoinIn.jsp").forward(request, response);
-            }   
-        
+        User user = (User) session.getAttribute("cus");
+
+        // Lấy dữ liệu từ form
+        String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+
+        // Cập nhật avatar nếu có upload mới
+        Part avatarPart = request.getPart("avatar");
+        String newAvatarUrl = null;
+
+        if (avatarPart != null && avatarPart.getSize() > 0) {
+            String fileName = System.currentTimeMillis() + "_" + avatarPart.getSubmittedFileName();
+            InputStream fileContent = avatarPart.getInputStream();
+            long fileSize = avatarPart.getSize();
+            String contentType = avatarPart.getContentType();
+
+            // Upload lên S3 và lấy URL
+            newAvatarUrl = S3Util.uploadFile(fileName, fileContent, fileSize, contentType);
+        }
+
+        // Cập nhật thông tin người dùng
+        UserDao userDao = new UserDao();
+        user.setFullName(fullName);
+        user.setEmail(email);
+        user.setPhoneNumber(phone);
+        user.setAddress(address);
+        if (newAvatarUrl != null) {
+            user.setSrcImg(newAvatarUrl);
+        }
+
+        userDao.updateUserProfile(user);
+
+        // Cập nhật lại session
+        session.setAttribute("user", user);
+
+        // Quay lại trang profile
+            response.sendRedirect("s_userProfile");
+  
     }
+    
 
     /**
      * Returns a short description of the servlet.
