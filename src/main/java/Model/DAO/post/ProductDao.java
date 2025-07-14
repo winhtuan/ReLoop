@@ -339,7 +339,6 @@ public class ProductDao {
         if (maxPrice != null) {
             sql.append(" AND price <= ?");
         } 
-        
         if (state != null && !state.isEmpty()) {
             sql.append(" AND state = ?");
         }
