@@ -366,9 +366,11 @@ public class ProductDao {
                     Product p = new Product();
                     p.setProductId(rs.getString("product_id"));
                     p.setTitle(rs.getString("title"));
+                    p.setDescription(rs.getString("description"));
                     p.setPrice(rs.getInt("price"));
                     p.setState(rs.getString("state"));
                     p.setLocation(rs.getString("location"));
+                    p.setCreatedAt(rs.getTimestamp("created_at"));
                     p.setImages(imageDAO.getImagesByProductId(rs.getString("product_id")));
                     products.add(p);
                 }
