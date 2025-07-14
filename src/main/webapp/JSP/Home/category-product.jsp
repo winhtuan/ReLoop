@@ -592,6 +592,7 @@
                                             }
                                         });
         </script>
+        
         <!<!-- category -->
         <script src="js/dropdown-handler.js"></script>
     </body>
