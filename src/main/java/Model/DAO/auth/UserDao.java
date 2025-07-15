@@ -219,6 +219,22 @@ public class UserDao {
         }
     }
 
+    public void updateUserProfile(User user) {
+    String sql = "UPDATE Users SET FullName = ?, email = ?, PhoneNumber = ?, Address = ?, img = ? WHERE user_id = ?";
+    try (Connection conn = DBUtils.getConnect();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, user.getFullName());
+        ps.setString(2, user.getEmail());
+        ps.setString(3, user.getPhoneNumber());
+        ps.setString(4, user.getAddress());
+        ps.setString(5, user.getSrcImg());
+        ps.setString(6, user.getUserId());
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
     public static void main(String[] args) {
         System.out.println(new UserDao().generateUserId());
     }

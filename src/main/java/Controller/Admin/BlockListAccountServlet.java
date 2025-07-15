@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -81,9 +82,18 @@ public class BlockListAccountServlet extends HttpServlet {
 
         // Đưa danh sách vào request scope
         request.setAttribute("blockAccounts", blockAccounts);
-
-        // Forward sang JSP để hiển thị
-        request.getRequestDispatcher("/JSP/Admin/blockAcc.jsp").forward(request, response);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("cus");
+            if (user.getFullName() != null && user.getPhoneNumber() != null && user.getAddress() != null) {
+                // Forward sang JSP để hiển thị
+                request.getRequestDispatcher("/JSP/Admin/blockAcc.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("s_userProfile").forward(request, response);
+            }
+        } else {
+            request.getRequestDispatcher("/JSP/Admin/JoinIn.jsp").forward(request, response);
+        }
     }
 
     /**
