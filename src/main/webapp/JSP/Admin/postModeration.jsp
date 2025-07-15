@@ -285,6 +285,7 @@
                 // Gán userId vào input hidden tương ứng
                 if (id === 'approveModal') {
                     document.getElementById('approveProductId').value = productID;
+                    document.getElementById('rejectUserId').value = userId;
                 } else if (id === 'rejectModal') {
                     document.getElementById('rejectProductId').value = productID;
                     document.getElementById('rejectUserId').value = userId;

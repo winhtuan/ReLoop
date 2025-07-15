@@ -23,8 +23,8 @@
     </listener>
     <!-- Home -->
     <listener>
-        <description>HttpSessionListener</description>
-        <listener-class>Controller.Auth.SessionListener</listener-class>
+        <description>HttpSessionConfigurator</description>
+        <listener-class>Utils.HttpSessionConfigurator</listener-class>
     </listener>
     <servlet>
         <servlet-name>Home</servlet-name>
@@ -233,14 +233,6 @@
     <servlet-mapping>
         <servlet-name>s_driver</servlet-name>
         <url-pattern>/s_driver</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>ShippingFeeServlet</servlet-name>
-        <servlet-class>Controller.api.ShippingFeeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ShippingFeeServlet</servlet-name>
-        <url-pattern>/ShippingFeeServlet</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>callLogin</servlet-name>

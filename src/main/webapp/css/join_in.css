@@ -4,14 +4,13 @@
 /*=============== VARIABLES CSS ===============*/
 :root {
     /*========== Colors ==========*/
-    /*Color mode HSL(hue, saturation, lightness)*/
-    --first-color: hsl(208, 92%, 54%);
-    --first-color-alt: hsl(208, 88%, 50%);
-    --title-color: hsl(220, 68%, 4%);
+    --first-color: hsl(45, 85%, 55%);       /* Amber gold */
+    --first-color-alt: hsl(42, 90%, 50%);   /* Amber đậm */
+    --title-color: hsl(25, 50%, 12%);       /* Nâu chocolate */
     --white-color: hsl(0, 0%, 100%);
-    --text-color: hsl(220, 15%, 66%);
-    --body-color: hsl(0, 0%, 100%);
-    --container-color: hsl(220, 50%, 97%);
+    --text-color: hsl(35, 20%, 45%);        /* Taupe */
+    --body-color: hsl(48, 25%, 98%);        /* Cream white */
+    --container-color: hsl(45, 35%, 95%);   /* Warm cream */
 
     /*========== Font and typography ==========*/
     /*.5rem = 8px | 1rem = 16px ...*/
@@ -176,19 +175,106 @@ img {
     cursor: pointer;
     z-index: 10;
 }
-
-.login__forgot {
-    display: block;
-    width: max-content;
-    margin: 1rem 0 0 auto;
-    font-size: var(--small-font-size);
-    font-weight: var(--font-semi-bold);
-    color: var(--text-color);
-    transition: color 0.4s;
+.login__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1.1rem;
+    margin-top: 0.7rem;
+    margin-bottom: 0.4rem;
 }
 
-.login__forgot:hover {
+.login__remember {
+    display: flex;
+    align-items: center;
+    gap: 0.42em;
+    font-size: var(--small-font-size);
+    font-weight: var(--font-medium);
+    color: var(--text-color);
+    cursor: pointer;
+    user-select: none;
+    line-height: 1.1;
+    padding-top: 5px; 
+}
+.login__remember input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid #b9ab81;
+    border-radius: 3.5px;
+    background: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: border 0.18s, background 0.18s;
+    margin: 0;
+    position: relative;
+}
+
+.login__remember input[type="checkbox"]:checked {
+    border-color: var(--first-color);
+    background: var(--first-color);
+}
+
+.login__remember input[type="checkbox"]:checked::after {
+    content: "";
+    display: block;
+    width: 9px;
+    height: 5px;
+    border-left: 2.2px solid #fff;
+    border-bottom: 2.2px solid #fff;
+    transform: rotate(-45deg);
+    position: absolute;
+    left: 3.5px;
+    top: 4px;
+}
+
+.login__remember span {
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: 2px;
+}
+
+.login__forgot {
+    font-size: var(--small-font-size);
+    font-weight: var(--font-semi-bold);
     color: var(--first-color);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.22s;
+    margin-left: auto;
+    display: inline-block;
+    line-height: 1.1;
+}
+.login__forgot:hover {
+    color: var(--first-color-alt);
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.3rem;
+    margin-top: 0.2rem;
+    width: 100%;
+}
+
+.logo img {
+    max-width: 200px;
+    width: 80%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px #fbb71022); /* bóng vàng nhẹ phía dưới */
+    transition: filter 0.22s, transform 0.22s;
+    border-radius: 12px;
+    background: #fff;
+    padding: 0.25rem 1.2rem;
+}
+
+.logo img:hover {
+    filter: drop-shadow(0 8px 20px #fbb71044) brightness(1.05);
+    transform: scale(1.04) rotate(-2deg);
 }
 
 .login__button {
@@ -198,9 +284,9 @@ img {
     background-color: var(--first-color);
     color: var(--white-color);
     font-weight: var(--font-semi-bold);
-    padding-block: 1.5rem;
+    padding-block: 1.2rem;
     border-radius: 4rem;
-    margin-block: 2rem;
+    margin-block: 1.5rem;
     cursor: pointer;
     transition: background-color 0.4s, box-shadow 0.4s;
 }
@@ -211,7 +297,7 @@ img {
 }
 
 .login__social {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .login__social-title {
@@ -259,7 +345,12 @@ img {
     font-weight: var(--font-semi-bold);
     cursor: pointer;
     transition: color 0.4s;
+    border: none;          /* Xóa border mặc định */
+    outline: none;         /* Xóa outline khi focus/click */
+    box-shadow: none;      /* Đề phòng có hiệu ứng đổ bóng */
+    padding: 0;            /* Đảm bảo không dính padding lạ */
 }
+
 
 .login__switch button:hover {
     color: var(--first-color-alt);
@@ -400,9 +491,13 @@ img {
     align-items: center;
     justify-content: center;
     padding: 1rem;
+    z-index: 10000;
 }
 .modal.show {
     display: flex;
+}
+body:has(.modal.show) #chatButton, .footer_area {
+    z-index: 0 !important;
 }
 .modal-content {
     background-color: #fff;
@@ -416,6 +511,8 @@ img {
     position: relative;
     animation: slideDown 0.3s ease;
 }
+
+
 
 @keyframes slideDown {
     from {

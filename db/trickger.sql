@@ -91,3 +91,46 @@ WHERE parent_id IS NULL;
 UPDATE categories c
 JOIN categories p ON c.parent_id = p.category_id
 SET c.level = p.level + 1;
+
+DELIMITER $$
+
+CREATE TRIGGER before_insert_product
+BEFORE INSERT ON product
+FOR EACH ROW
+BEGIN
+    DECLARE new_id INT;
+    DECLARE new_code CHAR(7);
+
+    -- Tăng số thứ tự
+    UPDATE product_sequence SET last_number = last_number + 1 WHERE id = 1;
+
+    -- Lấy số mới
+    SELECT last_number INTO new_id FROM product_sequence WHERE id = 1;
+
+    -- Tạo mã mới: PRD + số padded
+    SET new_code = CONCAT('PRD', LPAD(new_id, 4, '0'));
+
+    -- Gán vào trường product_id
+    SET NEW.product_id = new_code;
+END$$
+
+DELIMITER ;
+DELIMITER $$
+
+CREATE TRIGGER before_insert_product_images
+BEFORE INSERT ON product_images
+FOR EACH ROW
+BEGIN
+    DECLARE new_img_id INT;
+
+    -- Tăng số thứ tự
+    UPDATE product_images_sequence SET last_number = last_number + 1 WHERE id = 1;
+
+    -- Lấy số mới
+    SELECT last_number INTO new_img_id FROM product_images_sequence WHERE id = 1;
+
+    -- Gán vào trường img_id
+    SET NEW.img_id = new_img_id;
+END$$
+
+DELIMITER ;

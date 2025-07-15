@@ -24,7 +24,7 @@ public class s_logout extends HttpServlet {
         // Chuyển hướng về trang login
         response.sendRedirect("home");
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
