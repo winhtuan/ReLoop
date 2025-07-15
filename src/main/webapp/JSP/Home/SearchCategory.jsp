@@ -8,43 +8,43 @@
                     <c:url var="mainCategoryUrl" value="categoryViewServlet">
                         <c:param name="slug" value="${cat.slug}"/>
                     </c:url>
-                    <a class="main-category-label" href="${mainCategoryUrl}">
+                    <a class="main-category-label dropdown-link" href="${mainCategoryUrl}">
                         <c:choose>
                             <c:when test="${cat.name eq 'Books & Documents'}">
                                 <ion-icon name="book-outline"></ion-icon>
-                                </c:when>
-                                <c:when test="${cat.name eq 'Digital Goods'}">
+                            </c:when>
+                            <c:when test="${cat.name eq 'Digital Goods'}">
                                 <ion-icon name="laptop-outline"></ion-icon>
-                                </c:when>
-                                <c:when test="${cat.name eq 'Electronics'}">
+                            </c:when>
+                            <c:when test="${cat.name eq 'Electronics'}">
                                 <ion-icon name="hardware-chip-outline"></ion-icon>
-                                </c:when>
-                                <c:when test="${cat.name eq 'Fashion'}">
+                            </c:when>
+                            <c:when test="${cat.name eq 'Fashion'}">
                                 <ion-icon name="shirt-outline"></ion-icon>
-                                </c:when>
-                                <c:when test="${cat.name eq 'Furniture'}">
+                            </c:when>
+                            <c:when test="${cat.name eq 'Furniture'}">
                                 <ion-icon name="bed-outline"></ion-icon>
-                                </c:when>
-                                <c:when test="${cat.name eq 'Home Appliances'}">
+                            </c:when>
+                            <c:when test="${cat.name eq 'Home Appliances'}">
                                 <ion-icon name="home-outline"></ion-icon>
-                                </c:when>
-                                <c:when test="${cat.name eq 'Jewelry'}">
+                            </c:when>
+                            <c:when test="${cat.name eq 'Jewelry'}">
                                 <ion-icon name="sparkles-outline"></ion-icon>
-                                </c:when>
-                                <c:when test="${cat.name eq 'Pets'}">
+                            </c:when>
+                            <c:when test="${cat.name eq 'Pets'}">
                                 <ion-icon name="paw-outline"></ion-icon>
-                                </c:when>
-                                <c:otherwise>
+                            </c:when>
+                            <c:otherwise>
                                 <ion-icon name="folder-outline"></ion-icon>
-                                </c:otherwise>
-                            </c:choose>
-                            ${cat.name}
+                            </c:otherwise>
+                        </c:choose>
+                        <span class="cat-label-text">${cat.name}</span>
                     </a>
                     <ul class="sub-category-list">
                         <c:forEach var="sub" items="${categoryList}">
                             <c:if test="${sub.parentId == cat.categoryId}">
                                 <li class="sub-category-item">
-                                    <a href="categoryViewServlet?slug=${sub.slug}">
+                                    <a class="dropdown-link" href="categoryViewServlet?slug=${sub.slug}">
                                         <ion-icon name="chevron-forward-outline"></ion-icon> ${sub.name}
                                     </a>
                                 </li>
