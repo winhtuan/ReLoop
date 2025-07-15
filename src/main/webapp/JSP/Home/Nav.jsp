@@ -29,7 +29,17 @@
         <ul>
             <li class="active"><a href="${pageContext.request.contextPath}/home">Home</a></li>
             <li><a href="${pageContext.request.contextPath}/NewPostPage">New Post</a></li>
-            <li><a href="#">Post</a></li>
+            <div class="category-dropdown-container">
+                <li>
+                    <a href="#" class="category-nav">CATEGORY</a>
+                </li>
+
+                <div class="category-dropdown">
+                    <div class="category-container">
+                        <c:import url="/JSP/Home/SearchCategory.jsp" />
+                    </div>
+                </div>
+            </div>
             <li><a href="#">Shop</a></li>
                 <c:choose>
                     <c:when test="${sessionScope.user != null}">
@@ -43,17 +53,6 @@
     </nav>
     <!-- Cart Menu -->
     <div class="cart-fav-search">
-        <div class="category-dropdown-container">
-            <a href="#" class="category-nav">
-                <ion-icon name="menu-outline"></ion-icon> CATEGORY
-            </a>
-
-            <div class="category-dropdown">
-                <div class="category-container">
-                   <c:import url="/JSP/Home/SearchCategory.jsp" />
-                </div>
-            </div>
-        </div>
 
         <a href="#" class="search-nav"><ion-icon name="search-outline"></ion-icon> Search</a>
                 <c:choose>

@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -16,10 +16,12 @@
         <link rel="icon" href="img/core-img/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+        <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
         <link rel="stylesheet" href="css/dropdown.css">
 
+        <link rel="stylesheet" href="css/product-styles.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
     </head>
     <body>
@@ -32,11 +34,11 @@
         <!-- ##### Main Content Wrapper Start ##### -->
 
         <div class="main-content-wrapper d-flex clearfix">
-            <div>
+            <div class="nav-container">
                 <c:import url="/JSP/Home/Nav.jsp" />
             </div>
             <div>
-                <div>
+                <div class="product-container">
                     <h2>Product of category: ${currentCategory.name}</h2>
 
                     <!-- FILTER SECTION -->
@@ -205,90 +207,159 @@
                         <div class="filter-option dropdown">
                             <button class="btn btn-outline">Tình trạng <ion-icon name="chevron-down-outline"></ion-icon></button>
                             <div class="dropdown-content">
-                                <c:url var="stateAll" value="categoryViewServlet">
-                                    <c:if test="${currentCategory != null}">
-                                        <c:param name="slug" value="${currentCategory.slug}"/>
-                                    </c:if>
-                                    <c:if test="${param.minPrice != null}">
-                                        <c:param name="minPrice" value="${param.minPrice}"/>
-                                    </c:if>
-                                    <c:if test="${param.maxPrice != null}">
-                                        <c:param name="maxPrice" value="${param.maxPrice}"/>
-                                    </c:if>
-                                    <!-- Không thêm param state để xóa lọc -->
-                                </c:url>
-                                <c:url var="stateNew" value="categoryViewServlet">
-                                    <c:if test="${currentCategory != null}">
-                                        <c:param name="slug" value="${currentCategory.slug}"/>
-                                    </c:if>
-                                    <c:param name="state" value="mới"/>
-                                    <c:if test="${param.minPrice != null}">
-                                        <c:param name="minPrice" value="${param.minPrice}"/>
-                                    </c:if>
-                                    <c:if test="${param.maxPrice != null}">
-                                        <c:param name="maxPrice" value="${param.maxPrice}"/>
-                                    </c:if>
-                                </c:url>
-                                <c:url var="stateOld" value="categoryViewServlet">
-                                    <c:if test="${currentCategory != null}">
-                                        <c:param name="slug" value="${currentCategory.slug}"/>
-                                    </c:if>
-                                    <c:param name="state" value="cũ"/>
-                                    <c:if test="${param.minPrice != null}">
-                                        <c:param name="minPrice" value="${param.minPrice}"/>
-                                    </c:if>
-                                    <c:if test="${param.maxPrice != null}">
-                                        <c:param name="maxPrice" value="${param.maxPrice}"/>
-                                    </c:if>
-                                </c:url>
-                                <c:url var="stateDamaged" value="categoryViewServlet">
-                                    <c:if test="${currentCategory != null}">
-                                        <c:param name="slug" value="${currentCategory.slug}"/>
-                                    </c:if>
-                                    <c:param name="state" value="hư hỏng nhẹ"/>
-                                    <c:if test="${param.minPrice != null}">
-                                        <c:param name="minPrice" value="${param.minPrice}"/>
-                                    </c:if>
-                                    <c:if test="${param.maxPrice != null}">
-                                        <c:param name="maxPrice" value="${param.maxPrice}"/>
-                                    </c:if>
-                                </c:url>
-                                <a href="${stateAll}">Tất cả</a>
-                                <a href="${stateNew}">Mới</a>
-                                <a href="${stateOld}">Cũ</a>
-                                <a href="${stateDamaged}">Hư hỏng nhẹ</a>
+                                <c:set var="isPetCategory" value="${currentCategory != null && currentCategory.categoryId >= 41 && currentCategory.categoryId <= 46}" />
+                                <c:choose>
+                                    <c:when test="${isPetCategory}">
+                                        <!-- Lọc đặc biệt cho category_id 41-46 (Pets) -->
+                                        <c:url var="stateAll" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                        </c:url>
+                                        <c:url var="stateYoung" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:param name="state" value="Con non"/>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                        </c:url>
+                                        <c:url var="stateAdult" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:param name="state" value="Trưởng thành"/>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                        </c:url>
+                                        <a href="${stateAll}">Tất cả</a>
+                                        <a href="${stateYoung}">Con non</a>
+                                        <a href="${stateAdult}">Trưởng thành</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <!-- Lọc mặc định cho các category khác -->
+                                        <c:url var="stateAll" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                        </c:url>
+                                        <c:url var="stateNew" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:param name="state" value="mới"/>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                        </c:url>
+                                        <c:url var="stateOld" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:param name="state" value="cũ"/>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                        </c:url>
+                                        <c:url var="stateDamaged" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:param name="state" value="hư hỏng nhẹ"/>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                        </c:url>
+                                        <a href="${stateAll}">Tất cả</a>
+                                        <a href="${stateNew}">Mới</a>
+                                        <a href="${stateOld}">Cũ</a>
+                                        <a href="${stateDamaged}">Hư hỏng nhẹ</a>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </div>
+
                     <!-- PRODUCT LIST -->
                     <p>Product list size: ${fn:length(productList)}</p>
 
                     <div class="product-list">
+                        <c:set var="page" value="${param.page != null ? param.page : 1}" />
+                        <c:set var="pageSize" value="8" />
+                        <c:set var="start" value="${(page - 1) * pageSize}" />
+                        <c:set var="end" value="${start + pageSize - 1}" />
+                        <c:set var="totalPages" value="${(fn:length(productList) + pageSize - 1) / pageSize}" />
+
                         <c:choose>
                             <c:when test="${not empty productList}">
-                                <c:forEach var="p" items="${productList}">
+                                <c:forEach var="p" items="${productList}" begin="${start}" end="${end}">
                                     <div class="product-card">
-                                        <c:set var="primaryImage" value="${null}"/>
-                                        <c:forEach var="image" items="${p.images}">
-                                            <c:if test="${image.primary}">
-                                                <c:set var="primaryImage" value="${image}"/>
-                                            </c:if>
-                                        </c:forEach>
-                                        <c:choose>
-                                            <c:when test="${not empty primaryImage}">
-                                                <img src="${primaryImage.imageUrl}" alt="${p.title}" width="150" height="150"/>
-                                            </c:when>
-                                            <c:when test="${not empty p.images}">
-                                                <img src="${p.images[0].imageUrl}" alt="${p.title}" width="150" height="150"/>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <img src="https://via.placeholder.com/150" alt="No image" width="150" height="150"/>
-                                            </c:otherwise>
-                                        </c:choose>
-                                        <h4>${p.title}</h4>
-                                        <p>${p.price} VND</p>
-                                        <p>Condition: ${p.state}</p>
-                                        <p>Location: ${p.location}</p>
+                                        <a href="${pageContext.request.contextPath}/s_productDetail?productId=${p.productId}" class="product-link">
+                                            <div class="product-image-wrapper">
+                                                <c:choose>
+                                                    <c:when test="${not empty p.images and not empty p.images[0].imageUrl}">
+                                                        <img class="product-image" src="${p.images[0].imageUrl}" alt="${p.title}" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img class="product-image" src="https://via.placeholder.com/150" alt="No image" />
+                                                    </c:otherwise>
+                                                </c:choose>
+
+                                                <!-- Action buttons with ion-icon -->
+                                                <div class="product-actions">
+                                                    <button class="btn-action wishlist">
+                                                        <ion-icon name="heart-outline"></ion-icon>
+                                                    </button>
+                                                    <button class="btn-action buy-now">
+                                                        <ion-icon name="flash-outline"></ion-icon>
+                                                    </button>
+                                                    <button class="btn-action add-to-cart">
+                                                        <ion-icon name="cart-outline"></ion-icon>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-info" style="padding: 1rem;">
+                                                <div class="product-title">${p.title}</div>
+                                                <div class="product-price">${p.price} VNĐ</div>
+                                                <div class="product-description">${p.description}</div>
+                                                <div class="product-meta">
+                                                    <p class="location"><i class="fa fa-map-marker-alt"></i> ${p.location}</p>
+                                                    <p class="posted-date">
+                                                        <i class="fa fa-calendar-alt"></i> <fmt:formatDate value="${p.createdAt}" pattern="dd/MM/yyyy" />
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </a>
                                     </div>
                                 </c:forEach>
                             </c:when>
@@ -297,25 +368,90 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination" style="text-align: center; margin-top: 20px;">
+                        <c:if test="${totalPages > 1}">
+                            <c:url var="prevUrl" value="categoryViewServlet">
+                                <c:if test="${currentCategory != null}">
+                                    <c:param name="slug" value="${currentCategory.slug}"/>
+                                </c:if>
+                                <c:if test="${param.minPrice != null}">
+                                    <c:param name="minPrice" value="${param.minPrice}"/>
+                                </c:if>
+                                <c:if test="${param.maxPrice != null}">
+                                    <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                </c:if>
+                                <c:if test="${param.state != null}">
+                                    <c:param name="state" value="${param.state}"/>
+                                </c:if>
+                                <c:param name="page" value="${page - 1}"/>
+                            </c:url>
+                            <c:url var="nextUrl" value="categoryViewServlet">
+                                <c:if test="${currentCategory != null}">
+                                    <c:param name="slug" value="${currentCategory.slug}"/>
+                                </c:if>
+                                <c:if test="${param.minPrice != null}">
+                                    <c:param name="minPrice" value="${param.minPrice}"/>
+                                </c:if>
+                                <c:if test="${param.maxPrice != null}">
+                                    <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                </c:if>
+                                <c:if test="${param.state != null}">
+                                    <c:param name="state" value="${param.state}"/>
+                                </c:if>
+                                <c:param name="page" value="${page + 1}"/>
+                            </c:url>
+
+                            <c:if test="${page > 1}">
+                                <a href="${prevUrl}" class="pagination-link">Previous</a>
+                            </c:if>
+                            <c:forEach var="i" begin="1" end="${totalPages}">
+                                <c:url var="pageUrl" value="categoryViewServlet">
+                                    <c:if test="${currentCategory != null}">
+                                        <c:param name="slug" value="${currentCategory.slug}"/>
+                                    </c:if>
+                                    <c:if test="${param.minPrice != null}">
+                                        <c:param name="minPrice" value="${param.minPrice}"/>
+                                    </c:if>
+                                    <c:if test="${param.maxPrice != null}">
+                                        <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                    </c:if>
+                                    <c:if test="${param.state != null}">
+                                        <c:param name="state" value="${param.state}"/>
+                                    </c:if>
+                                    <c:param name="page" value="${i}"/>
+                                </c:url>
+                                <a href="${pageUrl}" class="pagination-link ${i == page ? 'active' : ''}">${i}</a>
+                            </c:forEach>
+                            <c:if test="${page < totalPages}">
+                                <a href="${nextUrl}" class="pagination-link">Next</a>
+                            </c:if>
+                        </c:if>
+                    </div>
                 </div>
             </div>
-            <c:import url="/JSP/Home/Footer.jsp" />
-            <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
-            <script src="js/jquery/jquery-2.2.4.min.js"></script>
-            <!-- Popper js -->
-            <script src="js/lib_js/popper.min.js"></script>
-            <!-- Bootstrap js -->
-            <script src="js/lib_js/bootstrap.min.js"></script>
-            <!-- Plugins js -->
-            <script src="js/lib_js/plugins.js"></script>
-            <!-- js -->
-            <script src="js/active.js"></script>
-            <!-- Ion Icons -->
-            <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-            <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-            <!-- Dropdown handler for filters -->
-            <script src="js/filter-dropdown.js"></script>
-            <script>
+        </div>
+        <c:import url="/JSP/Home/Footer.jsp" />
+        <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
+        <script src="js/jquery/jquery-2.2.4.min.js"></script>
+        <!-- Popper js -->
+        <script src="js/lib_js/popper.min.js"></script>
+        <!-- Bootstrap js -->
+        <script src="js/lib_js/bootstrap.min.js"></script>
+        <!-- Plugins js -->
+        <script src="js/lib_js/plugins.js"></script>
+        <!-- js -->
+        <script src="js/active.js"></script>
+        <!-- Ion Icons -->
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <!-- Font Awesome (chỉ nếu bạn dùng thêm icon fa) -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+        <!-- Dropdown handler for filters -->
+        <script src="js/filter-dropdown.js"></script>
+        <script>
                                         const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
                                         let originalContent = ''; // Biến lưu nội dung ban đầu
 
@@ -455,8 +591,8 @@
                                                 }
                                             }
                                         });
-            </script>
-            <!<!-- category -->
-            <script src="js/dropdown-handler.js"></script>
+        </script>
+        <!<!-- category -->
+        <script src="js/dropdown-handler.js"></script>
     </body>
 </html>

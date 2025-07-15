@@ -4,7 +4,9 @@
 
 <!--===== LOGIN ACCESS =====-->
 <div class="login__access">
-    <h1 class="login__title" style="text-align: center;">Log in to your account.</h1>
+    <div class="logo">
+        <a href="#"><img src="${pageContext.request.contextPath}/img/core-img/logo.png" alt=""></a>
+    </div>
 
     <div class="login__area">
         <form action="LoginServlet" method="post" class="login__form">
@@ -22,15 +24,14 @@
                 </div>
 
             </div>
-            <div style="display: flex; align-items: center;" class="login__row">
-                <span class="login__remember">
-                    <label class="login__remember" for="remember">
-                        <input type="checkbox" name="remember" />
-                        Remember me
-                    </label>
-                </span>
-
-                <a href="${pageContext.request.contextPath}/JSP/Authenticate/forgotPassword.jsp" class="login__forgot">Forgot your password?</a>
+            <div class="login__row">
+                <label class="login__remember" for="remember">
+                    <input type="checkbox" name="remember" id="remember" />
+                    <span>Remember me</span>
+                </label>
+                <a href="${pageContext.request.contextPath}/JSP/Authenticate/forgotPassword.jsp" class="login__forgot">
+                    Forgot your password?
+                </a>
             </div>
             <button type="submit" class="login__button">Login</button>
         </form>
@@ -53,7 +54,7 @@
         </div>
 
         <div class="login__switch">
-            Chưa có tài khoản? 
+            Don't have an account?
             <button type="button" id="loginButtonRegister">Create account</button>
         </div>
     </div>

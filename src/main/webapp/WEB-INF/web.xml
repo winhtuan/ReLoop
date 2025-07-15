@@ -235,14 +235,6 @@
         <url-pattern>/s_driver</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>ShippingFeeServlet</servlet-name>
-        <servlet-class>Controller.api.ShippingFeeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ShippingFeeServlet</servlet-name>
-        <url-pattern>/ShippingFeeServlet</url-pattern>
-    </servlet-mapping>
-    <servlet>
         <servlet-name>callLogin</servlet-name>
         <servlet-class>Controller.callLogin</servlet-class>
     </servlet>

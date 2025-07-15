@@ -4,6 +4,7 @@
  */
 package Model.DAO.commerce;
 
+import Model.DAO.auth.UserDao;
 import Model.entity.post.Product;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +13,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import Model.DAO.post.ProductImageDao;
+import Model.entity.auth.User;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
@@ -45,6 +49,50 @@ public class CartDAO {
         return String.format("%s%04d", prefix, nextId);
     }
 
+    public Map<User, List<Product>> getCartGroupedBySeller(String userId) {
+        Map<User, List<Product>> groupedCart = new LinkedHashMap<>();
+        String sql = "SELECT p.*, ci.quantity AS cQuantity " +
+             "FROM cart c " +
+             "JOIN cart_items ci ON c.cart_id = ci.cart_id " +
+             "JOIN product p ON ci.product_id = p.product_id " +
+             "WHERE c.user_id = ? " +
+             "ORDER BY p.user_id, p.created_at DESC";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setProductId(rs.getString("product_id"));
+                    product.setUserId(rs.getString("user_id"));
+                    product.setCategoryId(rs.getInt("category_id"));
+                    product.setTitle(rs.getString("title"));
+                    product.setDescription(rs.getString("description"));
+                    product.setPrice(rs.getBigDecimal("price").intValue());
+                    product.setLocation(rs.getString("location"));
+                    product.setStatus(rs.getString("status"));
+                    product.setModerationStatus(rs.getString("moderation_status"));
+                    product.setIsPriority(rs.getBoolean("is_priority"));
+                    product.setCreatedAt(rs.getTimestamp("created_at"));
+                    product.setState(rs.getString("state"));
+                    product.setQuantity(rs.getInt("cQuantity"));
+                    product.setImages(new ProductImageDao().getImagesByProductId(product.getProductId()));
+
+                    // Lấy người bán
+                    User seller = new UserDao().getUserById(product.getUserId());
+                    product.setUser(seller); // để hiển thị ở phần tử product nếu cần
+
+                    // Gộp theo seller
+                    groupedCart.computeIfAbsent(seller, k -> new ArrayList<>()).add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return groupedCart;
+    }
+
     public List<Product> getCartProductsByUserId(String userId) {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT p.*, ci.quantity as cQuantity "
@@ -75,7 +123,7 @@ public class CartDAO {
 
                     // Gán ảnh nếu cần (giả sử có ProductDAO.getImagesByProductId)
                     product.setImages(new ProductImageDao().getImagesByProductId(product.getProductId()));
-
+                    product.setUser(new UserDao().getUserById(product.getUserId()));
                     products.add(product);
                 }
             }

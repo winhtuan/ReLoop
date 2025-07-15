@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
         <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="css/notification.css">
+        <link rel="stylesheet" href="css/category-menu.css">
         
   </head>
     <body>
@@ -50,6 +51,7 @@
         <!-- js -->
         <script src="js/active.js"></script>
         <script src="js/JS_search.js"></script>
+        <script src="js/search-menu.js"></script>
         <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
