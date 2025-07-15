@@ -13,12 +13,41 @@ public class User {
     private boolean isPremium;
     private Date premiumExpiry;
     private BigDecimal balance;
+    private String srcImg;
+    private Account account;
 
     // Default constructor with default role = "user"
     public User() {
         this.role = "user"; // Set default role to "user"
     }
 
+    public User(String userId, String fullName, String role, String address, String phoneNumber, String email, boolean isPremium, Date premiumExpiry, BigDecimal balance, String srcImg) {
+        this.userId = userId;
+        this.fullName = fullName;
+        this.role = role;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.isPremium = isPremium;
+        this.premiumExpiry = premiumExpiry;
+        this.balance = balance;
+        this.srcImg = srcImg;
+    }
+
+    public User(String userId, String fullName, String role, String address, String phoneNumber, String email, boolean isPremium, Date premiumExpiry, BigDecimal balance, String srcImg, Account account) {
+        this.userId = userId;
+        this.fullName = fullName;
+        this.role = role;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.isPremium = isPremium;
+        this.premiumExpiry = premiumExpiry;
+        this.balance = balance;
+        this.srcImg = srcImg;
+        this.account = account;
+    }
+    
     // All-args constructor
     public User(String userId, String fullName, String role, String address, String phoneNumber,
                 String email, boolean isPremium, Date premiumExpiry, BigDecimal balance) {
@@ -31,6 +60,32 @@ public class User {
         this.isPremium = isPremium;
         this.premiumExpiry = premiumExpiry;
         this.balance = balance;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    
+    
+    public boolean isIsPremium() {
+        return isPremium;
+    }
+
+    public void setIsPremium(boolean isPremium) {
+        this.isPremium = isPremium;
+    }
+
+    public String getSrcImg() {
+        return srcImg;
+    }
+
+    public void setSrcImg(String srcImg) {
+        this.srcImg = srcImg;
     }
 
     public String getUserId() { return userId; }

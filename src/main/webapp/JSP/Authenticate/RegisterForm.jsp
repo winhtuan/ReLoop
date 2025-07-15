@@ -6,7 +6,7 @@
     <h1 class="login__title" style="text-align: center;">Create new account.</h1>
 
     <div class="login__area">
-        <form action="RegisterServlet" method="" class="login__form">
+        <form action="RegisterServlet" method="post" class="login__form">
             <div class="login__content grid">
                 <div class="login__group grid">
                     <div class="login__box">

@@ -1,12 +1,11 @@
 
 function selectChatUser(userId, username) {
+    document.querySelector(".chat-main").style.display = "flex";
     currentChatUserId = userId;
 
     currentChatUserName = username;
 
     document.getElementById("chatWith").textContent = username;
-
-
 
     document.querySelectorAll("#userList li").forEach(item => {
 
@@ -100,211 +99,180 @@ function selectChatUser(userId, username) {
 
             });
 
-    const dropdownBtn = document.querySelector("h3 .dropdown-btn");
-    const dropdownContent = document.querySelector("h3 .dropdown-content");
+    const dropdownBtn = document.querySelector("#userDropDown");
+    const dropdownContent = document.querySelector("#userDropDownContent");
     dropdownBtn.addEventListener("click", function (e) {
         e.stopPropagation();
-        const isOpen = dropdownContent.style.display === "block";
+        const isOpen = dropdownContent.style.display === "flex";
         document.querySelectorAll(".dropdown-content").forEach(content => content.style.display = "none");
-        dropdownContent.style.display = isOpen ? "none" : "block";
+        dropdownContent.style.display = isOpen ? "none" : "flex";
     });
-
 }
 
 function addMessageToChatBox(msg) {
-    if (msg.type === "image") {
-        addImageToChatBox(msg);
-        return;
-    }
 
+    /*-------------------------------------------------
+     2. Xác định các thông tin cần hiển thị
+     --------------------------------------------------*/
     const chatBox = document.getElementById("chatBox");
-    const p = document.createElement("p");
-    const isSentByMe = (msg.fromUserId !== undefined && msg.fromUserId === currentUserId) ||
-            (msg.senderId !== undefined && msg.senderId === currentUserId);
-    const content = msg.content;
+    const isSentByMe = (msg.fromUserId ?? msg.senderId) === currentUserId;
     const msID = msg.messageId;
-    let timeText = "";
+    const content = msg.content;
+    const avatarUrl = "https://placehold.co/400";
+    const senderName = isSentByMe ? "" : currentChatUserName + ":";
 
-    if (msg.timestamp) {
-        const time = new Date(msg.timestamp);
-        if (!isNaN(time)) {
-            timeText = '<small style="color:gray">' + time.toString().substring(0, 24) + '</small>';
-        } else {
-            timeText = '<small style="color:red">Invalid Date</small>';
-            console.error("Invalid timestamp received:", msg.timestamp);
-        }
+    // Xử lý thời gian
+    let timeText = "";
+    if (msg.sentAt) {
+        const time = new Date(msg.sentAt);
+        timeText = isNaN(time)
+                ? '<small style="color:red">Invalid Date</small>'
+                : time.toLocaleString("vi-VN", {hour: "2-digit", minute: "2-digit", weekday: "short"});
     }
 
+    /*-------------------------------------------------
+     3. Xử lý tin nhắn đã recall
+     --------------------------------------------------*/
     const isRecalled = msg.is_recall === true || msg.type === "recall";
 
+    /*-------------------------------------------------
+     4. Tạo cấu trúc DOM
+     --------------------------------------------------*/
+    const wrapper = document.createElement("div");              // .chat-msg
+    wrapper.className = "chat-msg" + (isSentByMe ? " me" : "");
+    wrapper.dataset.messageId = msID;
+
+    // ---- ẢNH AVATAR ------------------------------------------------
+    const avatar = document.createElement("img");
+    avatar.className = "avatar";
+    avatar.src = avatarUrl;
+    avatar.alt = "avatar";
+
+    // ---- PHẦN NỘI DUNG ---------------------------------------------
+    const contentBox = document.createElement("div");              // .chat-msg-content
+    contentBox.className = "chat-msg-content";
+
+    // Thời gian
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "time";
+    timeSpan.innerHTML = timeText;
+
     if (isRecalled) {
-        p.className = isSentByMe ? "msg-sent msg-recalled" : "msg-received msg-recalled";
-        const senderName = isSentByMe ? "" : currentChatUserName + ":";
-        p.innerHTML = "<b>" + senderName + "</b>Message has been recalled<br><small style=\"color:gray\">" + timeText + "</small>";
-        chatBox.appendChild(p);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        return;
-    }
-
-    p.className = isSentByMe ? "msg-sent" : "msg-received";
-    p.dataset.messageId = msID || "";
-    p.style.position = "relative";
-
-    let messageContent = "<b>" + (isSentByMe ? "" : currentChatUserName + ":") + "</b> " + content + "<br>" + timeText;
-
-    let dropdownHTML = `
-        <div class="dropdown" style="position: absolute; top: 0; right: 0;">
-            <button class="dropdown-btn">⋮</button>
-            <div class="dropdown-content">
-                <button onclick="copyMessage('${encodeURIComponent(content)}', this)">Copy</button>
-    `;
-    if (isSentByMe && msID !== undefined && msID !== null && (typeof msID === "string" || typeof msID === "number")) {
-        const validMsID = (typeof msID === "string") ? msID.trim() : msID.toString();
-        if (validMsID && !isNaN(Number(validMsID)) && Number(validMsID) > 0) {
-            dropdownHTML += `<button onclick="recallMessage('${msID}')">Recall</button>`;
-        } else {
-            console.warn("messageId không hợp lệ, không thêm nút Recall:", msID);
+        const p = document.createElement("p");
+        p.classList.add("msg-recalled");
+        p.innerHTML = `<b>${senderName}</b>Message has been recalled`;
+        contentBox.appendChild(p);
+    } else {
+        if (msg.type === "img")
+        {
+            contentBox.appendChild(addImageToChatBox(msg));
+        } else
+        {
+            const p = document.createElement("p");
+            p.innerHTML = content;
+            p.style.margin = 0; // tránh thụt dòng ngoài ý muốn
+            contentBox.appendChild(p);
         }
     }
-    dropdownHTML += `
-            </div>
-        </div>
-    `;
 
-    p.innerHTML = messageContent + dropdownHTML;
-    chatBox.appendChild(p);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    // ---- ACTIONS DROPDOWN ------------------------------------------
+    const actions = document.createElement("div");
+    actions.className = "chat-actions";
 
-    const dropdownBtn = p.querySelector(".dropdown-btn");
-    const dropdownContent = p.querySelector(".dropdown-content");
-    dropdownBtn.addEventListener("click", function (e) {
+    const dropdownBtn = document.createElement("ion-icon");
+    dropdownBtn.name = "ellipsis-vertical-outline";
+    actions.appendChild(dropdownBtn);
+
+    // Tạo menu ẩn
+    const menu = document.createElement("div");
+    menu.className = "dropdown-content";   // tận dụng CSS cũ
+    menu.style.display = "none";
+
+    // Copy
+    const copyBtn = document.createElement("button");
+    copyBtn.textContent = "Copy";
+    copyBtn.onclick = () => copyMessage(encodeURIComponent(content), copyBtn);
+    menu.appendChild(copyBtn);
+
+    // Recall (chỉ khi là của mình + msID hợp lệ)
+    if (isSentByMe && msID !== undefined && msID !== null && msID !== "") {
+        const recallBtn = document.createElement("button");
+        recallBtn.textContent = "Recall";
+        recallBtn.onclick = () => recallMessage(msID);
+        menu.appendChild(recallBtn);
+    }
+
+    actions.appendChild(menu);
+
+    /*-------------------------------------------------
+     5. Gắn sự kiện mở / đóng menu
+     --------------------------------------------------*/
+    dropdownBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        const isOpen = dropdownContent.style.display === "block";
-        document.querySelectorAll(".dropdown-content").forEach(content => content.style.display = "none");
-        dropdownContent.style.display = isOpen ? "none" : "block";
+        const isOpen = menu.style.display === "flex";
+        // Đóng mọi menu khác
+        document.querySelectorAll(".dropdown-content").forEach(m => m.style.display = "none");
+        menu.style.display = isOpen ? "none" : "flex";
     });
+
+    // Đóng menu khi click ngoài
+    document.addEventListener("click", () => menu.style.display = "none");
+
+    /*-------------------------------------------------
+     6. Lắp ráp và thêm vào chatBox
+     --------------------------------------------------*/
+
+    contentBox.appendChild(timeSpan);
+    if (!isRecalled) {
+        contentBox.appendChild(actions);
+    }
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(contentBox);
+    chatBox.appendChild(wrapper);
+
+    // Luôn cuộn xuống cuối
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 
 function addImageToChatBox(msg) {
-
-    const chatBox = document.getElementById("chatBox");
     const msID = msg.messageId;
 
-    if (msg.type !== "image") {
-        console.warn("Message type is not image, ignoring:", msg);
-        return;
-    }
-
-    const isSentByMe = (msg.fromUserId !== undefined && msg.fromUserId === currentUserId) ||
-            (msg.senderId !== undefined && msg.senderId === currentUserId);
-
-    const isRecalled = msg.is_recall === true || msg.type === "recall";
-
-    let timeText = "";
-    if (msg.timestamp) {
-        const time = new Date(msg.timestamp);
-        if (!isNaN(time)) {
-            timeText = '<small style="color:gray">' + time.toString().substring(0, 24) + '</small>';
-        } else {
-            timeText = '<small style="color:red">Invalid Date</small>';
-            console.error("Invalid timestamp received:", msg.timestamp);
-        }
-    }
-        
-
-    const p = document.createElement("p");
-    p.className = isSentByMe ? "msg-sent" : "msg-received";
-    p.dataset.messageId = msID || "";
-    p.style.position = "relative"; // To position the dropdown
-
-    if (isRecalled) {
-        p.className = isSentByMe ? "msg-sent msg-recalled" : "msg-received msg-recalled";
-        const senderName = isSentByMe ? "" : currentChatUserName + ":";
-        p.innerHTML = "<b>" + senderName + "</b>Message has been recalled<br><small style=\"color:gray\">" + timeText + "</small>";
-        chatBox.appendChild(p);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        return;
+    let mediaElement;
+    if (getFileExtension(msg.content) === "mp4") {
+        mediaElement = document.createElement("video");
+        mediaElement.controls = true;
     } else {
-        const img = document.createElement("img");
-        img.src = contextPath + msg.content;
-        img.style.maxWidth = "200px";
-        img.style.borderRadius = "8px";
-
-        p.appendChild(img);
-
-        let messageContent = "<br><b>" + (isSentByMe ? "" : (msg.fromUsername || currentChatUserName) + ":") + "</b><br>" + timeText;
-
-        // Create dropdown menu
-        let dropdownHTML = `
-        <div class="dropdown" style="position: absolute; top: 0; right: 0;">
-            <button class="dropdown-btn">⋮</button>
-            <div class="dropdown-content">
-                <button onclick="copyMessage('${encodeURIComponent(img)}', this)">Copy</button>
-    `;
-        if (isSentByMe && msID !== undefined && msID !== null && (typeof msID === "string" || typeof msID === "number")) {
-            const validMsID = (typeof msID === "string") ? msID.trim() : msID.toString();
-            if (validMsID && !isNaN(Number(validMsID)) && Number(validMsID) > 0) {
-                dropdownHTML += `<button onclick="recallMessage('${msID}')">Recall</button>`;
-            } else {
-                console.warn("messageId không hợp lệ, không thêm nút Recall:", msID);
-            }
-        }
-        dropdownHTML += `
-                </div>
-            </div>
-        `;
-
-        const divContent = document.createElement("div");
-        divContent.innerHTML = messageContent + dropdownHTML;
-        p.appendChild(divContent);
+        mediaElement = document.createElement("img");
     }
 
-    chatBox.appendChild(p);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    mediaElement.src = msg.content;
+    mediaElement.className = "chat-img";
 
-    //fix in here can not find dropdownBtn
-    const dropdownBtn = p.querySelector(".dropdown-btn");
-    const dropdownContent = p.querySelector(".dropdown-content");
-
-    if (dropdownBtn && dropdownContent) {
-        dropdownBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            const isOpen = dropdownContent.style.display === "block";
-            document.querySelectorAll(".dropdown-content").forEach(content => content.style.display = "none");
-            dropdownContent.style.display = isOpen ? "none" : "block";
-        });
-    } else {
-        console.warn("Dropdown button hoặc dropdown content không tìm thấy trong addImageToChatBox:", {
-            dropdownBtn,
-            dropdownContent,
-            messageId: msg.messageId
-        });
-    }
-
+    return mediaElement;
 }
-
-
 
 function handleRecallMessage(msg) {
 
     const isSentByMe = (msg.fromUserId !== undefined && msg.fromUserId === currentUserId) ||
             (msg.senderId !== undefined && msg.senderId === currentUserId);
-
-    const messageElement = document.querySelector("#chatBox p[data-message-id='" + msg.messageId + "']");
+    const senderName = isSentByMe ? "" : currentChatUserName + ":";
+    const messageElement = document.querySelector(".chat-body .chat-msg[data-message-id='" + msg.messageId + "']");
+    messageElement.querySelector(".chat-actions").remove();
 
     if (messageElement !== null) {
-
-        messageElement.className = isSentByMe ? "msg-sent msg-recalled" : "msg-received msg-recalled";
-
-        const senderName = isSentByMe ? "" : currentChatUserName + ":";
-
-        const time = new Date(msg.timestamp);
-
-        const timeText = isNaN(time) ? "Invalid Date" : time.toString().substring(0, 24);
-
-        messageElement.innerHTML = "<b>" + senderName + "</b>Message has been recalled<br><small style=\"color:gray\">" + timeText + "</small>";
-
+        const imgElement = messageElement.querySelector(".chat-msg-content img");
+        if (imgElement !== null) {
+            const p = document.createElement("p");
+            p.className = "msg-recalled";
+            p.innerHTML = `<b>${senderName}</b>Message has been recalled`;
+            imgElement.replaceWith(p);
+        } else {
+            const pElement = messageElement.querySelector("p");
+            pElement.className = "msg-recalled";
+            pElement.innerHTML = `<b>${senderName}</b>Message has been recalled`;
+        }
     } else {
 
         console.error("Message element not found for messageId:", msg.messageId);
@@ -312,8 +280,6 @@ function handleRecallMessage(msg) {
     }
 
 }
-
-
 
 function sendMessages() {
 
@@ -341,7 +307,7 @@ function sendMessages() {
 
         content: content,
 
-        timestamp: new Date()
+        sentAt: new Date()
 
     };
 
@@ -382,7 +348,17 @@ function loadChatHistory(userId) {
 
                 chatBox.innerHTML = "";
 
-                data.forEach(addMessageToChatBox);
+                data.messages.forEach(addMessageToChatBox);
+                if (data.product) {
+                    document.getElementById("chat-header-product").style.display = "flex";
+
+                    document.getElementById("chat-product-image").src = data.product.images[0].imageUrl;
+                    document.getElementById("chat-product-title").textContent = data.product.title;
+                    document.getElementById("chat-product-price").textContent = data.product.price + "₫";
+                    document.querySelector("#chat-header-product a").href = "s_productDetail?productId=" + data.product.productId;
+                } else {
+                    document.getElementById("chat-header-product").style.display = "none";
+                }
 
             })
 
@@ -396,31 +372,19 @@ function loadChatHistory(userId) {
 
 }
 
-
-
 if ("Notification" in window && Notification.permission !== "granted") {
-
     Notification.requestPermission().then(permission => {
-
         if (permission !== "granted") {
-
             console.log("Notification permission denied");
-
         }
-
     });
-
 }
-
-
 
 function showBrowserNotification(username, content) {
 
     if (Notification.permission === "granted") {
 
         const notification = new Notification("New message from " + username, {
-
-            body: content,
 
             icon: "https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/new-message-icon.png"
 
@@ -437,15 +401,17 @@ function showBrowserNotification(username, content) {
 }
 
 
-
 function markUserAsUnread(userId) {
+    console.log("userId:", userId);
+    document.querySelectorAll("#userList li").forEach(li => {
+        console.log("Found:", li.dataset.userId);
+    });
 
-    const li = [...document.querySelectorAll("#userList li")].find(li => li.dataset.userid === userId.toString());
-
+    const li = [...document.querySelectorAll("#userList li")].find(li => li.dataset.userId === userId);
+    console.log("ajsdkajd" + li);
     if (li && !li.classList.contains("user-unread")) {
 
         li.classList.add("user-unread");
-
     }
 
 }
@@ -472,7 +438,7 @@ function markMessagesAsRead(fromUserId) {
 
 function clearUnreadMark(userId) {
 
-    const li = [...document.querySelectorAll("#userList li")].find(li => li.dataset.userid === userId.toString());
+    const li = [...document.querySelectorAll("#userList li")].find(li => li.dataset.userId === userId.toString());
 
     if (li) {
 
@@ -482,16 +448,10 @@ function clearUnreadMark(userId) {
 
 }
 
-
-
-
-
 function blockUser() {
 
     if (!currentChatUserId || !ws || ws.readyState !== ws.OPEN)
         return;
-
-
 
     const message = {
 
@@ -503,11 +463,7 @@ function blockUser() {
 
     };
 
-
-
     ws.send(JSON.stringify(message));
-
-
 
     document.getElementById("blockBtn").style.display = "none";
 
@@ -524,19 +480,14 @@ function blockUser() {
     document.getElementById("imageUploadLabel").style.display = "none";
 
     document.getElementById("imageUpload").style.display = "none";
+    document.getElementById("emojiBtn").style.display = "none";
 
 }
-
-
-
-
 
 function unblockUser() {
 
     if (!currentChatUserId || !ws || ws.readyState !== ws.OPEN)
         return;
-
-
 
     const message = {
 
@@ -548,11 +499,7 @@ function unblockUser() {
 
     };
 
-
-
     ws.send(JSON.stringify(message));
-
-
 
     document.getElementById("blockBtn").style.display = "inline-block";
 
@@ -567,6 +514,7 @@ function unblockUser() {
     document.getElementById("imageUploadLabel").style.display = "inline-block";
 
     document.getElementById("imageUpload").style.display = "none";
+    document.getElementById("emojiBtn").style.display = "inline-block";
 
 }
 
@@ -576,25 +524,17 @@ function recallMessage(meId) {
 //
 //    const messageId = rawId ? Number(rawId.trim()) : NaN;
 
-    let messageId = parseInt(meId);
+    let messageId = meId;
 
     if (!currentChatUserId) {
-
         alert("Vui l뿯½ng ch뿯ẽn ng뿯ƽ뿯ẽi d뿯½ng đ뿯ẽ tr뿯½ chuy뿯ẽn");
-
         return;
-
     }
-
-    if (isNaN(messageId) || messageId <= 0) {
-
-        alert("ID tin nh뿯ẽn kh뿯½ng h뿯ẽp l뿯ẽ");
-
+    if (!messageId) {
+        alert("ID message er");
         return;
-
     }
-
-    if (confirm("Bạn có chắc muốn gở tin nhắn này ?")) {
+    if (confirm("Are you sure you want to recall this message?")) {
 
         const recallMsg = {
 
@@ -614,43 +554,50 @@ function recallMessage(meId) {
 
 }
 
-function sendImage() {
-    const input = document.getElementById("imageUpload");
-    const files = input.files;
-
+async function sendImage() {
+    const files = document.getElementById("imageUpload").files;
     if (files.length === 0)
         return;
 
+
     const formData = new FormData();
+    for (const f of files)
+        formData.append("file", f);
 
-    for (let i = 0; i < files.length; i++) {
-        formData.append("images", files[i]); // name="images" để trùng servlet xử lý
+    try {
+        const res = await fetch("/ReLoop/api/files", {method: "POST", body: formData});
+
+        // nếu server trả lỗi, ném ngoại lệ sớm
+        if (!res.ok) {
+            const errTxt = await res.text();      // cố đọc nội dung để log
+            throw new Error(`HTTP ${res.status}: ${errTxt}`);
+        }
+
+        const {uploaded} = await res.json();  // server trả { uploaded:[…] }
+        if (!(Array.isArray(uploaded) && uploaded.length)) {
+            console.warn("Không có ảnh nào được trả về", uploaded);
+            return;
+        }
+
+        // gửi qua WebSocket
+        uploaded.forEach(img =>
+            ws.send(JSON.stringify({
+                type: "image",
+                fromUserId: currentUserId,
+                toUserId: currentChatUserId,
+
+                imageUrl: img.shareLink, // hoặc webContentLink
+                fileType: img.contentType
+            }))
+        );
+    } catch (err) {
+        console.error("Upload failed", err);
     }
-
-    formData.append("fromUserId", currentUserId);
-    formData.append("toUserId", currentChatUserId);
-
-    fetch("/ReLoop/uploadImage", {
-        method: "POST",
-        body: formData
-    })
-            .then(response => response.json())
-            .then(result => {
-                const imageUrls = result.imageUrls; // giả sử server trả về list ảnh
-
-                imageUrls.forEach(imageUrl => {
-                    ws.send(JSON.stringify({
-                        type: "image",
-                        fromUserId: currentUserId,
-                        toUserId: currentChatUserId,
-                        imageUrl: imageUrl
-                    }));
-                });
-            })
-            .catch(error => console.error("Upload failed", error));
 }
+
+
 function searchUsers() {
-    const searchInput = document.getElementById("search").value.toLowerCase();
+    const searchInput = document.getElementById("searchUser").value.toLowerCase();
     const userList = document.getElementById("userList");
     const users = userList.getElementsByTagName("li");
 
@@ -665,7 +612,7 @@ function searchUsers() {
 }
 
 // Add event listener for search input
-document.getElementById("search").addEventListener("input", searchUsers);
+document.getElementById("searchUser").addEventListener("input", searchUsers);
 
 // Add event listener to close dropdown when clicking outside
 document.addEventListener("click", function (event) {
@@ -687,4 +634,34 @@ function copyMessage(content) {
                 console.error("Failed to copy message:", err);
                 //alert("Failed to copy message.");
             });
+}
+
+function getFileExtension(url) {
+    if (!url || typeof url !== 'string') {
+        return ''; // Trả về chuỗi rỗng nếu URL không hợp lệ
+    }
+
+    // Tìm vị trí của dấu chấm cuối cùng
+    const lastDotIndex = url.lastIndexOf('.');
+
+    // Nếu không có dấu chấm hoặc dấu chấm là ký tự cuối cùng
+    if (lastDotIndex === -1 || lastDotIndex === url.length - 1) {
+        return '';
+    }
+
+    // Lấy phần chuỗi sau dấu chấm cuối cùng
+    let extension = url.substring(lastDotIndex + 1);
+
+//    const queryStartIndex = extension.indexOf('?');
+//    if (queryStartIndex !== -1) {
+//        extension = extension.substring(0, queryStartIndex);
+//    }
+//
+//    // Xử lý trường hợp có dấu '#' (hash)
+//    const hashStartIndex = extension.indexOf('#');
+//    if (hashStartIndex !== -1) {
+//        extension = extension.substring(0, hashStartIndex);
+//    }
+
+    return extension;
 }

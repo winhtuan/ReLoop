@@ -61,13 +61,13 @@
     });
 
     // :: 3.0 ScrollUp Active Code
-    if ($.fn.scrollUp) {
-        $.scrollUp({
-            scrollSpeed: 1000,
-            easingType: "easeInOutQuart",
-            scrollText: '<i class="fa fa-angle-up" aria-hidden="true"></i>',
-        });
-    }
+//    if ($.fn.scrollUp) {
+//        $.scrollUp({
+//            scrollSpeed: 1000,
+//            easingType: "easeInOutQuart",
+//            scrollText: '<i class="fa fa-angle-up" aria-hidden="true"></i>',
+//        });
+//    }
 
     // :: 4.0 Sticky Active Code
     $window.on("scroll", function () {
@@ -179,23 +179,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Xử lý favouriteBox
-    const favouriteLink = document.getElementById("favouriteLink");
-    const favouriteBox = document.getElementById("favouriteBox");
-
-    favouriteLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        favouriteBox.style.display =
-                favouriteBox.style.display === "block" ? "none" : "block";
-    });
-
-    // Đóng favouriteBox nếu click ra ngoài
-    document.addEventListener("click", function (e) {
-        const container = document.getElementById("favouriteContainer");
-        if (!container.contains(e.target)) {
-            favouriteBox.style.display = "none";
-        }
-    });
 });
 
 /*=============== SHOW HIDE MODAL ===============*/

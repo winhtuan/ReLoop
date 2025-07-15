@@ -123,7 +123,7 @@
                                 <c:forEach var="product" items="${sessionScope.listProduct}">
                                     <div>
                                         <form action="${pageContext.request.contextPath}/s_productDetail" method="get">
-                                            <input type="hidden" name="productId" value="${product.id}">
+                                            <input type="hidden" name="productId" value="${product.productId}">
                                             <div>
                                                 <img src="${not empty product.images ? product.images[0].imageUrl : 'https://via.placeholder.com/150'}" alt="${product.title}">
                                                 <div>
@@ -136,7 +136,7 @@
                                                         <span style="color: gold;">★</span>
                                                         <span style="color: grey;">★</span>
                                                     </div>
-                                                    <button onclick="callDetail(${product.id})" class="btn amado-btn">View Details</button>
+                                                    <button onclick="callDetail(${product.productId})" class="btn amado-btn">View Details</button>
                                                     <button type="button" class="btn amado-btn">Add to Cart</button>
                                                 </div>
                                             </div>

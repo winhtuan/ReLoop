@@ -1,28 +1,23 @@
 package Model.entity.pay;
 
-import java.util.Date;
-
 public class PaidService {
 
     private String paidId;
     private String serviceName;
-    private double price;
-    private Date startDate;
-    private Date endDate;
+    private int price;
+    private String description;
     private int usageTime;
 
-    public PaidService() {
-    }
-
-    public PaidService(String paidId, String serviceName, double price, Date startDate, Date endDate, int usageTime) {
+    // Constructor
+    public PaidService(String paidId, String serviceName, int price, String description, int usageTime) {
         this.paidId = paidId;
         this.serviceName = serviceName;
         this.price = price;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.description = description;
         this.usageTime = usageTime;
     }
 
+    // Getters and Setters
     public String getPaidId() {
         return paidId;
     }
@@ -39,28 +34,20 @@ public class PaidService {
         this.serviceName = serviceName;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public String getDescription() {
+        return description;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getUsageTime() {
@@ -70,4 +57,5 @@ public class PaidService {
     public void setUsageTime(int usageTime) {
         this.usageTime = usageTime;
     }
+
 }

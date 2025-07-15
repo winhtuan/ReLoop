@@ -1,7 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="description" content="">
@@ -12,8 +12,10 @@
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        
+
         <link rel="stylesheet" href="css/core-style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/avatar.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
 
     </head>
@@ -28,10 +30,10 @@
         <!-- ##### Main Content Wrapper Start ##### -->
         <div class="main-content-wrapper d-flex clearfix">
             <c:import url="/JSP/Home/Nav.jsp" />
+            <c:import url="/JSP/Conversation/chatUI.jsp" />
         </div>
 
         <c:import url="/JSP/Home/Footer.jsp" />
-
         <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
         <script src="js/jquery/jquery-2.2.4.min.js"></script>
         <!-- Popper js -->
@@ -42,6 +44,7 @@
         <script src="js/lib_js/plugins.js"></script>
         <!-- js -->
         <script src="js/active.js"></script>
+        <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -53,6 +56,20 @@
                 preloader.style.pointerEvents = "none";
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
+
         </script>
+        <c:if test="${not empty requestScope.openLogin}">
+            <script>
+                console.warn("Hàm openModal không tồn tại.");
+                window.addEventListener("DOMContentLoaded", function () {
+                    if (typeof openModal === 'function') {
+                        openModal();
+                    } else {
+                        console.warn("Hàm openModal không tồn tại.");
+                    }
+                });
+            </script>
+        </c:if>
+            <<script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
     </body>
 </html>

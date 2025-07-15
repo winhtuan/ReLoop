@@ -25,7 +25,6 @@ public class s_search extends HttpServlet {
 
         // Directly get product list
         List<Product> productList = new ProductDao().searchProducts(keyword);
-
         // Create a simpler version of products for the response
         List<Map<String, Object>> simpleProducts = new ArrayList<>();
         for (Product p : productList) {
@@ -34,7 +33,7 @@ public class s_search extends HttpServlet {
             simpleProduct.put("title", p.getTitle());
             simpleProduct.put("price", p.getPrice());
             // No images loaded here; you can add them later with a join or additional call
-            simpleProduct.put("imageUrl", "default.jpg");
+            simpleProduct.put("imageUrl", p.getImages().get(0).getImageUrl());
             simpleProducts.add(simpleProduct);
         }
         PrintWriter out = response.getWriter();
@@ -52,8 +51,8 @@ public class s_search extends HttpServlet {
             return;
         }
         productList = new ProductDao().searchProducts(keyword);
-        request.getSession().setAttribute("listProduct", productList);
-        request.getRequestDispatcher("JSP/Home/listProduct.jsp").forward(request, response);
+        request.getSession().setAttribute("allPost", productList);
+        request.getRequestDispatcher("JSP/Post/NewPost.jsp").forward(request, response);
         //response.sendRedirect("JSP/Home/shop.html");
     }
 
@@ -61,4 +60,5 @@ public class s_search extends HttpServlet {
     public String getServletInfo() {
         return "Product search servlet returning simplified JSON products";
     }
+
 }

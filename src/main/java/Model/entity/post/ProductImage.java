@@ -15,6 +15,11 @@ public class ProductImage {
         this.isPrimary = isPrimary;
     }
 
+    @Override
+    public String toString() {
+        return "ProductImage{" + "imgId=" + imgId + ", productId=" + productId + ", imageUrl=" + imageUrl + ", isPrimary=" + isPrimary + '}';
+    }
+
     public int getImgId() { return imgId; }
     public void setImgId(int imgId) { this.imgId = imgId; }
 
