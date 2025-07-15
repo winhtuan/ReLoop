@@ -1,6 +1,6 @@
 package Model.entity.post;
 
-import java.math.BigDecimal;
+import Model.entity.auth.User;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +21,16 @@ public class Product {
     private String state;
     private int quantity;
     private List<ProductImage> images;
+    private User user;
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
     public Product() {
     }
 
@@ -40,10 +49,7 @@ public class Product {
         this.updatedAt = updatedAt;
         this.images = images;
     }
-    @Override
-    public String toString() {
-        return "Product{" + "productId=" + productId + ", userId=" + userId + ", categoryId=" + categoryId + ", title=" + title + ", description=" + description + ", price=" + price + ", location=" + location + ", status=" + status + ", moderationStatus=" + moderationStatus + ", isPriority=" + isPriority + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", state=" + state + ", quantity=" + quantity + ", images=" + images + '}';
-    }
+
     public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
         this.productId = productId;
         this.userId = userId;
@@ -75,7 +81,9 @@ public class Product {
     }
   
 
-    public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, String moderationStatus, boolean isPriority, Date createdAt, Date updatedAt, String state, int quantity, List<ProductImage> images) {
+    public Product(String productId, String userId, Integer categoryId, String title, String description, int price, 
+            String location, String status, String moderationStatus, boolean isPriority, Date createdAt, 
+            Date updatedAt, String state, int quantity, List<ProductImage> images) {
         this.productId = productId;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -216,5 +224,3 @@ public class Product {
 }
 
    
-
-

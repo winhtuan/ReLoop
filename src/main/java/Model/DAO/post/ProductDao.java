@@ -1,18 +1,21 @@
 package Model.DAO.post;
 
 import Model.entity.post.Product;
+import Model.entity.post.ProductAttributeValue;
 import Model.entity.post.ProductImage;
 import Utils.DBUtils;
-
+import java.util.Collections;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ProductDao {
 
+    private static final Logger LOGGER = Logger.getLogger(ProductDao.class.getName());
     public static List<Product> productList = null;
 
     public String generateProductId() {
@@ -284,6 +287,209 @@ public class ProductDao {
             System.out.println("Error deleting product: " + e.getMessage());
         }
         return false;
+    }
+
+    public List<Product> getProductsByCategoryIds(List<Integer> categoryIds) {
+        List<Product> products = new ArrayList<>();
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return products;
+        }
+
+        String sql = "SELECT * FROM product WHERE category_id IN ("
+                + String.join(",", Collections.nCopies(categoryIds.size(), "?"))
+                + ") AND moderation_status = 'approved' AND status = 'active' ORDER BY created_at DESC";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < categoryIds.size(); i++) {
+                ps.setInt(i + 1, categoryIds.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setProductId(rs.getString("product_id"));
+                p.setTitle(rs.getString("title"));
+                p.setDescription(rs.getString("description"));
+                p.setPrice(rs.getInt("price"));
+                p.setCreatedAt(rs.getTimestamp("created_at"));
+                // Thêm các field khác tùy vào Product class bạn
+
+                products.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    public List<Product> getProductsByCategoryIdsAndFilter(List<Integer> categoryIds, Double minPrice, Double maxPrice, String state) {
+        List<Product> products = new ArrayList<>();
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return products;
+        }
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM product WHERE category_id IN (");
+        sql.append(categoryIds.stream().map(id -> "?").collect(Collectors.joining(",")));
+        sql.append(") AND moderation_status = 'approved' AND status = 'active'");
+
+        if (minPrice != null) {
+            sql.append(" AND price >= ?");
+        }
+        if (maxPrice != null) {
+            sql.append(" AND price <= ?");
+        }
+        if (state != null && !state.isEmpty()) {
+            sql.append(" AND state = ?");
+        }
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            for (Integer id : categoryIds) {
+                ps.setInt(index++, id);
+            }
+            if (minPrice != null) {
+                ps.setDouble(index++, minPrice);
+            }
+            if (maxPrice != null) {
+                ps.setDouble(index++, maxPrice);
+            }
+            if (state != null && !state.isEmpty()) {
+                ps.setString(index++, state);
+            }
+
+            ProductImageDao imageDAO = new ProductImageDao(); // Khởi tạo ProductImageDao
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setProductId(rs.getString("product_id"));
+                    p.setTitle(rs.getString("title"));
+                    p.setDescription(rs.getString("description"));
+                    p.setPrice(rs.getInt("price"));
+                    p.setState(rs.getString("state"));
+                    p.setLocation(rs.getString("location"));
+                    p.setCreatedAt(rs.getTimestamp("created_at"));
+                    p.setImages(imageDAO.getImagesByProductId(rs.getString("product_id")));
+                    products.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
+    public String saveProduct(Product product, List<ProductAttributeValue> attributeValues, List<ProductImage> images) throws SQLException {
+        String generatedProductId = null;
+        Connection conn = null;
+
+        try {
+            conn = DBUtils.getConnect();
+            conn.setAutoCommit(false);
+
+            // Lưu product
+            String sqlProduct = "INSERT INTO product (user_id, category_id, title, description, price, location, state, status, is_priority, updated_at) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            try (PreparedStatement ps = conn.prepareStatement(sqlProduct)) {
+                LOGGER.info("Executing SQL: " + sqlProduct);
+                LOGGER.info("Setting parameters: userId=" + product.getUserId() + ", categoryId=" + product.getCategoryId()
+                        + ", title=" + product.getTitle() + ", description=" + product.getDescription()
+                        + ", price=" + product.getPrice() + ", location=" + product.getLocation()
+                        + ", state=" + product.getState() + ", status=" + product.getStatus()
+                        + ", isPriority=" + product.isIsPriority());
+
+                ps.setString(1, product.getUserId());
+                ps.setInt(2, product.getCategoryId());
+                ps.setString(3, product.getTitle());
+                ps.setString(4, product.getDescription());
+                ps.setInt(5, product.getPrice());
+                ps.setString(6, product.getLocation());
+                ps.setString(7, product.getState());
+                ps.setString(8, product.getStatus());
+                ps.setBoolean(9, product.isIsPriority());
+
+                int affectedRows = ps.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Creating product failed, no rows affected.");
+                }
+
+                // Lấy product_id từ bảng product
+                String sqlGetId = "SELECT product_id FROM product WHERE user_id = ? AND category_id = ? AND title = ? AND created_at = (SELECT MAX(created_at) FROM product WHERE user_id = ?)";
+                try (PreparedStatement psGetId = conn.prepareStatement(sqlGetId)) {
+                    psGetId.setString(1, product.getUserId());
+                    psGetId.setInt(2, product.getCategoryId());
+                    psGetId.setString(3, product.getTitle());
+                    psGetId.setString(4, product.getUserId());
+                    try (ResultSet rs = psGetId.executeQuery()) {
+                        if (rs.next()) {
+                            generatedProductId = rs.getString("product_id");
+                            product.setProductId(generatedProductId);
+                            LOGGER.info("Retrieved productId: " + generatedProductId);
+                        } else {
+                            throw new SQLException("Failed to retrieve generated product ID.");
+                        }
+                    }
+                }
+            }
+
+            // Lưu attribute values
+            if (attributeValues != null && !attributeValues.isEmpty()) {
+                String sqlAttr = "INSERT INTO product_attribute_value (product_id, attr_id, value) VALUES (?, ?, ?)";
+                try (PreparedStatement ps = conn.prepareStatement(sqlAttr)) {
+                    for (ProductAttributeValue attrValue : attributeValues) {
+                        ps.setString(1, generatedProductId);
+                        ps.setInt(2, attrValue.getAttributeId());
+                        ps.setString(3, attrValue.getValue());
+                        ps.addBatch();
+                    }
+                    ps.executeBatch();
+                    LOGGER.info("Inserted " + attributeValues.size() + " attribute values.");
+                }
+            }
+
+            // Lưu ảnh với img_id tự động từ trigger
+            if (images != null && !images.isEmpty()) {
+                String sqlImage = "INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?)";
+                try (PreparedStatement ps = conn.prepareStatement(sqlImage)) {
+                    for (int i = 0; i < images.size(); i++) {
+                        ProductImage image = images.get(i);
+                        ps.setString(1, generatedProductId);
+                        ps.setString(2, image.getImageUrl());
+                        ps.setBoolean(3, i == 0); // Ảnh đầu tiên là primary
+                        ps.addBatch();
+                    }
+                    ps.executeBatch();
+                    LOGGER.info("Inserted " + images.size() + " images.");
+                }
+            }
+
+            conn.commit();
+            return generatedProductId;
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    LOGGER.severe("Rollback successful due to: " + e.getMessage());
+                } catch (SQLException rollbackEx) {
+                    LOGGER.severe("Rollback failed: " + rollbackEx.getMessage());
+                }
+            }
+            LOGGER.severe("SQL Error: " + e.getMessage());
+            throw e;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                    LOGGER.info("Connection closed.");
+                } catch (SQLException e) {
+                    LOGGER.severe("Failed to close connection: " + e.getMessage());
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {

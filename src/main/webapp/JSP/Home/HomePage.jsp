@@ -18,10 +18,12 @@
 
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
         <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="css/notification.css">
+        <link rel="stylesheet" href="css/category-menu.css">
         
-    </head>
+  </head>
     <body>
         <!-- Page Preloder -->
         <div id="preloader">
@@ -49,6 +51,7 @@
         <!-- js -->
         <script src="js/active.js"></script>
         <script src="js/JS_search.js"></script>
+        <script src="js/search-menu.js"></script>
         <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -62,6 +65,8 @@
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
         </script>
+        <!<!-- category -->
+        <script src="js/dropdown-handler.js"></script>
         <c:if test="${not empty sessionScope.Message}">
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
