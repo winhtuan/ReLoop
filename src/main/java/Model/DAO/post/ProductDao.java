@@ -366,9 +366,11 @@ public class ProductDao {
                     Product p = new Product();
                     p.setProductId(rs.getString("product_id"));
                     p.setTitle(rs.getString("title"));
+                    p.setDescription(rs.getString("description"));
                     p.setPrice(rs.getInt("price"));
                     p.setState(rs.getString("state"));
                     p.setLocation(rs.getString("location"));
+                    p.setCreatedAt(rs.getTimestamp("created_at"));
                     p.setImages(imageDAO.getImagesByProductId(rs.getString("product_id")));
                     products.add(p);
                 }
@@ -389,15 +391,15 @@ public class ProductDao {
             conn.setAutoCommit(false);
 
             // Lưu product
-            String sqlProduct = "INSERT INTO product (user_id, category_id, title, description, price, location, state, status, is_priority, updated_at) " +
-                               "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            String sqlProduct = "INSERT INTO product (user_id, category_id, title, description, price, location, state, status, is_priority, updated_at) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
             try (PreparedStatement ps = conn.prepareStatement(sqlProduct)) {
                 LOGGER.info("Executing SQL: " + sqlProduct);
-                LOGGER.info("Setting parameters: userId=" + product.getUserId() + ", categoryId=" + product.getCategoryId() +
-                            ", title=" + product.getTitle() + ", description=" + product.getDescription() +
-                            ", price=" + product.getPrice() + ", location=" + product.getLocation() +
-                            ", state=" + product.getState() + ", status=" + product.getStatus() +
-                            ", isPriority=" + product.isIsPriority());
+                LOGGER.info("Setting parameters: userId=" + product.getUserId() + ", categoryId=" + product.getCategoryId()
+                        + ", title=" + product.getTitle() + ", description=" + product.getDescription()
+                        + ", price=" + product.getPrice() + ", location=" + product.getLocation()
+                        + ", state=" + product.getState() + ", status=" + product.getStatus()
+                        + ", isPriority=" + product.isIsPriority());
 
                 ps.setString(1, product.getUserId());
                 ps.setInt(2, product.getCategoryId());
@@ -489,6 +491,7 @@ public class ProductDao {
             }
         }
     }
+
     public static void main(String[] args) {
         for (Product a : new ProductDao().searchProducts("s")) {
             System.out.println(a.getImages().get(0).getImageUrl());

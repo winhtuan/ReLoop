@@ -14,7 +14,7 @@
         <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
         <!-- Title  -->
-        <title>Amado - Furniture Ecommerce Template | Product Details</title>
+        <title>Product Details</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
@@ -57,18 +57,18 @@
 
                     <div class="row">
                         <div class="col-12 col-lg-7">
-                            <div class="single_product_thumb">
+                            <div class="single_product_thumb custom-product-thumb">
                                 <div id="product_details_slider" class="carousel slide" data-ride="carousel">
                                     <ol class="carousel-indicators">
                                         <c:forEach var="image" items="${sessionScope.product.images}" varStatus="status">
                                             <li class="${status.first ? 'active' : ''}" data-target="#product_details_slider" data-slide-to="${status.index}" style="background-image: url(${image.imageUrl});"></li>
-                                            </c:forEach>
+                                        </c:forEach>
                                     </ol>
                                     <div class="carousel-inner">
                                         <c:forEach var="image" items="${sessionScope.product.images}" varStatus="status">
                                             <div class="carousel-item ${status.first ? 'active' : ''}">
                                                 <a class="gallery_img" href="${image.imageUrl}">
-                                                    <img class="d-block w-100" src="${image.imageUrl}" alt="Slide ${status.index + 1}">
+                                                    <img class="d-block w-100 product-main-img" src="${image.imageUrl}" alt="Slide ${status.index + 1}">
                                                 </a>
                                             </div>
                                         </c:forEach>
@@ -86,62 +86,55 @@
                                         <h6>${sessionScope.product.title}</h6>
                                     </a>
                                     <!-- Ratings & Review -->
-                                    <div class="ratings-review mb-15 d-flex align-items-center justify-content-between">
+                                    <div class="ratings-review-box">
                                         <div class="ratings">
-                                            <ion-icon name="star-outline" aria-hidden="true"></ion-icon>
-                                            <ion-icon name="star-outline" aria-hidden="true"></ion-icon>
-                                            <ion-icon name="star-outline" aria-hidden="true"></ion-icon>
-                                            <ion-icon name="star-outline" aria-hidden="true"></ion-icon>
-                                            <ion-icon name="star-outline" aria-hidden="true"></ion-icon>
+                                            <ion-icon name="star" aria-hidden="true"></ion-icon>
+                                            <ion-icon name="star" aria-hidden="true"></ion-icon>
+                                            <ion-icon name="star" aria-hidden="true"></ion-icon>
+                                            <ion-icon name="star" aria-hidden="true"></ion-icon>
+                                            <ion-icon name="star-half" aria-hidden="true"></ion-icon>
+                                            <span class="rating-score">4.5</span>
                                         </div>
                                         <div class="review">
-                                            <a href="#">Write A Review</a>
+                                            <a href="#commentTab" class="review-link">Write A Review</a>
                                         </div>
                                     </div>
                                     <!-- Availability -->
-                                    <p class="avaibility">• ${sessionScope.product.status}</p>
+                                    <p class="avaibility"><span class="avaibility-dot"></span> ${sessionScope.product.status}</p>
                                 </div>
-
                                 <div class="short_overview my-5">
                                     <p>${sessionScope.product.description}</p>
                                 </div>
-
                                 <!-- Add to Cart Form -->
-
-                                        <form class="cart clearfix" action="${pageContext.request.contextPath}/s_addToCart" method="post">
-
-                                        <div class="cart-btn d-flex mb-50">
-                                            <p>Quantity</p>
-                                            <div class="quantity">
-                                                <span class="qty-minus" onclick="var effect = document.getElementById('qty');
-                                                    var qty = effect.value;
-                                                    if (!isNaN(qty) && qty > 1)
-                                                        effect.value--;
-                                                    return false;"><ion-icon name="chevron-down-outline"></ion-icon></i></span>
-                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
-                                                <span class="qty-plus" onclick="var effect = document.getElementById('qty');
-                                                    var qty = effect.value;
-                                                    if (!isNaN(qty))
-                                                        effect.value++;
-                                                    return false;"><ion-icon name="chevron-up-outline"></ion-icon></span>
-                                            </div>
+                                <form class="cart clearfix" action="${pageContext.request.contextPath}/s_addToCart" method="post">
+                                    <div class="cart-btn d-flex mb-50 align-items-center">
+                                        <p>Quantity</p>
+                                        <div class="quantity">
+                                            <span class="qty-minus" onclick="var effect = document.getElementById('qty');
+                                                var qty = effect.value;
+                                                if (!isNaN(qty) && qty > 1)
+                                                    effect.value--;
+                                                return false;"><ion-icon name="chevron-down-outline"></ion-icon></span>
+                                            <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
+                                            <span class="qty-plus" onclick="var effect = document.getElementById('qty');
+                                                var qty = effect.value;
+                                                if (!isNaN(qty))
+                                                    effect.value++;
+                                                return false;"><ion-icon name="chevron-up-outline"></ion-icon></span>
                                         </div>
-
-                                        <div class="amado-btn-group">
-                                            <input type="hidden" name="postID" value="${sessionScope.product.productId}">
-                                            <input type="hidden" name="customerId" value="${sessionScope.customerId}">
-
-                                            <button type="submit" name="action" class="amado-btn-custom">
-                                                <span class="btn-icon"><ion-icon name="cart-outline"></ion-icon></span>Add to Cart
-                                            </button>
-
-                                            <button type="submit" name="action" value="buynow" class="amado-btn-custom" style="background-color:#20d34a;">
-                                                <span class="btn-icon"><ion-icon name="flash-outline"></ion-icon></span>Buy Now
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                    <!-- Seller Info Card -->
+                                    </div>
+                                    <div class="amado-btn-group cart-buy-group">
+                                        <input type="hidden" name="postID" value="${sessionScope.product.productId}">
+                                        <input type="hidden" name="customerId" value="${sessionScope.customerId}">
+                                        <button type="submit" name="action" class="amado-btn-custom">
+                                            <span class="btn-icon"><ion-icon name="cart-outline"></ion-icon></span>Add to Cart
+                                        </button>
+                                        <button type="submit" name="action" value="buynow" class="amado-btn-custom" style="background-color:#20d34a;">
+                                            <span class="btn-icon"><ion-icon name="flash-outline"></ion-icon></span>Buy Now
+                                        </button>
+                                    </div>
+                                </form>
+                                <!-- Seller Info Card -->
                                     <div class="seller-info-horizontal">
                                         <div class="seller-avatar-hz">
                                             <img src="${sessionScope.seller.srcImg}" alt="Seller Avatar">
@@ -175,6 +168,23 @@
             </div>
             <!-- Product Details Area End -->
 
+            <!-- Tabs for Detail and Comment -->
+            <div class="product-tabs-container" id="productTabs">
+                <ul class="product-tabs-nav">
+                    <li class="tab-link active" data-tab="detailTab">Detail</li>
+                    <li class="tab-link" data-tab="commentTab" id="commentTabBtn">Comment</li>
+                </ul>
+                <div class="product-tab-content">
+                    <div id="detailTab" class="tab-content active">
+                        <!-- Nội dung chi tiết sản phẩm sẽ thêm sau -->
+                        <p>Product detail content here...</p>
+                    </div>
+                    <div id="commentTab" class="tab-content">
+                        <!-- Nội dung bình luận sẽ thêm sau -->
+                        <p>Comment section here...</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- ##### Main Content Wrapper End ##### -->
 
@@ -202,6 +212,28 @@
                                                     setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
                                                 });
 
+            // Tab switching and scroll to comment
+            document.addEventListener('DOMContentLoaded', function() {
+                const tabLinks = document.querySelectorAll('.tab-link');
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        tabLinks.forEach(l => l.classList.remove('active'));
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        this.classList.add('active');
+                        document.getElementById(this.dataset.tab).classList.add('active');
+                    });
+                });
+                // Scroll to comment tab when clicking review link
+                const reviewLink = document.querySelector('.review-link');
+                if (reviewLink) {
+                    reviewLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        document.querySelector('.tab-link[data-tab="commentTab"]').click();
+                        document.getElementById('productTabs').scrollIntoView({behavior: 'smooth'});
+                    });
+                }
+            });
         </script>
         <c:if test="${not empty requestScope.messCartAdd}">
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
