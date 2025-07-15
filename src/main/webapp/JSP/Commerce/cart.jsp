@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@page import="Model.entity.*" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -21,33 +22,44 @@
                     <c:when test="${not empty sessionScope.cartItems}">
                         <form id="cartForm" method="post" action="s_cartBuy">
                             <div class="cart-card-list">
-                                <c:forEach var="userEntry" items="${sessionScope.cartItems}">
-                                    <c:forEach var="product" items="${userEntry.value}">
-                                        <div class="cart-card">
-                                            <input type="checkbox" name="productIds" value="${product.productId}" class="item-checkbox"/>
-                                            <img class="cart-card-img" src="<c:choose>
-                                                     <c:when test='${not empty product.images}'>
-                                                         ${product.images[0].imageUrl}
-                                                     </c:when>
-                                                     <c:otherwise>/assets/img/no-image.png</c:otherwise>
-                                                 </c:choose>" alt="${product.title}" />
-                                            <div class="cart-card-info">
-                                                <div class="cart-card-title">${product.title}</div>
-                                                <div class="cart-card-price">
-                                                    <fmt:formatNumber value="${product.price}" type="currency" currencySymbol=""/>
-                                                    <span class="cart-card-currency">VND</span>
-                                                </div>
-                                                <div class="cart-card-qty">
-                                                    <button type="button" class="qty-btn" data-id="${product.productId}" data-change="-1">-</button>
-                                                    <input type="text" value="${product.quantity}" id="q-${product.productId}" readonly class="cart-qty-input">
-                                                    <input type="hidden" name="qty_${product.productId}" value="${product.quantity}" />
-                                                    <button type="button" class="qty-btn" data-id="${product.productId}" data-change="1">+</button>
-                                                    <button type="button" class="cart-card-remove" onclick="removeFromCart('${product.productId}', this)">Xóa</button>
+                                <c:forEach var="userEntry" items="${sessionScope.cartItems}" varStatus="sellerStatus">
+                                    <div class="seller-block" data-seller-index="${sellerStatus.index}">
+                                        <!-- Checkbox chọn tất cả của người bán -->
+                                        <div class="seller-header">
+                                            <input type="checkbox" class="seller-select-all" data-seller-index="${sellerStatus.index}" />
+                                            <label>${userEntry.key.fullName}</label>
+                                        </div>
+
+                                        <!-- Danh sách sản phẩm của seller -->
+                                        <c:forEach var="product" items="${userEntry.value}">
+                                            <div class="cart-card" data-seller-index="${sellerStatus.index}">
+                                                <input type="checkbox" name="productIds" value="${product.productId}" class="item-checkbox"/>
+                                                <img class="cart-card-img" src="<c:choose>
+                                                         <c:when test='${not empty product.images}'>
+                                                             ${product.images[0].imageUrl}
+                                                         </c:when>
+                                                         <c:otherwise>/assets/img/no-image.png</c:otherwise>
+                                                     </c:choose>" alt="${product.title}" />
+                                                <div class="cart-card-info">
+                                                    <div class="cart-card-title">${product.title}</div>
+                                                    <div class="cart-card-price">
+                                                        <fmt:formatNumber value="${product.price}" type="currency" currencySymbol=""/>
+                                                        <span class="cart-card-currency">VND</span>
+                                                    </div>
+                                                    <div class="cart-card-qty">
+                                                        <button type="button" class="qty-btn" data-id="${product.productId}" data-change="-1">-</button>
+                                                        <input type="text" value="${product.cQuantity}" id="q-${product.productId}" readonly class="cart-qty-input">
+                                                        <input type="hidden" name="qty_${product.productId}" value="${product.cQuantity}" />
+                                                        <input type="hidden" name="qtyr_${product.productId}" value="${product.quantity}" />
+                                                        <button type="button" class="qty-btn" data-id="${product.productId}" data-change="1">+</button>
+                                                        <button type="button" class="cart-card-remove" onclick="removeFromCart('${product.productId}', this)">Xóa</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </c:forEach>
+                                        </c:forEach>
+                                    </div>
                                 </c:forEach>
+
                             </div>
                         </form>
                     </c:when>
@@ -81,6 +93,5 @@
                 </div>
             </c:if>
         </div>
-        <script src="${pageContext.request.contextPath}/js/JS_cart.js"></script>
     </body>
 </html>

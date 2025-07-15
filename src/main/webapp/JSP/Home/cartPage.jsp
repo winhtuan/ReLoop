@@ -85,17 +85,6 @@
             </script>
             <c:remove var="message" scope="request" />
         </c:if>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                // gắn sự kiện sau khi DOM đã sẵn sàng
-                document.querySelectorAll(".item-checkbox")
-                        .forEach(cb => cb.addEventListener("change", updateSubtotal));
-
-                updateSubtotal();          // tính tổng lần đầu (sẽ = 0 vì chưa tick)
-            });
-
-        </script>
-        <<script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
 
     </body>
 </html>

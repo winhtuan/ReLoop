@@ -10,6 +10,9 @@ document.addEventListener('click', function (e) {
         const qtyInput = document.getElementById('q-' + productId);
         const hidden = document.querySelector(`input[name="qty_${productId}"]`);
         let newQty = Math.max(1, parseInt(qtyInput.value) + delta);
+        const realQuantity = document.querySelector(`input[name="qtyr_${productId}"]`).value;
+        if(newQty>realQuantity)
+            return;
         qtyInput.value = newQty;
         hidden.value = newQty;
         updatedCart.set(productId, newQty);
@@ -73,6 +76,7 @@ function setupCheckboxLogic() {
 
 document.addEventListener('DOMContentLoaded', function () {
     setupCheckboxLogic();
+    setupSellerSelectAllLogic();
     updateSidebarTotal();
 });
 
@@ -97,24 +101,34 @@ function removeFromCart(productId, btn) {
 // Gửi cập nhật số lượng lên server nếu có thay đổi
 const cartUpdateURL = `${contextPath}/s_cart`;
 function sendCartUpdatesIfNeeded() {
-    if (updatedCart.size === 0)
-        return;
+    if (updatedCart.size === 0) return;
     const updates = [];
     updatedCart.forEach((qty, productId) => {
         updates.push({ productId, quantity: qty });
     });
-    navigator.sendBeacon(
-        cartUpdateURL,
-        new Blob([JSON.stringify(updates)], { type: "application/json" })
-    );
-    updatedCart.clear();
+
+    try {
+        const data = JSON.stringify(updates);
+        const success = navigator.sendBeacon(cartUpdateURL, new Blob([data], {
+            type: "application/json"
+        }));
+
+        if (success) {
+            console.log("Cart updated via beacon");
+            updatedCart.clear();
+        } else {
+            console.warn("Beacon failed");
+        }
+    } catch (err) {
+        console.error("sendBeacon error:", err);
+    }
 }
+
 
 // Gửi khi user rời trang
 window.addEventListener("beforeunload", function () {
     sendCartUpdatesIfNeeded();
 });
-// Gửi khi click link hoặc submit form
 // Đảm bảo chỉ gửi khi thực sự chuyển trang hoặc submit
 function setupLinkAndFormListeners() {
     document.querySelectorAll("a").forEach(el => {
@@ -128,7 +142,7 @@ function setupLinkAndFormListeners() {
         });
     });
 }
-setupLinkAndFormListeners();
+//setupLinkAndFormListeners();
 
 // Khi submit form chỉ gửi các sản phẩm được chọn
 const cartForm = document.getElementById('cartForm');
@@ -143,6 +157,41 @@ if (cartForm) {
                     input.disabled = true;
                 });
             }
+        });
+    });
+}
+function setupSellerSelectAllLogic() {
+    const sellerCheckboxes = document.querySelectorAll('.seller-select-all');
+
+    sellerCheckboxes.forEach(sellerCheckbox => {
+        const sellerIndex = sellerCheckbox.dataset.sellerIndex;
+
+        // Khi click vào checkbox "Chọn tất cả của người bán"
+        sellerCheckbox.addEventListener('change', function () {
+            const itemCheckboxes = document.querySelectorAll(`.cart-card[data-seller-index="${sellerIndex}"] .item-checkbox`);
+            itemCheckboxes.forEach(cb => {
+                cb.checked = this.checked;
+            });
+            updateSidebarTotal();
+        });
+    });
+
+    // Khi từng item được chọn/deselect => cập nhật trạng thái của seller checkbox
+    const allItemCheckboxes = document.querySelectorAll('.item-checkbox');
+    allItemCheckboxes.forEach(itemCb => {
+        itemCb.addEventListener('change', function () {
+            const card = itemCb.closest('.cart-card');
+            const sellerIndex = card.dataset.sellerIndex;
+            const sellerCb = document.querySelector(`.seller-select-all[data-seller-index="${sellerIndex}"]`);
+
+            const items = document.querySelectorAll(`.cart-card[data-seller-index="${sellerIndex}"] .item-checkbox`);
+            const allChecked = Array.from(items).every(cb => cb.checked);
+
+            if (sellerCb) {
+                sellerCb.checked = allChecked;
+            }
+
+            updateSidebarTotal();
         });
     });
 }
