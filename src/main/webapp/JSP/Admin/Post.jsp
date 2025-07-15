@@ -116,8 +116,6 @@
                                 <th class="px-4 py-2 border-b">title</th>
                                 <th class="px-4 py-2 border-b">description</th>
                                 <th class="px-4 py-2 border-b">price</th>
-                                <th class="px-4 py-2 border-b">moderationStatus</th>
-                                <th class="px-4 py-2 border-b text-right pr-[110px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="postTableBody" class="text-gray-800">
@@ -131,74 +129,11 @@
                                     <td class="px-4 py-2">${product.title}</td>
                                     <td class="px-4 py-2">${product.description}</td>
                                     <td class="px-4 py-2">${product.price}</td>
-                                    <td class="px-4 py-2">${product.moderationStatus}</td>
-                                    <td class="px-4 py-2 text-right pr-[110px]">
-                                        <div class="flex justify-end items-center gap-4">
-                                            <!-- Unblock button -->
-                                            <button onclick="openModal('approveModal', '${product.productId}', '${product.userId}')" 
-                                                    type="button" class="group relative cursor-pointer text-green-600 hover:text-red-800">
-                                                <span class="material-symbols-rounded text-xl">check_circle</span>
-                                                <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
-                                                    Approval
-                                                </div>
-                                            </button>
-                                            <!-- Delete button -->
-                                            <button onclick="openModal('rejectModal', '${product.productId}', '${product.userId}')"
-                                                    type="button" class="group relative cursor-pointer text-red-600 hover:text-gray-800">
-                                                <span class="material-symbols-rounded text-xl">cancel</span>
-                                                <div class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition">
-                                                    Reject
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </td>
                                 </tr>
                             </c:forEach>
                         </tbody>
                     </table>
                     <div id="pagination" class="mt-6 flex justify-center"></div>
-                </div>
-            </div>
-            <!-- Approve Modal -->
-            <div id="approveModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Confirm Approval</h2>
-                    <p class="text-gray-600 mb-6">Are you sure you want to approve this product?</p>
-                    <div class="flex justify-end gap-3">
-                        <button onclick="closeModal('approveModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                        <form action="ApprovalServlet" method="post">
-                            <input type="hidden" name="productId" id="approveProductId">
-                            <input type="hidden" name="action" value="approve">
-                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Yes</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div id="rejectModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
-                <div class="bg-white p-6 rounded-lg w-full max-w-md shadow-lg relative">
-                    <form action="ApprovalServlet" method="post">
-                        <h2 class="text-xl font-semibold mb-4 text-red-600">Reject Product</h2>
-                        <!-- Hidden để gửi productId -->
-                        <input type="hidden" id="rejectProductId" name="productId">
-                        <input type="hidden" id="rejectUserId" name="userId">
-                        <input type="hidden" name="action" value="reject">
-                        <!-- Lý do từ chối -->
-                        <label for="reason" class="block text-gray-700 mb-1">Reason for rejection:</label>
-                        <textarea name="reason" id="reason" rows="4"
-                                  class="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
-                                  required></textarea>
-                        <!-- Nút submit và cancel -->
-                        <div class="mt-4 flex justify-end gap-3">
-                            <button type="button" onclick="closeModal('rejectModal')"
-                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                                Submit
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </main>

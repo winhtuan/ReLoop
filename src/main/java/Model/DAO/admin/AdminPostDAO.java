@@ -43,7 +43,28 @@ public class AdminPostDAO {
         }
         return list;
     }
-
+    public List<Product> allPost() {
+        String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
+                + "FROM reloop_v2.product "
+                + "WHERE moderation_status = 'approved'";
+        List<Product> list = new ArrayList<>();
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setProductId(rs.getString("product_id"));
+                product.setUserId(rs.getString("user_id"));
+                product.setTitle(rs.getString("title"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getBigDecimal("price").intValue());
+                product.setModerationStatus(rs.getString("moderation_status"));
+                list.add(product);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy danh sách tài khoản chưa bị khóa: " + e.getMessage());
+        }
+        return list;
+    }
     public List<ProductImage> image(String productId) {
         String sql = "SELECT image_url FROM reloop_v2.product_images WHERE product_id = ?";
         List<ProductImage> list = new ArrayList<>();

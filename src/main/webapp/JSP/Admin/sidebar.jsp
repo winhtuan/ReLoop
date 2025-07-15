@@ -11,30 +11,41 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
         <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        html, body { height: 100%; margin: 0; padding: 0; }
-        body { display: flex; flex-direction: row; }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 100vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            background-color: #fff;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-        .sidebar-nav { flex-grow: 1; }
-        main, .content-wrapper {
-            margin-left: 260px;
-            width: calc(100% - 260px);
-            padding: 1rem;
-            flex-grow: 1;
-        }
-    </style>
+            *, *::before, *::after {
+                box-sizing: border-box;
+            }
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                display: flex;
+                flex-direction: row;
+            }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 260px;
+                height: 100vh;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                background-color: #fff;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                z-index: 999;
+            }
+            .sidebar-nav {
+                flex-grow: 1;
+            }
+            main, .content-wrapper {
+                margin-left: 260px;
+                width: calc(100% - 260px);
+                padding: 1rem;
+                flex-grow: 1;
+            }
+        </style>
     </head>
 
     <body>
@@ -105,7 +116,9 @@
                             <li class="nav-item">
                                 <a class="nav-link dropdown-title">Post</a>
                             </li>
-
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/PostServlet" class="nav-link dropdown-link">Post</a>
+                            </li>
                             <li class="nav-item">
                                 <a href="${pageContext.request.contextPath}/ApprovalPost" class="nav-link dropdown-link">Approval Post</a>
                             </li>
@@ -168,4 +181,4 @@
     </body>
 
     <script src="${pageContext.request.contextPath}/js/sidebar.js"></script>
-    </html>
+</html>

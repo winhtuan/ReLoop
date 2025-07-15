@@ -88,23 +88,26 @@ public class ApprovalServlet extends HttpServlet {
         if (productId != null && !productId.isEmpty()) {
             if ("approve".equals(action)) {
                 db.approvePostById(productId);
+
             } else if ("reject".equals(action)) {
                 db.rejectPostById(productId);
+                // Giả sử bạn có hàm lấy email người đăng từ productId
+                String userEmail = db.getUserEmailByUserId(userId);
+
+                // Gửi email từ chối
+                boolean emailSent = sendRejectionEmail(userEmail, reason);
+
+                if (emailSent) {
+                    request.setAttribute("message", "Product rejected and email sent successfully.");
+                } else {
+                    request.setAttribute("error", "Failed to send rejection email.");
+                }
             }
+                // Sau khi xử lý xong, redirect về trang danh sách chờ duyệt
+        response.sendRedirect("ApprovalPost"); // Đổi đường dẫn nếu cần    
         }
-        // Giả sử bạn có hàm lấy email người đăng từ productId
-        String userEmail = db.getUserEmailByUserId(userId);
 
-        // Gửi email từ chối
-        boolean emailSent = sendRejectionEmail(userEmail, reason);
 
-        if (emailSent) {
-            request.setAttribute("message", "Product rejected and email sent successfully.");
-        } else {
-            request.setAttribute("error", "Failed to send rejection email.");
-        }
-        // Sau khi xử lý xong, redirect về trang danh sách chờ duyệt
-        response.sendRedirect("ApprovalPost"); // Đổi đường dẫn nếu cần
 
     }
 
