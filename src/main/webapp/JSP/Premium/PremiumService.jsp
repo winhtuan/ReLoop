@@ -48,6 +48,7 @@
         <script src="js/active.js"></script>
         <script src="js/search-menu.js"></script>
         <script src="${pageContext.request.contextPath}/js/notification.js"></script>
+        <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
