@@ -1,13 +1,12 @@
 package Model.entity.auth;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 public class Account {
     private String accId;
     private String password;
     private String email;
-    private LocalDate regisDate;
+    private Date regisDate;
     private String userId;
     private String verificationToken;
     private boolean isVerified;
@@ -20,7 +19,7 @@ public class Account {
         this.email = email;
     }
 
-    public Account(String accId, String password, String email, LocalDate regisDate,
+    public Account(String accId, String password, String email, Date regisDate,
                     String userId, String verificationToken, boolean isVerified) {
         this.accId = accId;
         this.password = password;
@@ -31,7 +30,7 @@ public class Account {
         this.isVerified = isVerified;
     }
 
-    public Account(String accId, String password, String email, LocalDate regisDate, String userId, String verificationToken, boolean isVerified, boolean isBlock, Date offlineAt) {
+    public Account(String accId, String password, String email, Date regisDate, String userId, String verificationToken, boolean isVerified, boolean isBlock, Date offlineAt) {
         this.accId = accId;
         this.password = password;
         this.email = email;
@@ -76,8 +75,8 @@ public class Account {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public LocalDate getRegisDate() { return regisDate; }
-    public void setRegisDate(LocalDate regisDate) { this.regisDate = regisDate; }
+    public Date getRegisDate() { return regisDate; }
+    public void setRegisDate(Date regisDate) { this.regisDate = regisDate; }
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }

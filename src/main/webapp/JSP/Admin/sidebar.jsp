@@ -147,7 +147,27 @@
                             </li>
                         </ul>
                     </li>
-
+                    
+                    <li class="nav-item dropdown-container">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <span class="material-symbols-outlined">wallet</span>
+                            <span class="nav-label">Money</span>
+                            <span class="dropdown-icon material-symbols-rounded">keyboard_arrow_down</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-title">Revenue</a>
+                            </li>
+                            <li class="nav-item">
+                                <!--<a href="${pageContext.request.contextPath}/" class="nav-link dropdown-link">Total Revenue</a>-->
+                                <a href="#" class="nav-link dropdown-link">Total Revenue</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/CreateWithrawQR" class="nav-link dropdown-link">Withdrawal Request</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
                     <li class="nav-item dropdown-container">
                         <a href="#" class="nav-link dropdown-toggle">
                             <span class="material-symbols-outlined">report</span>

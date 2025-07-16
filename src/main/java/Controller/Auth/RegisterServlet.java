@@ -24,6 +24,7 @@ import Model.DAO.auth.UserDao;
 import Utils.AppConfig;
 import Utils.DBUtils;
 import java.time.LocalDate;
+import java.util.Date;
 
 public class RegisterServlet extends HttpServlet {
 
@@ -81,7 +82,7 @@ public class RegisterServlet extends HttpServlet {
                     accId,
                     hashedPassword,
                     email,
-                    LocalDate.now(),
+                    new Date(),
                     String.valueOf(user_id),
                     token,
                     false

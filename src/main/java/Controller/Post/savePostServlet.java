@@ -34,9 +34,9 @@ public class savePostServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json"); // Đặt content type là JSON
         response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession();
         Account acc = (Account) session.getAttribute("user");
@@ -145,5 +145,5 @@ public class savePostServlet extends HttpServlet {
             response.getWriter().write("{\"success\":false,\"message\":\"Failed to save product: " + e.getMessage() + "\"}");
         }
     }
-    
+
 }
