@@ -7,7 +7,7 @@
 
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="categoryViewServlet?slug=electronics">
                 <img src="img/cate-img/Electronics_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
@@ -20,7 +20,7 @@
 
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="categoryViewServlet?slug=vehicles">
                 <img src="img/cate-img/Vehicles_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
@@ -33,7 +33,7 @@
 
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="categoryViewServlet?slug=pets">
                 <img src="img/cate-img/Pet_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
@@ -46,7 +46,7 @@
 
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="categoryViewServlet?slug=furniture">
                 <img src="img/cate-img/Furniture_BG.png" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
@@ -59,7 +59,7 @@
 
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="categoryViewServlet?slug=fashion">
                 <img src="img/cate-img/Fashion_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
@@ -72,7 +72,7 @@
 
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="categoryViewServlet?slug=home-appliances">
                 <img src="img/cate-img/Home_Appliances_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
@@ -85,7 +85,7 @@
 
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="digital-goods">
                 <img src="img/cate-img/Digital_Goods_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
@@ -99,7 +99,7 @@
 
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="categoryViewServlet?slug=jewelry">
                 <img src="img/cate-img/Jewelry_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">
@@ -112,7 +112,7 @@
         
         <!-- Single Catagory -->
         <div class="single-products-catagory clearfix">
-            <a href="shop.html">
+            <a href="categoryViewServlet?slug=books-%26-documents">
                 <img src="img/cate-img/BookDocument_BG.jpg" alt="">
                 <!-- Hover Content -->
                 <div class="hover-content">

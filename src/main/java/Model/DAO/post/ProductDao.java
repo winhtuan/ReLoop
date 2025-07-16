@@ -494,8 +494,16 @@ public class ProductDao {
     }
 
     public static void main(String[] args) {
-        for (Product a : new ProductDao().searchProducts("s")) {
-            System.out.println(a.getImages().get(0).getImageUrl());
+        List<Integer> ls=new ArrayList<>();
+        ls.add(9);
+        ls.add(51);
+        ls.add(52);
+        ls.add(53);
+        ls.add(54);
+        List<Product> productList = new ProductDao().getProductsByCategoryIdsAndFilter(ls, 0.0, 200000000.0, null);
+        for(Product p:productList)
+        {
+            System.out.println(p.toString());
         }
     }
 

@@ -12,41 +12,34 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
         <style>
-
-            *, *::before, *::after {
-                box-sizing: border-box;
-            }
-            html, body {
-                height: 100%;
-                margin: 0;
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                margin: 7px;
                 padding: 0;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 2px solid #ccc;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s ease;
             }
-            body {
-                display: flex;
-                flex-direction: row;
-            }
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 260px;
-                height: 100vh;
-                overflow-y: auto;
-                display: flex;
-                flex-direction: column;
-                background-color: #fff;
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-                z-index: 999;
-            }
-            .sidebar-nav {
-                flex-grow: 1;
-            }
-            main, .content-wrapper {
-                margin-left: 260px;
-                width: calc(100% - 260px);
-                padding: 1rem;
-                flex-grow: 1;
 
+            .user-avatar:hover {
+                transform: scale(1.05);
+                border-color: #007bff;
+            }
+
+            .role-badge {
+                display: inline-block;
+                font-size: 12px;
+                font-weight: 600;
+                color: #856404;
+                background-color: #fff3cd;
+                border: 1px solid #ffeeba;
+                padding: 2px 8px;
+                border-radius: 20px;
+                margin-top: 4px;
+                width: fit-content;
             }
         </style>
     </head>
