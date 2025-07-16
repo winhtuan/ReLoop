@@ -322,7 +322,8 @@ public class ProductDao {
         }
         return products;
     }
-
+    
+    
     public List<Product> getProductsByCategoryIdsAndFilter(List<Integer> categoryIds, Double minPrice, Double maxPrice, String state) {
         List<Product> products = new ArrayList<>();
         if (categoryIds == null || categoryIds.isEmpty()) {
@@ -338,7 +339,7 @@ public class ProductDao {
         }
         if (maxPrice != null) {
             sql.append(" AND price <= ?");
-        }
+        } 
         if (state != null && !state.isEmpty()) {
             sql.append(" AND state = ?");
         }
