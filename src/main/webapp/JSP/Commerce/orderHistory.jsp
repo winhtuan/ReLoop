@@ -24,6 +24,7 @@
         <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
         <link rel="stylesheet" href="css/orderHistory.css"/>
+        <link rel="stylesheet" href="css/feedbackModal.css"/> <!-- Thêm CSS mới -->
     </head>
     <body>
         <!-- Page Preloder -->
@@ -38,51 +39,107 @@
         <div class="main-content-wrapper d-flex clearfix">
             <c:import url="/JSP/Home/Nav.jsp" />
             <div class="container py-4" style="color: black;">
-                <h2>🧾 Lịch sử đơn hàng</h2>
+                <h2>🧾 Order History</h2>
 
                 <c:forEach var="order" items="${orders}">
-                    <div class="order-card">
+                    <div class="order-card" data-order-id="${order.orderId}">
                         <div class="order-header">
-                            <h3><i class="fas fa-receipt"></i> Mã đơn: ${order.orderId}</h3>
+                            <h3><i class="fas fa-receipt"></i> Order ID: ${order.orderId}</h3>
                             <span class="order-status status-${order.status}">
                                 <i class="fas fa-circle-notch"></i> ${order.status.toUpperCase()}
                             </span>
                         </div>
 
                         <div class="info-row">
-                            <i class="far fa-calendar-alt"></i> Ngày tạo: 
+                            <i class="far fa-calendar-alt"></i> Created Date: 
                             <fmt:formatDate value="${order.createdAt}" pattern="dd/MM/yyyy HH:mm" />
                         </div>
 
                         <div class="info-row">
-                            <i class="fas fa-money-bill-wave"></i> Tổng tiền: 
+                            <i class="fas fa-money-bill-wave"></i> Total Amount: 
                             <span class="total"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="" groupingUsed="true" /> VND</span>
                         </div>
 
                         <div class="info-row">
-                            <i class="fas fa-tag"></i> Giảm giá: 
+                            <i class="fas fa-tag"></i> Discount: 
                             <fmt:formatNumber value="${order.discountAmount}" type="currency" currencySymbol="" groupingUsed="true" /> VND
                         </div>
 
                         <div class="info-row">
-                            <i class="fas fa-location-dot"></i> Địa chỉ giao hàng: ${order.shippingAddress}
+                            <i class="fas fa-location-dot"></i> Shipping Address: ${order.shippingAddress}
                         </div>
 
                         <div class="product-list">
-                            <h4><i class="fas fa-box"></i> Chi tiết sản phẩm</h4>
+                            <h4><i class="fas fa-box"></i> Product Details</h4>
                             <ul>
                                 <c:forEach var="item" items="${order.listItems}">
                                     <li>
-                                        🆔 Sản phẩm: ${item.productName} | 
-                                        📦 SL: ${item.quantity} | 
-                                        💵 Giá: 
+                                        🆔 Product: ${item.productName} | 
+                                        📦 Quantity: ${item.quantity} | 
+                                        💵 Price: 
                                         <fmt:formatNumber value="${item.price}" type="currency" currencySymbol="" groupingUsed="true" /> VND
                                     </li>
                                 </c:forEach>
                             </ul>
                         </div>
+                        <!-- Buttons based on status -->
+                        <c:choose>
+                            <c:when test="${order.status == 'cancelled'}">
+                                <!-- Không hiển thị nút Actions khi trạng thái là cancelled -->
+                            </c:when>
+                            <c:when test="${order.status == 'received'}">
+                                <button class="feedback-trigger-btn" data-order-id="${order.orderId}">
+                                    <i class="fas fa-star"></i> Rate Order
+                                </button>
+                            </c:when>
+                            <c:otherwise>
+                                <button class="order-action-btn" data-order-id="${order.orderId}">
+                                    <i class="fas fa-ellipsis-v"></i> Actions
+                                </button>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </c:forEach>
+            </div>
+
+            <!-- Order Modal -->
+            <div id="orderModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-receipt"></i> Actions for Order: <span id="modalOrderId"></span></h3>
+                        <span class="modal-close">×</span>
+                    </div>
+                    <div class="modal-body">
+                        <button class="modal-btn cancel-order">Cancel Order</button>
+                        <button class="modal-btn return-order">Return Order</button>
+                        <button class="modal-btn received-order">Received</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Modal -->
+            <div id="feedbackModal" class="feedback-modal">
+                <div class="feedback-modal-content">
+                    <div class="feedback-modal-header">
+                        <h3><i class="fas fa-star"></i> Rate Your Order</h3>
+                        <span class="feedback-modal-close">×</span>
+                    </div>
+                    <div class="feedback-modal-body">
+                        <form id="feedbackForm">
+                            <p>Order ID: <span id="feedbackOrderId"></span></p>
+                            <p>Please rate and comment on your experience:</p>
+                            <div class="rating">
+                                <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+                                <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+                                <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+                                <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+                                <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+                            </div>
+                            <textarea id="feedbackComment" placeholder="Your comment..." rows="3"></textarea>
+                            <button type="submit" class="feedback-modal-btn">Submit Feedback</button>
+                        </form>
+                    </div>
+                </div>
             </div>
 
             <c:import url="/JSP/Home/Footer.jsp" />
@@ -109,7 +166,6 @@
                     preloader.style.pointerEvents = "none";
                     setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
                 });
-
             </script>
             <c:if test="${not empty sessionScope.Message}">
                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -119,7 +175,7 @@
                 window.addEventListener("DOMContentLoaded", function () {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Thông báo',
+                        title: 'Notification',
                         text: "${fn:escapeXml(sessionScope.Message)}"
                     });
                 });
@@ -134,6 +190,7 @@
             </c:if>
             <script src="js/conversation/JS_chatBox.js"></script>
             <script src="js/JS_search.js"></script>
-
+            <script src="js/orderHistoryModal.js"></script>
+            <script src="js/feedbackModal.js"></script> <!-- Thêm JS mới -->
     </body>
 </html>
