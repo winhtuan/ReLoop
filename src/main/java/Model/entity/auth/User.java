@@ -14,6 +14,7 @@ public class User {
     private Date premiumExpiry;
     private BigDecimal balance;
     private String srcImg;
+    private Account account;
 
     // Default constructor with default role = "user"
     public User() {
@@ -33,6 +34,20 @@ public class User {
         this.srcImg = srcImg;
     }
 
+    public User(String userId, String fullName, String role, String address, String phoneNumber, String email, boolean isPremium, Date premiumExpiry, BigDecimal balance, String srcImg, Account account) {
+        this.userId = userId;
+        this.fullName = fullName;
+        this.role = role;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.isPremium = isPremium;
+        this.premiumExpiry = premiumExpiry;
+        this.balance = balance;
+        this.srcImg = srcImg;
+        this.account = account;
+    }
+    
     // All-args constructor
     public User(String userId, String fullName, String role, String address, String phoneNumber,
                 String email, boolean isPremium, Date premiumExpiry, BigDecimal balance) {
@@ -47,6 +62,28 @@ public class User {
         this.balance = balance;
     }
 
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    @Override
+public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return userId != null && userId.equals(user.userId);
+}
+
+@Override
+public int hashCode() {
+    return userId != null ? userId.hashCode() : 0;
+}
+
+    
     public boolean isIsPremium() {
         return isPremium;
     }

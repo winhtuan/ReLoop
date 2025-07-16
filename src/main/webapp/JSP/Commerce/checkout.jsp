@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@page import="Model.entity.pay.Voucher"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -140,12 +141,22 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-medium">Discount Code / Voucher</label>
+                                    <div class="voucher-group mb-2">
+                                        <select class="form-select" id="voucherSelect" onchange="selectVou()">
+                                            <option value="">-- Select a voucher --</option>
+                                            <c:forEach var="v" items="${sessionScope.userVouchers}">
+                                                <option value="${v.code}">${v.code} - Giảm <fmt:formatNumber value="${v.discountValue}" pattern="#,###" />đ</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+
                                     <div class="input-group voucher-group">
                                         <input type="text" class="form-control" name="voucher" placeholder="Enter voucher code" id="voucherInput">
                                         <button class="btn btn-outline-warning" type="button" id="applyVoucherBtn">
                                             <ion-icon name="pricetag-outline"></ion-icon> Apply
                                         </button>
                                     </div>
+
                                     <!-- Thông báo sẽ hiện ở đây -->
                                     <div id="voucherMessage" class="mt-2"></div>
                                 </div>
@@ -185,6 +196,7 @@
                 ];
             </script>
             <script>
+                const goongApiKey = "${sessionScope.goongapi}";
                 let productTotal = ${amount};
                 if (isNaN(productTotal))
                     productTotal = 0;
@@ -199,17 +211,24 @@
             <script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
             <script src="${pageContext.request.contextPath}/js/order.js"></script>
             <script src="${pageContext.request.contextPath}/js/notification.js"></script>
+            <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
             <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
             <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
             <script>
-                const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
                 window.addEventListener("load", function () {
+                    // Ẩn preloader
                     const preloader = document.getElementById("preloader");
                     preloader.style.opacity = "0";
                     preloader.style.pointerEvents = "none";
-                    setTimeout(() => preloader.style.display = "none", 500); // Hide after fade out
+                    setTimeout(() => preloader.style.display = "none", 500);
                 });
+
+                function selectVou() {
+                    const select = document.getElementById("voucherSelect");
+                    const input = document.getElementById("voucherInput");
+                    input.value = select.value || "";
+                }
             </script>
 
     </body>

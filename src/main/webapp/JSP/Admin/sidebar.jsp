@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,6 +12,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
         <style>
+
             *, *::before, *::after {
                 box-sizing: border-box;
             }
@@ -44,6 +46,7 @@
                 width: calc(100% - 260px);
                 padding: 1rem;
                 flex-grow: 1;
+
             }
         </style>
     </head>
@@ -68,6 +71,27 @@
             <nav class="sidebar-nav">
                 <!-- Primary Top Nav -->
                 <ul class="nav-list primary-nav">
+                    <li class="nav-item">
+                        <c:if test="${not empty cus}">                           
+                            <a href="s_userProfile" class="nav-link user-info-link" style="margin: 0;padding: 0;">
+                                <img src="${cus.srcImg}" alt="Avatar" class="user-avatar rounded-circle">
+                                <div class="user-info-text">
+                                    <span class="nav-label font-semibold">${cus.fullName}</span><br>
+                                    <span class="nav-label role-badge">
+                                        <c:choose>
+                                            <c:when test="${cus.role == 'admin'}">Admin</c:when>                                           
+                                        </c:choose>
+                                    </span>
+                                </div>
+                            </a>
+                        </c:if>
+                        <ul class="dropdown-menu">
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-title">Profile</a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
                         <a href="${pageContext.request.contextPath}/StatictisServlet" class="nav-link">
                             <span class="material-symbols-rounded">dashboard</span>
@@ -165,7 +189,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="s_logout" class="nav-link">
+                        <a href="${pageContext.request.contextPath}/s_logout" class="nav-link">
                             <span class="material-symbols-rounded">logout</span>
                             <span class="nav-label">Logout</span>
                         </a>

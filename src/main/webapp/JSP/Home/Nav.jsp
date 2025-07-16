@@ -29,7 +29,17 @@
         <ul>
             <li class="active"><a href="${pageContext.request.contextPath}/home">Home</a></li>
             <li><a href="${pageContext.request.contextPath}/NewPostPage">New Post</a></li>
-            <li><a href="#">Post</a></li>
+            <div class="category-dropdown-container">
+                <li>
+                    <a href="#" class="category-nav">CATEGORY</a>
+                </li>
+
+                <div class="category-dropdown">
+                    <div class="category-container">
+                        <c:import url="/JSP/Home/SearchCategory.jsp" />
+                    </div>
+                </div>
+            </div>
             <li><a href="#">Shop</a></li>
                 <c:choose>
                     <c:when test="${sessionScope.user != null}">
@@ -43,6 +53,7 @@
     </nav>
     <!-- Cart Menu -->
     <div class="cart-fav-search">
+
         <a href="#" class="search-nav"><ion-icon name="search-outline"></ion-icon> Search</a>
                 <c:choose>
                     <c:when test="${sessionScope.user != null}">
@@ -90,10 +101,11 @@
                     </c:if>
                     <ul id="menu" class="menu">
                         <li><a href="${pageContext.request.contextPath}/s_orderHistory" id="menu-item"><ion-icon name="bag-handle-outline"></ion-icon>Order History</a></li>
-                        <li><a href="#" id="menu-item"><ion-icon name="newspaper-outline"></ion-icon>Manager Post</a></li>
+                        <li><a href="${pageContext.request.contextPath}/s_manageProduct" id="menu-item"><ion-icon name="newspaper-outline"></ion-icon>Manager Post</a></li>
                         <li><a href="${pageContext.request.contextPath}/UsersServlet" id="menu-item"><ion-icon name="chatbubble-ellipses-outline"></ion-icon>Message</a></li>
                         <li><a href="#" id="menu-item"><ion-icon name="document-text-outline"></ion-icon>Profile</a></li>
                         <li><a href="https://docs.google.com/forms/d/1GZUnTuEUHixIWl1RRyBxBUaxV7aaOy6R5-Z9v5OcJgs" target="_blank" id="menu-item" ><ion-icon name="flag" style="color: gold;"></ion-icon> Report Website</a></li>
+
                         <li><a href="${pageContext.request.contextPath}/s_logout" id="menu-item" class="text-danger"><ion-icon name="log-out"></ion-icon> Log Out</a></li>
                     </ul>
                 </div>
@@ -108,9 +120,10 @@
     </div>
     <!-- Button Group -->
     <div class="amado-btn-group mt-15 mb-100">
+
         <c:choose>
             <c:when test="${sessionScope.user != null}">
-                <a href="#" class="item-btn-custom">
+                <a href="${pageContext.request.contextPath}/upPostServlet" class="item-btn-custom">
                     <ion-icon name="document-text-outline" class="btn-icon"></ion-icon>
                     <span>Up Post</span>
                 </a>                    

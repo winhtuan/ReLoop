@@ -94,6 +94,7 @@
         <!-- js -->
         <script src="js/active.js"></script>
         <script src="js/JS_search.js"></script>
+        <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
         <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>

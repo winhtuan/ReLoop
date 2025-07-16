@@ -149,6 +149,7 @@ public class UserDao {
     }
 
     public static ArrayList<User> listAllCustomers(String uid) {
+        AccountDao accDAO=new AccountDao();
         ArrayList<User> customers = new ArrayList<>();
         String sql = "SELECT u.user_id, u.FullName, u.Address, u.PhoneNumber, u.email "
                 + "FROM conversation c "
@@ -167,7 +168,7 @@ public class UserDao {
                     user.setAddress(rs.getString("Address"));
                     user.setPhoneNumber(rs.getString("PhoneNumber"));
                     user.setEmail(rs.getString("email"));
-
+                    user.setAccount(accDAO.getAccountByEmail(user.getEmail()));
                     customers.add(user);
                 }
             }
@@ -217,6 +218,22 @@ public class UserDao {
             return false;
         }
     }
+
+    public void updateUserProfile(User user) {
+    String sql = "UPDATE Users SET FullName = ?, email = ?, PhoneNumber = ?, Address = ?, img = ? WHERE user_id = ?";
+    try (Connection conn = DBUtils.getConnect();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, user.getFullName());
+        ps.setString(2, user.getEmail());
+        ps.setString(3, user.getPhoneNumber());
+        ps.setString(4, user.getAddress());
+        ps.setString(5, user.getSrcImg());
+        ps.setString(6, user.getUserId());
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
     public static void main(String[] args) {
         System.out.println(new UserDao().generateUserId());

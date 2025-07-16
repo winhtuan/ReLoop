@@ -1,8 +1,9 @@
 -- Tạo database và chọn
 CREATE DATABASE reloop_v2;
 USE reloop_v2;
--- 1. users
+SET SQL_SAFE_UPDATES = 0;
 
+-- 1. users
 CREATE TABLE users (
     user_id CHAR(7) NOT NULL PRIMARY KEY CHECK (user_id LIKE 'CUS____'),
     FullName VARCHAR(255),
@@ -152,8 +153,20 @@ CREATE TABLE orders (
     CONSTRAINT FK_orders_shipping_method FOREIGN KEY (shipping_method) REFERENCES shipping_methods(id) ON DELETE SET NULL,
     CONSTRAINT FK_orders_voucher FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id) ON DELETE SET NULL
 );
+alter table orders add column shipfee int;
+ALTER TABLE orders
+MODIFY COLUMN status ENUM('pending', 'paid', 'shipping', 'delivered', 'cancelled', 'refunded', 'received');
 
 CREATE INDEX idx_orders_user_id ON orders(user_id);
+
+SELECT o.*, u.FullName
+FROM orders o
+JOIN users u ON o.user_id = u.user_id
+WHERE o.status = 'received';
+
+UPDATE orders
+SET status = 'pending'
+WHERE status = 'received';
 
 -- 13. conversation
 CREATE TABLE conversation (
@@ -206,11 +219,12 @@ CREATE TABLE cart_items (
     cart_id CHAR(7) NOT NULL,
     product_id CHAR(7) NOT NULL,
     quantity INT CHECK (quantity > 0),
+	price int,
     PRIMARY KEY (cart_id, product_id),
     CONSTRAINT FK_cart_items_cart FOREIGN KEY (cart_id) REFERENCES cart(cart_id) ON DELETE CASCADE,
     CONSTRAINT FK_cart_items_product FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
-
+alter table cart_items add column price int;
 CREATE INDEX idx_cart_items_cart_id ON cart_items(cart_id);
 
 -- 18. order_items
@@ -250,11 +264,80 @@ CREATE TABLE Messages (
     CONSTRAINT FK_Messages_sender FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-create table notification(
-	noti_id CHAR(7) NOT NULL PRIMARY KEY CHECK (noti_id LIKE 'NOT____'),
+CREATE TABLE notification (
+    noti_id CHAR(7) NOT NULL PRIMARY KEY CHECK (noti_id LIKE 'NOT____'),
     user_id CHAR(7) NOT NULL,
-    content text,
+    title VARCHAR(255),
+    content TEXT,
+    link VARCHAR(255),
+    type VARCHAR(50),          
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_read BOOLEAN DEFAULT FALSE,
-    CONSTRAINT FK_notic_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-)
+    CONSTRAINT fk_noti_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+CREATE TABLE user_vouchers (
+    user_voucher_id CHAR(7) NOT NULL PRIMARY KEY CHECK (user_voucher_id LIKE 'UVU____'),
+    user_id CHAR(7) NOT NULL,
+    voucher_id CHAR(7) NOT NULL,
+    assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_used TINYINT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_user_vouchers_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT FK_user_vouchers_voucher FOREIGN KEY (voucher_id) REFERENCES vouchers(voucher_id) ON DELETE CASCADE,
+    UNIQUE (user_id, voucher_id)
+);
+
+UPDATE product
+SET moderation_status = 'approved'
+WHERE moderation_status = 'pending';
+
+UPDATE categories SET slug = REPLACE(slug, '&', '-') WHERE slug LIKE '%&%';
+
+CREATE TABLE category_attribute (
+    attr_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL, -- Tên thuộc tính (VD: Hãng, Kích thước)
+    input_type ENUM('text', 'number', 'select') NOT NULL, -- Kiểu nhập liệu
+    options TEXT, -- JSON chứa các lựa chọn nếu là select
+    is_required BOOLEAN DEFAULT FALSE,
+    CONSTRAINT FK_attr_category FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
+);
+
+CREATE TABLE product_attribute_value (
+    product_id CHAR(7) NOT NULL,
+    attr_id INT NOT NULL,
+    value TEXT,
+    PRIMARY KEY (product_id, attr_id),
+    CONSTRAINT FK_attr_value_product FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE,
+    CONSTRAINT FK_attr_value_attr FOREIGN KEY (attr_id) REFERENCES category_attribute(attr_id) ON DELETE CASCADE
+);
+
+CREATE TABLE category_state_options (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT NOT NULL,
+    options TEXT NOT NULL, -- lưu JSON ["mới", "cũ", "hư hỏng nhẹ"]
+    CONSTRAINT FK_cat_state FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
+);
+
+CREATE TABLE product_sequence (
+    id INT PRIMARY KEY,
+    last_number INT
+);
+
+CREATE TABLE product_images_sequence (
+    id INT PRIMARY KEY,
+    last_number INT
+);
+
+CREATE TABLE feedback (
+    feedback_id CHAR(7) NOT NULL PRIMARY KEY CHECK (feedback_id LIKE 'FDB____'),
+    order_id CHAR(7) NOT NULL,
+    user_id CHAR(7) NOT NULL,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_feedback_order FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    CONSTRAINT FK_feedback_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_feedback_order_id ON feedback(order_id);
+CREATE INDEX idx_feedback_user_id ON feedback(user_id);

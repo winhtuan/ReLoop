@@ -5,13 +5,13 @@
 package Controller;
 
 import Model.DAO.commerce.CartDAO;
+import Model.DAO.post.ProductDao;
 import Model.entity.auth.Account;
+import Model.entity.auth.User;
 import Model.entity.post.Product;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import jakarta.mail.Session;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,11 +19,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.util.List;
+import java.util.Map;
 
-/**
- *
- * @author Thanh Loc
- */
 public class s_cart extends HttpServlet {
 
     @Override
@@ -31,7 +28,7 @@ public class s_cart extends HttpServlet {
             throws ServletException, IOException {
         HttpSession se = request.getSession();
         Account ac = (Account) se.getAttribute("user");
-        List<Product> ls = new CartDAO().getCartProductsByUserId(ac.getUserId());
+        Map<User, List<Product>> ls = new CartDAO().getCartGroupedBySeller(ac.getUserId());
         se.setAttribute("cartItems", ls);
         request.getRequestDispatcher("JSP/Home/cartPage.jsp").forward(request, response);
     }
@@ -46,7 +43,6 @@ public class s_cart extends HttpServlet {
                 json.append(line);
             }
         }
-
         Gson gson = new Gson();
         List<CartUpdate> updates = gson.fromJson(json.toString(), new TypeToken<List<CartUpdate>>() {
         }.getType());
@@ -95,6 +91,8 @@ public class s_cart extends HttpServlet {
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
+        int cartN = new CartDAO().getTotalQuantityByUserId(ac.getUserId());
+        request.getSession().setAttribute("cartN", cartN);
     }
 
 }

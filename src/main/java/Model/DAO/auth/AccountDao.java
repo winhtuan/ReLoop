@@ -189,7 +189,9 @@ public class AccountDao {
                         regisDate,
                         rs.getString("user_id"),
                         rs.getString("verification_token"),
-                        rs.getBoolean("is_verified")
+                        rs.getBoolean("is_verified"),
+                        rs.getBoolean("is_block"),
+                        rs.getDate("offline_at")
                 );
             }
         } catch (SQLException e) {
@@ -198,14 +200,23 @@ public class AccountDao {
         return null;
     }
 
-    public void updatePassword(String email, String newPassword) {
+    public boolean updatePassword(String email, String newPassword) {
         String query = "UPDATE Account SET password = ? WHERE email = ?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+
+            // Hash mật khẩu mới
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+            // Gán giá trị tham số
+            ps.setString(1, hashedPassword);
             ps.setString(2, email);
-            ps.executeUpdate();
+
+            // Thực thi truy vấn và kiểm tra xem có dòng nào bị ảnh hưởng không
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // Trả về true nếu có ít nhất một dòng được cập nhật
         } catch (SQLException e) {
-            System.out.println("Lỗi khi cập nhật mật khẩu: " + e);
+            System.out.println("Lỗi khi cập nhật mật khẩu: " + e.getMessage());
+            return false;
         }
     }
 
@@ -266,6 +277,17 @@ public class AccountDao {
             ps.setString(2, token);
             ps.setTimestamp(3, new Timestamp(expiry.getTime()));
             ps.executeUpdate();
+        }
+    }
+
+    public void updateOfflineAt(String userId) {
+        String sql = "UPDATE Account SET offline_at = ? WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setString(2, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật offline_at: " + e.getMessage());
         }
     }
 
@@ -361,6 +383,24 @@ public class AccountDao {
             e.printStackTrace();
             return null; // Lỗi DB
         }
+    }
+
+    public String getPasswordById(String user_id) {
+        String password = null;
+        String sql = "SELECT password FROM Account WHERE user_id = ?";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user_id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                password = rs.getString("password");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return password;
     }
 
     public static void main(String[] args) {

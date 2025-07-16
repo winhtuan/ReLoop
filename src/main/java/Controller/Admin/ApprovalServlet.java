@@ -93,7 +93,7 @@ public class ApprovalServlet extends HttpServlet {
                 db.rejectPostById(productId);
                 // Giả sử bạn có hàm lấy email người đăng từ productId
                 String userEmail = db.getUserEmailByUserId(userId);
-
+              
                 // Gửi email từ chối
                 boolean emailSent = sendRejectionEmail(userEmail, reason);
 
@@ -106,8 +106,6 @@ public class ApprovalServlet extends HttpServlet {
                 // Sau khi xử lý xong, redirect về trang danh sách chờ duyệt
         response.sendRedirect("ApprovalPost"); // Đổi đường dẫn nếu cần    
         }
-
-
 
     }
 

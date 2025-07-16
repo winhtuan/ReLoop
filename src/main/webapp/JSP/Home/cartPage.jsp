@@ -29,102 +29,10 @@
             <div class="loader"></div>
         </div>
 
-
         <c:import url="/JSP/Home/Search.jsp" />
 
-        <!-- ##### Main Content Wrapper Start ##### -->
-        <div class="main-content-wrapper d-flex clearfix">
-            <c:import url="/JSP/Home/Nav.jsp" />
-            <c:choose>
-                <c:when test="${not empty sessionScope.cartItems}">
-                    <div class="wrapper">
-                        <form id="cartForm" method="post" action="s_cartBuy">
-                            <div class="cart-left">
-                                <div class="cart-title">Shopping Cart</div>
-
-                                <div class="thead">
-                                    <div></div>
-                                    <div></div>
-                                    <div>Name</div>
-                                    <div>Price</div>
-                                    <div>Quantity</div>
-                                    <div></div>
-                                </div>
-
-                                <c:forEach var="item" items="${sessionScope.cartItems}">
-                                    <div class="item">
-                                        <div class="col checkbox">
-                                            <input type="checkbox" name="productIds" value="${item.productId}" class="item-checkbox"/>
-                                        </div>
-                                        <div class="col image">
-                                            <img src="<c:choose>
-                                                     <c:when test='${not empty item.images}'>
-                                                         ${item.images[0].imageUrl}
-                                                     </c:when>
-                                                     <c:otherwise>/assets/img/no-image.png</c:otherwise>
-                                                 </c:choose>" alt="${item.title}" />
-                                        </div>
-
-                                        <div class="col name">${item.title}</div>
-
-                                        <div class="col price" data-price="${item.price}">
-                                            <fmt:formatNumber value="${item.price}" type="currency" currencySymbol="VND"/>
-                                        </div>
-
-                                        <div class="col qty">
-                                            <button type="button" class="dec" data-id="${item.productId}" onclick="updateQty(this, -1)">–</button>
-                                            <span id="q-${item.productId}">${item.quantity}</span>
-                                            <input type="hidden"
-                                                   name="qty_${item.productId}"
-                                                   value="${item.quantity}"
-                                                   class="qty-hidden" />
-                                            <button type="button" class="inc" data-id="${item.productId}" onclick="updateQty(this, 1)">+</button>
-                                        </div>
-                                        <div class="col delete">
-                                            <button type="button" class="delete-btn" onclick="removeFromCart('${item.productId}', this)">🗑</button>
-                                        </div>
-                                    </div>
-                                </c:forEach>
-                            </div>
-                        </form>
-
-                        <div class="cart-right">
-                            <h3>Cart Total</h3>
-
-                            <c:set var="sub" value="0" scope="page"/>
-                            <c:forEach var="item" items="${sessionScope.cartItems}">
-                                <c:set var="sub"
-                                       value="${sub + item.price * item.quantity}" scope="page"/>
-                            </c:forEach>
-
-                            <div class="line" style="font-weight:600">
-                                <span>Total:</span>
-                                <span><fmt:formatNumber value="${sub}" type="currency" currencySymbol="VND"/></span>
-                            </div>
-
-                            <button type="submit" form="cartForm" class="checkout">Checkout</button>
-
-                        </div>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="empty-cart">
-                        <img src="${pageContext.request.contextPath}/img/cart_tutorial.png"
-                             alt="Empty cart" class="empty-img"/>
-
-                        <h2>Your cart is empty</h2>
-                        <p>Looks like you haven’t added anything yet.</p>
-
-                        <a href="${pageContext.request.contextPath}/home" class="browse-btn">
-                            Start shopping
-                        </a>
-                    </div>
-                </c:otherwise>
-
-            </c:choose>
-
-        </div>
-
+        <c:import url="/JSP/Commerce/cart.jsp" />
+        
         <c:import url="/JSP/Home/Footer.jsp" />
         <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
         <script src="js/jquery/jquery-2.2.4.min.js"></script>
@@ -138,6 +46,7 @@
         <script src="${pageContext.request.contextPath}/js/active.js"></script>
         <script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
         <script src="${pageContext.request.contextPath}/js/notification.js"></script>
+        <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -176,17 +85,6 @@
             </script>
             <c:remove var="message" scope="request" />
         </c:if>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                // gắn sự kiện sau khi DOM đã sẵn sàng
-                document.querySelectorAll(".item-checkbox")
-                        .forEach(cb => cb.addEventListener("change", updateSubtotal));
-
-                updateSubtotal();          // tính tổng lần đầu (sẽ = 0 vì chưa tick)
-            });
-
-        </script>
-        <<script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
 
     </body>
 </html>

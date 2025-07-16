@@ -163,3 +163,136 @@
         font-size: 13px;
     }
 }
+
+/* Existing styles remain unchanged */
+
+/* Feedback Section Styles */
+.content-area {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.single-product-area {
+    flex: 1 0 auto; /* Cho phép single-product-area chiếm không gian nhưng không co lại quá mức */
+}
+
+.feedback-section {
+    padding: 40px 0;
+    background-color: #f9f9f9;
+    margin-top: 40px; /* Đảm bảo khoảng cách với single-product-area */
+    flex: 0 0 auto; /* Giữ feedback-section cố định, không co dãn */
+}
+
+.feedback-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feedback-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(60, 60, 60, 0.08);
+    padding: 18px 22px;
+    font-family: 'helveticaneuemedium', Arial, sans-serif;
+}
+
+.feedback-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.feedback-rating ion-icon {
+    color: #fbb710;
+    font-size: 20px;
+    margin-right: 2px;
+}
+
+.feedback-comment {
+    font-size: 15px;
+    color: #333;
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+}
+
+.feedback-author {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+}
+
+.feedback-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.no-feedback {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Dynamic Star Rating Styles */
+.star-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 2px;
+}
+
+.star-wrapper ion-icon {
+    font-size: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.star-wrapper .star-outline {
+    color: #ddd; /* Màu nền của sao */
+    z-index: 1;
+}
+
+.star-fill-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 2;
+    height: 100%;
+}
+
+.star-fill-wrapper ion-icon {
+    color: #f39c12; /* Màu cam lấp đầy */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .feedback-card {
+        padding: 12px 15px;
+    }
+    .feedback-title {
+        font-size: 20px;
+    }
+    .feedback-comment {
+        font-size: 14px;
+    }
+}

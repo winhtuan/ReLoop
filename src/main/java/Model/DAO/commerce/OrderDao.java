@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 import java.util.List;
 
-
 public class OrderDao {
 
     // Phương thức để tạo mã đơn hàng tự động (ORD0001)
@@ -91,6 +90,19 @@ public class OrderDao {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public String getOrderStatusByOrderId(String orderId) throws SQLException {
+        String sql = "SELECT status FROM orders WHERE order_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("status");
+                }
+            }
+        }
+        return null; // Hoặc throw exception nếu không tìm thấy
     }
 
     public Order getOrderById(String orderId) {
@@ -170,7 +182,6 @@ public class OrderDao {
         }
     }
 
-
     public List<Voucher> getAllVoucher() {
         List<Voucher> list = new ArrayList<>();
         String sql = "SELECT * FROM vouchers";
@@ -223,7 +234,6 @@ public class OrderDao {
         return null;
     }
 
-
     public List<Order> getOrdersByUserId(String userId) {
         List<Order> orders = new ArrayList<>();
         String sql = "SELECT * FROM orders WHERE user_id = ?";
@@ -253,8 +263,8 @@ public class OrderDao {
 
     public List<OrderItem> getOrderItems(String orderId) {
         List<OrderItem> items = new ArrayList<>();
-        String sql = "SELECT oi.order_id, oi.product_id, oi.quantity, oi.price, p.title FROM order_items oi "+
-        "JOIN product p ON oi.product_id = p.product_id WHERE oi.order_id = ?";
+        String sql = "SELECT oi.order_id, oi.product_id, oi.quantity, oi.price, p.title FROM order_items oi "
+                + "JOIN product p ON oi.product_id = p.product_id WHERE oi.order_id = ?";
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, orderId);

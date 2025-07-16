@@ -44,6 +44,7 @@
                                             <img src="${pageContext.request.contextPath}/img/bg-img/1.jpg" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fbb710; margin-right: 5px;"/>
                                             <div>
                                                 <strong>${u.fullName}</strong><br>
+
                                             </div>
                                         </li>
                                     </c:if>
@@ -58,6 +59,7 @@
                                 <img src="https://placehold.co/400" alt="Avatar" class="chat-header-avatar">
                                 <div class="chat-header-info">
                                     <strong><span id="chatWith">[Select user]</span></strong>
+                                    <small class="last-active" datetime="${u.lastActive}">${u.lastActive}</small>
                                     <small>
                                         <c:if test="${not empty sessionScope.chatProductId}">
                                             about Product ID: ${sessionScope.chatProductId}
@@ -75,7 +77,7 @@
                                 </div>
                             </div>
                             <div id="chat-header-product" class="chat-header-product" style="display: none;">
-                                <a href="#"><img id="chat-product-image" class="chat-header-product-img" /></a>
+                                <a href="#" id="linktoproduct"><img id="chat-product-image" class="chat-header-product-img" /></a>
                                 <div class="chat-header-product-info">
                                     <strong id="chat-product-title"></strong>
                                     <span id="chat-product-price"></span>
@@ -94,9 +96,8 @@
                             <div id="emojiPicker" style="position: absolute; bottom: 60px; left: 0; display: none; z-index: 1000;"></div>
 
                             <label id="imageUploadLabel" class="chat-btn" for="imageUpload" style="cursor: pointer; font-size: 20px;">
-                                <ion-icon name="images-outline"></ion-icon>
-                            </label>
-                            <input type="file" id="imageUpload" style="display: none;" multiple accept="image/*" onchange="sendImage()" />
+                                <ion-icon name="image-outline"></ion-icon> </label>
+                            <input type="file" id="imageUpload" style="display: none;" multiple accept="image/*,video/*" onchange="sendImage()" />
 
                             <input type="text" id="messageInput" placeholder="Enter message..." onkeydown="handleKeyPress(event)" autocomplete="off" autocorrect="off" autocapitalize="off"/>
                             <button onclick="sendMessages()" class="chat-btn chat-btn-send">
@@ -156,7 +157,7 @@
                         unblockBtn.style.display = "inline-block";
                     else
                         unblockBtn.style.display = "none";
-                    blockNotice.textContent = msg.status === "blocked_by_me" ? "Bạn đã block người dùng này" : "Người dùng này đã block bạn";
+                    blockNotice.textContent = msg.status === "blocked_by_me" ? "You have blocked this user" : "	You have been blocked by this user";
                     blockNotice.style.display = "block";
                 } else if (msg.status === "unblocked_by_me" || msg.status === "unblocked_me") {
                     messageInput.style.display = "block";
@@ -237,6 +238,12 @@
         loadChatHistory(${requestScope.sellid});
         </script>
     </c:if>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            timeago.render(document.querySelectorAll('.last-active'));
+        });
+    </script>
 
 </body>
 </html>

@@ -31,6 +31,11 @@ public class Voucher {
         this.isActive = isActive;
     }
 
+    @Override
+    public String toString() {
+        return "Voucher{" + "voucherId=" + voucherId + ", code=" + code + ", description=" + description + ", discountValue=" + discountValue + ", minOrderAmount=" + minOrderAmount + ", startDate=" + startDate + ", endDate=" + endDate + ", usageLimit=" + usageLimit + ", usedCount=" + usedCount + ", isActive=" + isActive + '}';
+    }
+
     // Getters and Setters
     public String getVoucherId() { return voucherId; }
     public void setVoucherId(String voucherId) { this.voucherId = voucherId; }
