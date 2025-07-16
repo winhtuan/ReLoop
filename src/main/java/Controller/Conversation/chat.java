@@ -60,7 +60,7 @@ public class chat {
                     .build();
             session.getAsyncRemote().sendText(errorMsg.toString());
             // Nếu muốn đóng luôn kết nối, bỏ comment dòng sau:
-            // try { session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "No session or user")); } catch (Exception e) { e.printStackTrace(); }
+            // try { session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "User logged out")); } catch (Exception e) { e.printStackTrace(); }
         }
     }
 
