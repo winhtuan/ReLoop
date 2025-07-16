@@ -2,10 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package Controller.Admin;
+package Controller;
 
-import Model.DAO.admin.AdminPostDAO;
+import Model.DAO.auth.UserDao;
+import Model.DAO.commerce.FollowDAO;
+import Model.DAO.post.ProductDao;
 import Model.entity.auth.User;
+import Model.entity.post.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,13 +17,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  *
  * @author ACER
  */
-@WebServlet(name = "StatictisServlet", urlPatterns = {"/StatictisServlet"})
-public class StatictisServlet extends HttpServlet {
+@WebServlet(name = "s_manageProduct", urlPatterns = {"/s_manageProduct"})
+public class s_manageProduct extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,27 +39,16 @@ public class StatictisServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            AdminPostDAO dao = new AdminPostDAO();
-            
-            int totalUsers = dao.getTotalUsers();
-            int totalProducts = dao.getTotalProducts();
-            int todayProducts = dao.getTodayTotalProducts();
-
-            // Truyền dữ liệu sang JSP
-            request.setAttribute("totalUsers", totalUsers);
-            request.setAttribute("totalProducts", totalProducts);
-            request.setAttribute("todayProducts", todayProducts);
-            HttpSession session = request.getSession(false);
-            if(session != null){
-                User user = (User) session.getAttribute("cus");
-                if(user.getFullName() != null && user.getPhoneNumber() != null && user.getAddress() != null){
-                    request.getRequestDispatcher("/JSP/Admin/dashboard.jsp").forward(request, response);
-                }else{
-                    request.getRequestDispatcher("s_userProfile").forward(request, response);
-                }
-            }else{
-                request.getRequestDispatcher("/JSP/Admin/JoinIn.jsp").forward(request, response);
-            }        
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet s_manageProduct</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet s_manageProduct at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
     }
 
@@ -71,7 +64,7 @@ public class StatictisServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doPost(request, response);
     }
 
     /**
@@ -85,7 +78,35 @@ public class StatictisServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("cus") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        User user = (User) session.getAttribute("cus");
+        String userId = user.getUserId();
+        ProductDao productDao = new ProductDao();
+        List<Product> listProduct = productDao.getProductsByUserId(userId);
+
+        int follow = 0;
+        try {
+            FollowDAO followDAO = new FollowDAO();
+            follow = followDAO.countFollowers(userId);  // ✅ Bọc try-catch cho phần này
+        } catch (Exception e) {
+            e.printStackTrace(); // hoặc log lỗi bằng Logger
+            follow = 0; // fallback nếu lỗi
+        }
+        UserDao userDao = new UserDao();
+        User u = userDao.getUserById(userId);
+
+        request.setAttribute("user", u);
+        request.setAttribute("follower", follow);
+        request.setAttribute("ownerProducts", listProduct);
+        request.setAttribute("ownerProductsJson", new com.google.gson.Gson().toJson(listProduct));
+
+        request.getRequestDispatcher("/JSP/User/ownerProduct.jsp").forward(request, response);
     }
 
     /**

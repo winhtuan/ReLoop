@@ -498,4 +498,61 @@ public class ProductDao {
         }
     }
 
+    public List<Product> getProductsByUserId(String userId) {
+        List<Product> products = new ArrayList<>();
+
+        String sql = "SELECT p.*, pi.img_id, pi.image_url, pi.is_primary "
+                + "FROM product p "
+                + "LEFT JOIN product_images pi ON p.product_id = pi.product_id "
+                + "WHERE p.user_id = ?";
+
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            Map<String, Product> productMap = new LinkedHashMap<>();
+
+            while (rs.next()) {
+                String pid = rs.getString("product_id");
+                Product product = productMap.get(pid);
+
+                if (product == null) {
+                    product = new Product(
+                            pid,
+                            userId,
+                            rs.getInt("category_id"),
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getBigDecimal("price").intValue(),
+                            rs.getString("location"),
+                            rs.getString("status"),
+                            rs.getBoolean("is_priority"),
+                            rs.getTimestamp("created_at"),
+                            rs.getTimestamp("updated_at")
+                    );
+                    product.setImages(new ArrayList<>());
+                    productMap.put(pid, product);
+                }
+
+                String imageUrl = rs.getString("image_url");
+                if (imageUrl != null) {
+                    ProductImage img = new ProductImage();
+                    img.setImgId(rs.getInt("img_id"));
+                    img.setProductId(pid);
+                    img.setImageUrl(imageUrl);
+                    img.setPrimary(rs.getBoolean("is_primary"));
+                    product.getImages().add(img);
+                }
+            }
+
+            products.addAll(productMap.values());
+
+        } catch (SQLException e) {
+            System.out.println("Error retrieving products by user ID: " + e.getMessage());
+        }
+
+        return products;
+    }
+
 }
