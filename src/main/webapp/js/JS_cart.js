@@ -11,7 +11,7 @@ document.addEventListener('click', function (e) {
         const hidden = document.querySelector(`input[name="qty_${productId}"]`);
         let newQty = Math.max(1, parseInt(qtyInput.value) + delta);
         const realQuantity = document.querySelector(`input[name="qtyr_${productId}"]`).value;
-        if(newQty>realQuantity)
+        if (newQty > realQuantity)
             return;
         qtyInput.value = newQty;
         hidden.value = newQty;
@@ -87,24 +87,30 @@ function removeFromCart(productId, btn) {
     fetch(`${contextPath}/s_cart?productId=${productId}`, {
         method: "DELETE"
     })
-        .then(response => {
-            if (response.ok) {
-                const card = btn.closest('.cart-card');
-                card.remove();
-                updateSidebarTotal();
-            } else {
-                alert("Failed to remove item.");
-            }
-        });
+            .then(response => {
+                if (response.ok) {
+                    const card = btn.closest('.cart-card');
+                    const sellerBlock = card.closest('.seller-block');
+                    card.remove();
+                    const remainingCards = sellerBlock.querySelectorAll('.cart-card');
+                    if (remainingCards.length === 0) {
+                        sellerBlock.remove();
+                    }
+                    updateSidebarTotal();
+                } else {
+                    alert("Failed to remove item.");
+                }
+            });
 }
 
 // Gửi cập nhật số lượng lên server nếu có thay đổi
 const cartUpdateURL = `${contextPath}/s_cart`;
 function sendCartUpdatesIfNeeded() {
-    if (updatedCart.size === 0) return;
+    if (updatedCart.size === 0)
+        return;
     const updates = [];
     updatedCart.forEach((qty, productId) => {
-        updates.push({ productId, quantity: qty });
+        updates.push({productId, quantity: qty});
     });
 
     try {
