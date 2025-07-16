@@ -81,6 +81,5 @@
                 </div>
             </c:if>
         </div>
-        <script src="${pageContext.request.contextPath}/js/JS_cart.js"></script>
     </body>
 </html>
