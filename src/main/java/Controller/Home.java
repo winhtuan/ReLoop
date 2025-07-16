@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public class Home extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

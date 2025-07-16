@@ -44,7 +44,7 @@
         <main class="flex-1">
             <div class="header bg-white flex items-center px-6 py-4 gap-3 pb-[100px]">
                 <span class="material-symbols-rounded text-gray-600 text-3xl">person_search</span>
-                <h1 class="text-2xl font-semibold text-gray-800">Account Manager</h1>
+                <h1 class="text-2xl font-semibold text-gray-800">Post Manager</h1>
             </div>
 
             <!-- Hiển thị thông báo thành công/thất bại -->
@@ -308,29 +308,6 @@
             function closeModaledit(modalId) {
                 document.getElementById(modalId).classList.add('hidden');
             }
-
-//            function confirmBlock() {
-//                // TODO: Gọi API hoặc logic block tại đây
-//                alert("Account blocked!");
-//                closeModal('blockModal');
-//            }
-//
-//            function confirmDelete() {
-//                // TODO: Gọi API hoặc logic xóa tại đây
-//                alert("Account deleted!");
-//                closeModal('deleteModal');
-//            }
-//
-//            document.getElementById('createAccountForm').addEventListener('submit', function (e) {
-//                e.preventDefault();
-//                const formData = new FormData(this);
-//
-//                // TODO: Gửi dữ liệu tới server hoặc xử lý tại đây
-//                alert("Account created!\nUsername: " + formData.get('username'));
-//
-//                closeModal('createModal');
-//                this.reset(); // reset form sau khi tạo
-//            });
             // Tìm kiếm
             searchInput.addEventListener("keyup", () => {
                 const keyword = searchInput.value.trim().toLowerCase();
