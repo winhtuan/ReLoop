@@ -36,7 +36,10 @@ public class s_addToCart extends HttpServlet {
 
         if (existingQuantity > 0) {
             // Nếu đã có → tăng quantity lên 1
-            cartDao.updateQuantity(userId, productId, existingQuantity + quantity);
+            if(!cartDao.isCartQuantityExceedsAvailable(userId, productId))
+            {
+                cartDao.updateQuantity(userId, productId, existingQuantity + quantity);
+            }
         } else {
             // Nếu chưa có → thêm mới với quantity = 1
             cartDao.addItemToCart(userId, productId, quantity);
@@ -47,7 +50,6 @@ public class s_addToCart extends HttpServlet {
         request.setAttribute("productId", productId);
         request.setAttribute("messCartAdd", "Add to cart successfully");
         request.getRequestDispatcher("/s_productDetail").forward(request, response);
-
     }
 
 }

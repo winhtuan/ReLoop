@@ -91,6 +91,8 @@ public class s_cart extends HttpServlet {
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
+        int cartN = new CartDAO().getTotalQuantityByUserId(ac.getUserId());
+        request.getSession().setAttribute("cartN", cartN);
     }
 
 }

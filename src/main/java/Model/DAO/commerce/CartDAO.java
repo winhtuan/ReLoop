@@ -51,12 +51,12 @@ public class CartDAO {
 
     public Map<User, List<Product>> getCartGroupedBySeller(String userId) {
         Map<User, List<Product>> groupedCart = new LinkedHashMap<>();
-        String sql = "SELECT p.*, ci.quantity AS cQuantity " +
-             "FROM cart c " +
-             "JOIN cart_items ci ON c.cart_id = ci.cart_id " +
-             "JOIN product p ON ci.product_id = p.product_id " +
-             "WHERE c.user_id = ? " +
-             "ORDER BY p.user_id, p.created_at DESC";
+        String sql = "SELECT p.*, ci.quantity AS cQuantity "
+                + "FROM cart c "
+                + "JOIN cart_items ci ON c.cart_id = ci.cart_id "
+                + "JOIN product p ON ci.product_id = p.product_id "
+                + "WHERE c.user_id = ? "
+                + "ORDER BY p.user_id, p.created_at DESC";
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, userId);
@@ -245,7 +245,31 @@ public class CartDAO {
         }
     }
 
+    public boolean isCartQuantityExceedsAvailable(String userId, String productId) {
+        String sql = "SELECT ci.quantity AS cartQty, p.quantity AS productQty "
+                + "FROM cart c "
+                + "JOIN cart_items ci ON c.cart_id = ci.cart_id "
+                + "JOIN product p ON ci.product_id = p.product_id "
+                + "WHERE c.user_id = ? AND p.product_id = ?";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            ps.setString(2, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int cartQty = rs.getInt("cartQty");
+                    int productQty = rs.getInt("productQty");
+                    return (cartQty+1) > productQty;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false; // Mặc định false nếu lỗi hoặc không có dữ liệu
+    }
+
     public static void main(String[] args) {
-        System.out.println("ádas" + new CartDAO().hasCart("CUS0004"));
+        System.out.println("ádas" + new CartDAO().isCartQuantityExceedsAvailable("CUS0002", "PRD0001"));
     }
 }
