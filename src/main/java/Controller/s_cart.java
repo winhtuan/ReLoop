@@ -5,6 +5,7 @@
 package Controller;
 
 import Model.DAO.commerce.CartDAO;
+import Model.DAO.post.ProductDao;
 import Model.entity.auth.Account;
 import Model.entity.auth.User;
 import Model.entity.post.Product;
@@ -42,7 +43,6 @@ public class s_cart extends HttpServlet {
                 json.append(line);
             }
         }
-
         Gson gson = new Gson();
         List<CartUpdate> updates = gson.fromJson(json.toString(), new TypeToken<List<CartUpdate>>() {
         }.getType());

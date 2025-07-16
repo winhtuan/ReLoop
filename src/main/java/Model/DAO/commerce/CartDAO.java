@@ -75,7 +75,8 @@ public class CartDAO {
                     product.setIsPriority(rs.getBoolean("is_priority"));
                     product.setCreatedAt(rs.getTimestamp("created_at"));
                     product.setState(rs.getString("state"));
-                    product.setQuantity(rs.getInt("cQuantity"));
+                    product.setQuantity(rs.getInt("quantity"));
+                    product.setcQuantity(rs.getInt("cQuantity"));
                     product.setImages(new ProductImageDao().getImagesByProductId(product.getProductId()));
 
                     // Lấy người bán
