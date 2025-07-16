@@ -14,7 +14,7 @@
         <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
         <!-- Title  -->
-        <title>Amado - Furniture Ecommerce Template | Product Details</title>
+        <title>Product Details</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
@@ -57,7 +57,7 @@
 
                     <div class="row">
                         <div class="col-12 col-lg-7">
-                            <div class="single_product_thumb">
+                            <div class="single_product_thumb custom-product-thumb">
                                 <div id="product_details_slider" class="carousel slide" data-ride="carousel">
                                     <ol class="carousel-indicators">
                                         <c:forEach var="image" items="${sessionScope.product.images}" varStatus="status">
@@ -68,7 +68,7 @@
                                         <c:forEach var="image" items="${sessionScope.product.images}" varStatus="status">
                                             <div class="carousel-item ${status.first ? 'active' : ''}">
                                                 <a class="gallery_img" href="${image.imageUrl}">
-                                                    <img class="d-block w-100" src="${image.imageUrl}" alt="Slide ${status.index + 1}">
+                                                    <img class="d-block w-100 product-main-img" src="${image.imageUrl}" alt="Slide ${status.index + 1}">
                                                 </a>
                                             </div>
                                         </c:forEach>
@@ -86,6 +86,7 @@
                                         <h6>${sessionScope.product.title}</h6>
                                     </a>
                                     <!-- Ratings & Review -->
+
                                     <div class="ratings-review mb-15 d-flex align-items-center justify-content-between">
                                         <div class="ratings" id="product-rating">
                                             <!-- Số sao sẽ được tạo động bởi JavaScript -->
@@ -106,18 +107,18 @@
                                         </div>
                                         <div class="review">
                                             <a href="#" class="scroll-to-reviews">Review</a>
+
                                         </div>
                                     </div>
                                     <!-- Availability -->
-                                    <p class="avaibility">• ${sessionScope.product.status}</p>
+                                    <p class="avaibility"><span class="avaibility-dot"></span> ${sessionScope.product.status}</p>
                                 </div>
-
                                 <div class="short_overview my-5">
                                     <p>${sessionScope.product.description}</p>
                                 </div>
-
                                 <!-- Add to Cart Form -->
                                 <form class="cart clearfix" action="${pageContext.request.contextPath}/s_addToCart" method="post">
+
                                     <div class="cart-btn d-flex mb-50">
                                         <p>Quantity</p>
                                         <div class="quantity">
@@ -143,6 +144,7 @@
                                             <span class="btn-icon"><ion-icon name="cart-outline"></ion-icon></span>Add to Cart
                                         </button>
 
+
                                         <button type="submit" name="action" value="buynow" class="amado-btn-custom" style="background-color:#20d34a;">
                                             <span class="btn-icon"><ion-icon name="flash-outline"></ion-icon></span>Buy Now
                                         </button>
@@ -160,6 +162,7 @@
                                             <span class="seller-rating-hz">
                                                 <ion-icon name="star-outline"></ion-icon> 4.5 <span class="rating-count">(2)</span>
                                             </span>
+
                                         </div>
                                         <div class="seller-stats-hz">
                                             <span>55 sold</span> · <span>4 for sale</span>
@@ -212,6 +215,7 @@
                         <c:if test="${empty feedbackList}">
                             <p class="no-feedback">No reviews yet.</p>
                         </c:if>
+
                     </div>
                 </div>
             </div>
@@ -231,7 +235,7 @@
         <script src="${pageContext.request.contextPath}/js/lib_js/plugins.js"></script>
         <!-- Active js -->
         <script src="${pageContext.request.contextPath}/js/active.js"></script>
-
+        <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>
@@ -306,6 +310,7 @@
                         ratingElement.insertBefore(starWrapper, averageRatingSpan);
                     }
                     averageRatingSpan.style.display = "none"; // Ẩn span chứa dữ liệu
+
                 }
             });
         </script>

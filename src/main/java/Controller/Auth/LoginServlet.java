@@ -195,6 +195,8 @@ public class LoginServlet extends HttpServlet {
                     boolean isshopkeeper = accountDao.checkIsshopkeeper(user_id);
                     boolean issuportier = accountDao.checkIssupporter(user_id);
                     if (isAdmin) {
+                        request.getSession().setAttribute("cus", user);
+                        request.getSession().setAttribute("user", acc);
                         request.getRequestDispatcher("StatictisServlet").forward(request, response);
                         return;
                     } 

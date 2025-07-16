@@ -60,7 +60,7 @@ public class upPostServlet extends HttpServlet {
         request.setAttribute("categoriesJson", categoriesJson);
         request.setAttribute("categoryAttributesJson", categoryAttributesJson);
         request.setAttribute("categoryStateOptionsJson", categoryStateOptionsJson);
-        request.getRequestDispatcher("/JSP/Home/createPost.jsp").forward(request, response);
+        request.getRequestDispatcher("/JSP/UpPost/UpPostPage.jsp").forward(request, response);
     }
 
     @Override

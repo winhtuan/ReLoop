@@ -77,7 +77,7 @@
                                 </div>
                             </div>
                             <div id="chat-header-product" class="chat-header-product" style="display: none;">
-                                <a href="#"><img id="chat-product-image" class="chat-header-product-img" /></a>
+                                <a href="#" id="linktoproduct"><img id="chat-product-image" class="chat-header-product-img" /></a>
                                 <div class="chat-header-product-info">
                                     <strong id="chat-product-title"></strong>
                                     <span id="chat-product-price"></span>
@@ -157,7 +157,7 @@
                         unblockBtn.style.display = "inline-block";
                     else
                         unblockBtn.style.display = "none";
-                    blockNotice.textContent = msg.status === "blocked_by_me" ? "Bạn đã block người dùng này" : "Người dùng này đã block bạn";
+                    blockNotice.textContent = msg.status === "blocked_by_me" ? "You have blocked this user" : "	You have been blocked by this user";
                     blockNotice.style.display = "block";
                 } else if (msg.status === "unblocked_by_me" || msg.status === "unblocked_me") {
                     messageInput.style.display = "block";

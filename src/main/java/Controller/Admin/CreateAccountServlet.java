@@ -79,7 +79,7 @@ public class CreateAccountServlet extends HttpServlet {
         AdminDAO dao = new AdminDAO();
 
         String user_id = dao.generateNewUserId();
-        boolean userCreater = dao.createUserSkeleton(user_id, role);
+        boolean userCreater = dao.createUserSkeleton(user_id, role, email);
 
         if (userCreater) {
             String accId = dao.generateNewAccId(); // ACCxxxx

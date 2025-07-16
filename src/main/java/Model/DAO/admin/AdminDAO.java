@@ -6,6 +6,7 @@ import Utils.DBUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class AdminDAO {
 
@@ -140,11 +141,12 @@ public class AdminDAO {
         }
     }
 
-    public boolean createUserSkeleton(String userId, String role) {
-        String sql = "INSERT INTO users (user_id, role) VALUES (?, ?)";
+    public boolean createUserSkeleton(String userId, String role, String email) {
+        String sql = "INSERT INTO users (user_id, role, email) VALUES (?, ?, ?)";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, userId);
             ps.setString(2, role);  // Sử dụng tham số role truyền vào
+            ps.setString(3, email);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -156,7 +158,8 @@ public class AdminDAO {
         String sql = "INSERT INTO Account (acc_id, password, email, regisDate, user_id, is_verified) VALUES (?, ?, ?, NOW(), ?, 1)";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, accId);
-            ps.setString(2, password);
+            String passwordH = BCrypt.hashpw(password, BCrypt.gensalt());
+            ps.setString(2, passwordH);
             ps.setString(3, email);
             ps.setString(4, userId);
             return ps.executeUpdate() > 0;
