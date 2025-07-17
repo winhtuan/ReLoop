@@ -9,6 +9,10 @@
         <servlet-name>s_Feedback</servlet-name>
         <servlet-class>Controller.s_Feedback</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CreateWithrawQR</servlet-name>
+        <servlet-class>Controller.Paid.CreateWithrawQR</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>s_favorite</servlet-name>
         <url-pattern>/s_favorite</url-pattern>
@@ -20,6 +24,10 @@
     <servlet-mapping>
         <servlet-name>s_Feedback</servlet-name>
         <url-pattern>/s_Feedback</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateWithrawQR</servlet-name>
+        <url-pattern>/CreateWithrawQR</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

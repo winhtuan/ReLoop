@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const dropdownSelected = document.getElementById("dropdownSelected");
     const categoryInput = document.getElementById("categoryInput");
-    const form = document.querySelector("form");
+    const form = document.getElementById("postForm");
     const modal = document.getElementById("categoryModal");
     const categoryList = document.getElementById("categoryList");
     const backButton = document.getElementById("backButton");
@@ -11,17 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Create container for form fields
     const formFieldsContainer = document.querySelector(".category-and-fields");
-    const formFields = document.createElement("div");
-    formFields.id = "formFields";
-    formFields.className = "hidden";
-    formFieldsContainer.appendChild(formFields);
+    const formFields = document.getElementById("formFields");
 
-    // Add submit button
-    const submitButton = document.createElement("button");
-    submitButton.type = "submit";
-    submitButton.textContent = "Post Ad";
-    submitButton.className = "hidden";
-    form.appendChild(submitButton);
+    const submitButton = document.getElementById("submitPostBtn");
+    submitButton.classList.add("hidden");
 
     // Initial log to check data
     console.log("Initial window.categoryTree:", window.categoryTree);
@@ -232,7 +225,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Hàm submit form
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
-        console.log("Form submit triggered SubmitEvent");
+        // Đảm bảo luôn lấy selectedCategoryId mới nhất
+        selectedCategoryId = categoryInput.value || selectedCategoryId;
         if (!selectedCategoryId) {
             alert("Please select a category!");
             return;
@@ -268,31 +262,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error(`HTTP ${response.status} - ${response.statusText}`);
             return response.json();
         }).then(data => {
-            console.log('Response data:', JSON.stringify(data, null, 2)); // Debug chi tiết phản hồi
-            console.log('Checking success:', data.success, 'Checking status:', data.status); // Debug điều kiện
             if (data && (data.success === true || data.success === "true" || data.status === "success")) {
-                alert('Ad posted successfully!'); // Hiển thị thông báo bằng tiếng Anh
-                console.log('Calling /home servlet with contextPath:', window.contextPath); // Debug
-                fetch(window.contextPath + '/home', {
-                    method: 'GET',
-                    credentials: 'include'
-                }).then(homeResponse => {
-                    if (homeResponse.ok) {
-                        return homeResponse.text(); // Hoặc homeResponse.json() tùy servlet trả về gì
-                    } else {
-                        throw new Error(`HTTP ${homeResponse.status} - ${homeResponse.statusText}`);
-                    }
-                }).then(() => {
-                    window.location.href = window.contextPath + '/home'; // Chuyển hướng sau khi gọi servlet
-                }).catch(error => {
-                    console.error('Error calling /home:', error.message);
-                    alert('Failed to load home page. Please try again.');
-                });
+                alert('Ad posted successfully!');
+                window.location.href = window.contextPath + '/home';
             } else {
                 alert(data && data.message ? data.message : 'Failed to post ad');
             }
         }).catch(error => {
-            console.error('Error:', error.message);
             alert('An error occurred while posting the ad. Please check the server log.');
         });
     });
