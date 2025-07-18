@@ -32,7 +32,7 @@
                         </div>
                         <div class="chat-list">
                             <ul id="userList">
-                                <li data-user-id="CUS0003" onclick="selectChatUser('CUS0003', 'Supporter')">
+                                <li data-user-id="CUS0003" onclick="selectChatUser('${supporterID}', 'Supporter')">
                                     <img src="${pageContext.request.contextPath}/img/message-img/customer-support.png" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fbb710; margin-right: 5px;"/>
                                     <div>
                                         <strong>Supporter</strong><br>
@@ -117,6 +117,7 @@
         const currentUsername = "${cus.fullName}";
         let currentChatUserId = null;
         let currentChatUserName = null;
+        const supporterID = "${requestScope.supporterID}";
 
         const contextPathI = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
 

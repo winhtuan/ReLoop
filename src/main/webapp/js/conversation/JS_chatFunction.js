@@ -11,7 +11,7 @@ function selectChatUser(userId, username) {
     document.getElementById("messageInput").style.display = "block";
     document.querySelector(".inputBox button").style.display = "inline-block";
     document.getElementById("blockNotice").style.display = "none";
-
+    
     loadChatHistory(userId);
     markMessagesAsRead(userId);
 
@@ -248,7 +248,7 @@ function loadChatHistory(userId) {
             chatBox.innerHTML = "";
 
             data.messages.forEach(addMessageToChatBox);
-            if (data.product) {
+            if (data.product && userId !== supporterID) {
 //                document.getElementById("linktoproduct").href ="s_productDetail?productId=" + data.product.productId;
                 document.getElementById("chat-header-product").style.display = "flex";
                 document.getElementById("chat-product-image").src = data.product.images[0].imageUrl;

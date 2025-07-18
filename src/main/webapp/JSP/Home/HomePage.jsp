@@ -22,8 +22,8 @@
         <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="css/notification.css">
         <link rel="stylesheet" href="css/category-menu.css">
-        
-  </head>
+
+    </head>
     <body>
         <!-- Page Preloder -->
         <div id="preloader">
@@ -88,7 +88,11 @@
                 loginAcessRegister.classList.add('active');
             </script>
         </c:if>
-
+        <c:if test="${not empty param.login}">
+            <script>
+                modal.classList.add('show');
+            </script>
+        </c:if>
         <script src="js/conversation/JS_chatBox.js"></script>
 
     </body>
