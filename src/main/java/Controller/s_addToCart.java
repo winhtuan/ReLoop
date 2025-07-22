@@ -36,8 +36,7 @@ public class s_addToCart extends HttpServlet {
 
         if (existingQuantity > 0) {
             // Nếu đã có → tăng quantity lên 1
-            if(!cartDao.isCartQuantityExceedsAvailable(userId, productId))
-            {
+            if (!cartDao.isCartQuantityExceedsAvailable(userId, productId)) {
                 cartDao.updateQuantity(userId, productId, existingQuantity + quantity);
             }
         } else {
@@ -46,10 +45,7 @@ public class s_addToCart extends HttpServlet {
         }
 
         int cartN = new CartDAO().getTotalQuantityByUserId(acc.getUserId());
-        request.getSession().setAttribute("cartN", cartN);
-        request.setAttribute("productId", productId);
-        request.setAttribute("messCartAdd", "Add to cart successfully");
-        request.getRequestDispatcher("/s_productDetail").forward(request, response);
+        request.getSession().setAttribute("cartN", cartN);        
+        response.setStatus(200);
     }
-
 }

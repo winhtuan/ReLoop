@@ -11,52 +11,52 @@ function selectChatUser(userId, username) {
     document.getElementById("messageInput").style.display = "block";
     document.querySelector(".inputBox button").style.display = "inline-block";
     document.getElementById("blockNotice").style.display = "none";
-    
+
     loadChatHistory(userId);
     markMessagesAsRead(userId);
 
     fetch("/ReLoop/checkBlock?user1=" + currentUserId + "&user2=" + userId)
-        .then(res => res.json())
-        .then(data => {
-            const blockBtn = document.getElementById("blockBtn");
-            const unblockBtn = document.getElementById("unblockBtn");
-            const messageInput = document.getElementById("messageInput");
-            const sendBtn = document.querySelector(".inputBox button");
-            const blockNotice = document.getElementById("blockNotice");
-            const imageUploadl = document.getElementById("imageUploadLabel");
-            imageUploadl.style.display = "none";
-            const imageUpload = document.getElementById("imageUpload");
-            imageUpload.style.display = "none";
-
-            if (data.blockedByMe) {
-                blockBtn.style.display = "none";
-                unblockBtn.style.display = "inline-block";
-                messageInput.style.display = "none";
-                sendBtn.style.display = "none";
-                blockNotice.style.display = "block";
-                blockNotice.textContent = "You have blocked this user";
-            } else if (data.blockedMe) {
-                blockBtn.style.display = "none";
-                unblockBtn.style.display = "none";
-                messageInput.style.display = "none";
-                sendBtn.style.display = "none";
-                blockNotice.style.display = "block";
-                blockNotice.textContent = "You have been blocked by this user";
-            } else {
-                blockBtn.style.display = "inline-block";
-                unblockBtn.style.display = "none";
-                messageInput.style.display = "block";
-                sendBtn.style.display = "inline-block";
-                blockNotice.style.display = "none";
+            .then(res => res.json())
+            .then(data => {
+                const blockBtn = document.getElementById("blockBtn");
+                const unblockBtn = document.getElementById("unblockBtn");
+                const messageInput = document.getElementById("messageInput");
+                const sendBtn = document.querySelector(".chat-btn-send");
+                const blockNotice = document.getElementById("blockNotice");
+                const imageUploadl = document.getElementById("imageUploadLabel");
+                imageUploadl.style.display = "none";
+                const imageUpload = document.getElementById("imageUpload");
                 imageUpload.style.display = "none";
-                imageUploadl.style.display = "inline-block";
-            }
-        })
-        .catch(err => {
-            console.error("Failed to check block status", err);
-            document.getElementById("blockNotice").textContent = "Unable to check block status.";
-            document.getElementById("blockNotice").style.display = "block";
-        });
+
+                if (data.blockedByMe) {
+                    blockBtn.style.display = "none";
+                    unblockBtn.style.display = "inline-block";
+                    messageInput.style.display = "none";
+                    sendBtn.style.display = "none";
+                    blockNotice.style.display = "block";
+                    blockNotice.textContent = "You have blocked this user";
+                } else if (data.blockedMe) {
+                    blockBtn.style.display = "none";
+                    unblockBtn.style.display = "none";
+                    messageInput.style.display = "none";
+                    sendBtn.style.display = "none";
+                    blockNotice.style.display = "block";
+                    blockNotice.textContent = "You have been blocked by this user";
+                } else {
+                    blockBtn.style.display = "inline-block";
+                    unblockBtn.style.display = "none";
+                    messageInput.style.display = "block";
+                    sendBtn.style.display = "inline-block";
+                    blockNotice.style.display = "none";
+                    imageUpload.style.display = "none";
+                    imageUploadl.style.display = "inline-block";
+                }
+            })
+            .catch(err => {
+                console.error("Failed to check block status", err);
+                document.getElementById("blockNotice").textContent = "Unable to check block status.";
+                document.getElementById("blockNotice").style.display = "block";
+            });
 
     const dropdownBtn = document.querySelector("#userDropDown");
     const dropdownContent = document.querySelector("#userDropDownContent");
@@ -80,8 +80,8 @@ function addMessageToChatBox(msg) {
     if (msg.sentAt) {
         const time = new Date(msg.sentAt);
         timeText = isNaN(time)
-            ? '<small style="color:red">Invalid Date</small>'
-            : time.toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", weekday: "short" });
+                ? '<small style="color:red">Invalid Date</small>'
+                : time.toLocaleString("vi-VN", {hour: "2-digit", minute: "2-digit", weekday: "short"});
     }
 
     const isRecalled = msg.is_recall === true || msg.type === "recall";
@@ -134,11 +134,18 @@ function addMessageToChatBox(msg) {
     copyBtn.onclick = () => copyMessage(encodeURIComponent(content), copyBtn);
     menu.appendChild(copyBtn);
 
-    if (isSentByMe && msID !== undefined && msID !== null && msID !== "") {
-        const recallBtn = document.createElement("button");
-        recallBtn.textContent = "Recall";
-        recallBtn.onclick = () => recallMessage(msID);
-        menu.appendChild(recallBtn);
+    if (isSentByMe && msID && msg.sentAt) {
+        const sentTime = new Date(msg.sentAt);
+        const now = new Date();
+        const diffMs = now - sentTime;
+        const diffMinutes = diffMs / (1000 * 60);
+
+        if (diffMinutes <= 180) {
+            const recallBtn = document.createElement("button");
+            recallBtn.textContent = "Recall";
+            recallBtn.onclick = () => recallMessage(msID);
+            menu.appendChild(recallBtn);
+        }
     }
 
     actions.appendChild(menu);
@@ -183,7 +190,7 @@ function addImageToChatBox(msg) {
 
 function handleRecallMessage(msg) {
     const isSentByMe = (msg.fromUserId !== undefined && msg.fromUserId === currentUserId) ||
-        (msg.senderId !== undefined && msg.senderId === currentUserId);
+            (msg.senderId !== undefined && msg.senderId === currentUserId);
     const senderName = isSentByMe ? "" : currentChatUserName + ":";
     const messageElement = document.querySelector(".chat-body .chat-msg[data-message-id='" + msg.messageId + "']");
     if (messageElement !== null) {
@@ -236,33 +243,33 @@ function handleKeyPress(event) {
 
 function loadChatHistory(userId) {
     fetch("/ReLoop/GetChatHistory?user1=" + currentUserId + "&user2=" + userId)
-        .then(response => {
-            if (!response.ok) {
-                response.text().then(text => console.error("Error body:", text));
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const chatBox = document.getElementById("chatBox");
-            chatBox.innerHTML = "";
+            .then(response => {
+                if (!response.ok) {
+                    response.text().then(text => console.error("Error body:", text));
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const chatBox = document.getElementById("chatBox");
+                chatBox.innerHTML = "";
 
-            data.messages.forEach(addMessageToChatBox);
-            if (data.product && userId !== supporterID) {
+                data.messages.forEach(addMessageToChatBox);
+                if (data.product && userId !== supporterID) {
 //                document.getElementById("linktoproduct").href ="s_productDetail?productId=" + data.product.productId;
-                document.getElementById("chat-header-product").style.display = "flex";
-                document.getElementById("chat-product-image").src = data.product.images[0].imageUrl;
-                document.getElementById("chat-product-title").textContent = data.product.title;
-                document.getElementById("chat-product-price").textContent = data.product.price + "₫";
-                document.querySelector("#chat-header-product a").href = "s_productDetail?productId=" + data.product.productId;
-            } else {
-                document.getElementById("chat-header-product").style.display = "none";
-            }
-        })
-        .catch(err => {
-            console.error("Failed to load chat history", err);
-            document.getElementById("chatBox").innerHTML = "<p style='color: red;'>Failed to load chat history.</p>";
-        });
+                    document.getElementById("chat-header-product").style.display = "flex";
+                    document.getElementById("chat-product-image").src = data.product.images[0].imageUrl;
+                    document.getElementById("chat-product-title").textContent = data.product.title;
+                    document.getElementById("chat-product-price").textContent = data.product.price + "₫";
+                    document.querySelector("#chat-header-product a").href = "s_productDetail?productId=" + data.product.productId;
+                } else {
+                    document.getElementById("chat-header-product").style.display = "none";
+                }
+            })
+            .catch(err => {
+                console.error("Failed to load chat history", err);
+                document.getElementById("chatBox").innerHTML = "<p style='color: red;'>Failed to load chat history.</p>";
+            });
 }
 
 if ("Notification" in window && Notification.permission !== "granted") {
@@ -381,15 +388,14 @@ async function sendImage() {
     const formData = new FormData();
     for (const f of files)
         formData.append("file", f);
-
     try {
-        const res = await fetch("/ReLoop/api/files", { method: "POST", body: formData });
+        const res = await fetch("/ReLoop/api/files", {method: "POST", body: formData});
         if (!res.ok) {
             const errTxt = await res.text();
             throw new Error(`HTTP ${res.status}: ${errTxt}`);
         }
 
-        const { uploaded } = await res.json();
+        const {uploaded} = await res.json();
         if (!(Array.isArray(uploaded) && uploaded.length)) {
             console.warn("No image was returned", uploaded);
             return;
@@ -434,18 +440,20 @@ document.addEventListener("click", function (event) {
 
 function copyMessage(content) {
     navigator.clipboard.writeText(content)
-        .then(() => {
-            // copied
-        })
-        .catch(err => {
-            console.error("Failed to copy message:", err);
-        });
+            .then(() => {
+                // copied
+            })
+            .catch(err => {
+                console.error("Failed to copy message:", err);
+            });
 }
 
 function getFileExtension(url) {
-    if (!url || typeof url !== 'string') return '';
+    if (!url || typeof url !== 'string')
+        return '';
     const lastDotIndex = url.lastIndexOf('.');
-    if (lastDotIndex === -1 || lastDotIndex === url.length - 1) return '';
+    if (lastDotIndex === -1 || lastDotIndex === url.length - 1)
+        return '';
     return url.substring(lastDotIndex + 1);
 }
 document.getElementById("chat-header-product").addEventListener("click", function () {

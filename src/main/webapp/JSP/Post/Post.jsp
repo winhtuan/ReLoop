@@ -39,12 +39,10 @@
                                     </button>
                                 </form>
 
+                                <button class="btn-action add-to-cart" data-productid="${product.productId}" title="Thêm vào giỏ hàng">
+                                    <ion-icon name="cart-outline"></ion-icon>
+                                </button>
 
-                                <form action="s_addToCart" method="post">
-                                    <input type="hidden" name="quantity" value="1">
-                                    <input type="hidden" name="postID" value="${product.productId}">
-                                    <button class="btn-action add-to-cart" title="Thêm vào giỏ hàng"><ion-icon name="cart-outline"></ion-icon></button>
-                                </form>
 
                             </div>
                         </div>

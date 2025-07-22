@@ -90,9 +90,10 @@
                         </div>
 
                         <div class="inputBox chat-input-wrap" style="position: relative; display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                            <label class="chat-btn" id="emojiBtn" style="cursor: pointer; font-size: 20px;">
+                            <button type="button" id="emojiBtn" class="chat-btn" style="cursor: pointer; font-size: 20px; background: none; border: none;">
                                 <ion-icon name="happy-outline"></ion-icon>
-                            </label>
+                            </button>
+                            
                             <div id="emojiPicker" style="position: absolute; bottom: 60px; left: 0; display: none; z-index: 1000;"></div>
 
                             <label id="imageUploadLabel" class="chat-btn" for="imageUpload" style="cursor: pointer; font-size: 20px;">
@@ -137,7 +138,7 @@
             }
             if (msg.type === "block_status") {
                 const messageInput = document.getElementById("messageInput");
-                const sendBtn = document.querySelector(".inputBox button");
+                const sendBtn = document.querySelector(".chat-btn-send");
                 const blockBtn = document.getElementById("blockBtn");
                 const unblockBtn = document.getElementById("unblockBtn");
                 const blockNotice = document.getElementById("blockNotice");
@@ -227,7 +228,11 @@
 
         // Close emoji picker if clicking outside
         document.addEventListener("click", function (event) {
-            if (!emojiPickerContainer.contains(event.target) && event.target !== emojiBtn) {
+            if (
+                    !emojiPickerContainer.contains(event.target) &&
+                    !emojiBtn.contains(event.target)
+                    )
+            {
                 emojiPickerContainer.style.display = "none";
             }
         });
