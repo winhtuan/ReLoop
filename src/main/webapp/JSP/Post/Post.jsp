@@ -25,26 +25,50 @@
                                      </c:choose>" class="product-image" />
                             </a>
                             <div class="product-actions">
-                                <form action="s_favorite" method="post">
-                                    <input type="hidden" name="userId" value="${sessionScope.user.userId}">
-                                    <input type="hidden" name="productId" value="${product.productId}">
-                                    <button type="submit" class="btn-action wishlist" title="Thêm vào yêu thích"><ion-icon name="heart-outline"></ion-icon></button>
-                                </form>
+                                <c:choose>
+                                    <c:when test="${not empty sessionScope.user}">
+                                        <!-- Đã đăng nhập -->
+                                        <form action="s_favorite" method="post">
+                                            <input type="hidden" name="userId" value="${sessionScope.user.userId}">
+                                            <input type="hidden" name="productId" value="${product.productId}">
+                                            <button type="submit" class="btn-action wishlist" title="Thêm vào yêu thích">
+                                                <ion-icon name="heart-outline"></ion-icon>
+                                            </button>
+                                        </form>
 
-                                <form action="s_cartBuy" method="post">
-                                    <input type="hidden" name="productIds" value="${product.productId}" />
-                                    <input type="hidden" name="qty_${product.productId}" value="1" />
-                                    <button type="submit" class="btn-action buy-now" title="Mua ngay">
-                                        <ion-icon name="flash-outline"></ion-icon>
-                                    </button>
-                                </form>
+                                        <form action="s_cartBuy" method="post">
+                                            <input type="hidden" name="productIds" value="${product.productId}" />
+                                            <input type="hidden" name="qty_${product.productId}" value="1" />
+                                            <button type="submit" class="btn-action buy-now" title="Mua ngay">
+                                                <ion-icon name="flash-outline"></ion-icon>
+                                            </button>
+                                        </form>
 
-                                <button class="btn-action add-to-cart" data-productid="${product.productId}" title="Thêm vào giỏ hàng">
-                                    <ion-icon name="cart-outline"></ion-icon>
-                                </button>
+                                        <button class="btn-action add-to-cart" data-productid="${product.productId}" title="Thêm vào giỏ hàng">
+                                            <ion-icon name="cart-outline"></ion-icon>
+                                        </button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <!-- Chưa đăng nhập: chuyển hướng callLogin -->
+                                        <form action="callLogin" method="get">
+                                            <button type="submit" class="btn-action wishlist" title="Thêm vào yêu thích">
+                                                <ion-icon name="heart-outline"></ion-icon>
+                                            </button>
+                                        </form>
 
+                                        <form action="callLogin" method="get">
+                                            <button type="submit" class="btn-action buy-now" title="Mua ngay">
+                                                <ion-icon name="flash-outline"></ion-icon>
+                                            </button>
+                                        </form>
 
+                                        <button class="btn-action add-to-cart" onclick="window.location = 'callLogin'" title="Thêm vào giỏ hàng">
+                                            <ion-icon name="cart-outline"></ion-icon>
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
+
                         </div>
                         <div class="product-info p-3">
                             <a href="s_productDetail?productId=${product.productId}" class="text-dark"><h6>${product.title}</h6></a>
