@@ -6,7 +6,7 @@
         <div class="section-heading text-left mb-30">
             <h2>Post a New Product</h2>
             <p class="section-sub mb-15">
-                More About <a href="#" style="color:#fbb710;">ReLoop's posting rules</a>
+                More About <a href="${pageContext.request.contextPath}/JSP/UpPost/postingRule.jsp" style="color:#fbb710;">ReLoop's posting rules</a>
             </p>
         </div>
         <form action="${pageContext.request.contextPath}/savePostServlet" method="post" enctype="multipart/form-data" id="postForm" onsubmit="return false;">
