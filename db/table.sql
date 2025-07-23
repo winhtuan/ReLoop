@@ -168,6 +168,15 @@ UPDATE orders
 SET status = 'pending'
 WHERE status = 'received';
 
+UPDATE feedback
+SET rating = 4
+WHERE feedback_id = 'FDB0002';
+
+select * from feedback;
+select * from orders;
+select * from order_items;
+select * from product;
+
 -- 13. conversation
 CREATE TABLE conversation (
     conversation_id CHAR(7) NOT NULL PRIMARY KEY CHECK (conversation_id LIKE 'CON____'),
@@ -341,3 +350,19 @@ CREATE TABLE feedback (
 
 CREATE INDEX idx_feedback_order_id ON feedback(order_id);
 CREATE INDEX idx_feedback_user_id ON feedback(user_id);
+
+CREATE TABLE WithdrawalRequest (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id CHAR(7) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    bank_code VARCHAR(50) NOT NULL,
+    account_number VARCHAR(50) NOT NULL,
+    account_name VARCHAR(100) NOT NULL,
+    add_info VARCHAR(255),
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES Users(user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
