@@ -34,7 +34,7 @@
                 <div>
                     <div class="text-gray-500 text-xs">Balance</div>
                     <div class="font-bold text-yellow-600 text-xl mb-1">${user.balance}$</div>
-                    <button onclick="openWithdrawModal()" class="px-4 py-1.5 bg-yellow-400 text-white rounded-lg shadow hover:bg-yellow-500 transition font-semibold">
+                    <button onclick="showWithdrawModal()" class="px-4 py-1.5 bg-yellow-400 text-white rounded-lg shadow hover:bg-yellow-500 transition font-semibold">
                         <i class="fas fa-money-bill-wave mr-1"></i> Withdraw
                     </button>
                 </div>
@@ -265,6 +265,11 @@
 
     function closePasswordModal() {
         document.getElementById('password-modal').classList.add('hidden');
+    }
+
+    function openWithdrawModal() {
+        if (window.showWithdrawModal)
+            window.showWithdrawModal();
     }
 
     document.getElementById('avatar-input').addEventListener('change', function (e) {

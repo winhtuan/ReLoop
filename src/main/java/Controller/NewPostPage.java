@@ -1,6 +1,8 @@
 package Controller;
 
+import Model.DAO.post.CategoryDAO;
 import Model.DAO.post.ProductDao;
+import Model.entity.post.Category;
 import Model.entity.post.Product;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -16,6 +18,10 @@ public class NewPostPage extends HttpServlet {
             throws ServletException, IOException {
         List<Product> allProducts = new ProductDao().getAllProducts();
         request.getSession().setAttribute("allPost", allProducts);
+        CategoryDAO categoryDAO = new CategoryDAO();
+        List<Category> categoryList = categoryDAO.getAllCategories();
+
+        request.setAttribute("categoryList", categoryList);
         request.getRequestDispatcher("JSP/Post/NewPost.jsp").forward(request, response);
     }
 

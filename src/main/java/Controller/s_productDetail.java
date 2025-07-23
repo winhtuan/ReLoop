@@ -7,6 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import Model.DAO.auth.UserDao;
+import Model.entity.auth.User;
 
 public class s_productDetail extends HttpServlet {
 
@@ -19,6 +21,10 @@ public class s_productDetail extends HttpServlet {
         }
         Product p = null;
         p = new ProductDao().getProductById(id);
+        if (p != null) {
+            User user = new UserDao().getUserById(p.getUserId());
+            p.setUser(user);
+        }
         request.getSession().setAttribute("product", p);
 
         // Gọi servlet s_Feedback để lấy feedback
@@ -38,6 +44,10 @@ public class s_productDetail extends HttpServlet {
         }
         Product p = null;
         p = new ProductDao().getProductById(id);
+        if (p != null) {
+            User user = new UserDao().getUserById(p.getUserId());
+            p.setUser(user);
+        }
         request.getSession().setAttribute("product", p);
 
         // Gọi servlet s_Feedback để lấy feedback

@@ -16,11 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const submitButton = document.getElementById("submitPostBtn");
     submitButton.classList.add("hidden");
 
-    // Initial log to check data
-    console.log("Initial window.categoryTree:", window.categoryTree);
-    console.log("Initial window.categoryAttributes:", window.categoryAttributes);
-    console.log("Initial window.categoryStateOptions:", window.categoryStateOptions);
-    console.log("Initial window.contextPath:", window.contextPath); // Debug contextPath
     if (!window.categoryTree) {
         console.error("window.categoryTree is undefined or not loaded!");
     }
@@ -36,14 +31,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (categoryStack.length > 0) {
             backButton.classList.remove("hidden");
-            closeButton.style.display = "none"; // Ẩn nút × ở cấp 1 trở lên
+            closeButton.style.display = "none"; // Hide close button at level 1 or higher
         } else {
             backButton.classList.add("hidden");
-            closeButton.style.display = "block"; // Hiển thị nút × ở cấp 0
+            closeButton.style.display = "block"; // Show close button at level 0
         }
 
         const categories = (parentId === null) ? window.categoryTree[-1] || [] : window.categoryTree[parentId] || [];
-        console.log("Rendering categories for parentId:", parentId, "Categories:", categories);
+
         if (!categories || categories.length === 0) {
             categoryList.innerHTML += "<li class='category-item'>No subcategories available</li>";
             return;
@@ -55,15 +50,14 @@ document.addEventListener("DOMContentLoaded", function () {
             item.textContent = category.name;
             item.onclick = function () {
                 const hasChildren = window.categoryTree.hasOwnProperty(category.categoryId) && window.categoryTree[category.categoryId].length > 0;
-                console.log("Category:", category.name, "categoryId:", category.categoryId, "hasChildren:", hasChildren);
                 if (hasChildren) {
                     categoryStack.push(category.categoryId);
-                    renderCategories(category.categoryId); // Không đóng modal, chỉ render cấp tiếp theo
+                    renderCategories(category.categoryId); // Just render next level, don't close modal
                 } else {
                     selectedCategoryId = category.categoryId;
                     categoryInput.value = selectedCategoryId;
                     dropdownSelected.textContent = category.name;
-                    modal.style.display = "none"; // Đóng modal khi chọn danh mục cuối
+                    modal.style.display = "none"; // Close modal when selecting last category
                     loadFormFields(selectedCategoryId);
                     submitButton.classList.remove("hidden");
                 }
@@ -74,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadFormFields(categoryId) {
         formFields.innerHTML = "";
-        console.log("Loading form fields for categoryId:", categoryId);
 
         // State field with placeholder
         let stateField = `
@@ -86,10 +79,8 @@ document.addEventListener("DOMContentLoaded", function () {
         formFields.innerHTML += stateField;
 
         const attributes = window.categoryAttributes && window.categoryAttributes[categoryId] ? window.categoryAttributes[categoryId] : [];
-        console.log("Attributes for categoryId", categoryId, ":", attributes);
         if (attributes.length > 0) {
             attributes.forEach(attr => {
-                console.log("Processing attribute:", attr);
                 let inputHtml = '';
                 if (attr.input_type === "select" && attr.options) {
                     let options = attr.options;
@@ -103,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else if (!Array.isArray(options)) {
                         options = [];
                     }
-                    console.log("Options for", attr.name, ":", options);
                     inputHtml += `<select name="${attr.name}" id="${attr.name}" placeholder="${attr.name}" ${attr.is_required ? "required" : ""}>`;
                     inputHtml += `<option value="" selected disabled hidden>${attr.name}</option>`;
                     options.forEach(option => {
@@ -141,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if ([41, 42, 43, 44, 45, 46].includes(parseInt(categoryId))) {
             stateOptions = window.categoryStateOptions && window.categoryStateOptions[categoryId]
                     ? window.categoryStateOptions[categoryId]
-                    : ['con non', 'trưởng thành'];
+                    : ['Young', 'Adult'];
         }
 
         stateOptions.forEach(option => {
@@ -159,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     dropdownSelected.addEventListener("click", function () {
         if (modal.style.display !== "block") {
-            modal.style.display = "block"; // Mở modal
+            modal.style.display = "block"; // Open modal
             const startId = categoryStack[categoryStack.length - 1] || null;
             renderCategories(startId);
         }
@@ -189,10 +179,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Hàm sendImage
+    // sendImage function
     async function sendImage() {
         const files = document.getElementById("productImages").files;
-        console.log("Files selected:", files.length);
         if (files.length === 0)
             return [];
 
@@ -216,16 +205,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
             return uploaded.map(img => img.shareLink);
         } catch (err) {
-            console.error("Upload failed", err);
+            console.error("Image upload failed", err);
             alert("Image upload failed, please try again.");
             return [];
         }
     }
 
-    // Hàm submit form
+    // Form submit handler
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
-        // Đảm bảo luôn lấy selectedCategoryId mới nhất
+        // Always get the latest selectedCategoryId
         selectedCategoryId = categoryInput.value || selectedCategoryId;
         if (!selectedCategoryId) {
             alert("Please select a category!");
@@ -243,19 +232,29 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Check for moderation_status hidden input
+        let moderationStatusInput = form.querySelector('input[name="moderation_status"]');
+        let moderationStatus = moderationStatusInput ? moderationStatusInput.value : undefined;
+
+        // Build payload
+        let payload = {
+            categoryId: parseInt(selectedCategoryId),
+            productState: formData.get('productState'),
+            productPrice: formData.get('productPrice'),
+            productTitle: formData.get('productTitle'),
+            productDescription: formData.get('productDescription'),
+            productLocation: formData.get('productLocation'),
+            attributeValues: attributeValues,
+            imageUrls: imageUrls
+        };
+        if (moderationStatus) {
+            payload.moderation_status = moderationStatus;
+        }
+
         fetch(window.contextPath + '/savePostServlet', {
             method: 'POST',
             credentials: 'include',
-            body: JSON.stringify({
-                categoryId: parseInt(selectedCategoryId),
-                productState: formData.get('productState'),
-                productPrice: formData.get('productPrice'),
-                productTitle: formData.get('productTitle'),
-                productDescription: formData.get('productDescription'),
-                productLocation: formData.get('productLocation'),
-                attributeValues: attributeValues,
-                imageUrls: imageUrls
-            }),
+            body: JSON.stringify(payload),
             headers: {'Content-Type': 'application/json'}
         }).then(response => {
             if (!response.ok)

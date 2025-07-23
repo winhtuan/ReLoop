@@ -13,6 +13,18 @@
         <servlet-name>CreateWithrawQR</servlet-name>
         <servlet-class>Controller.Paid.CreateWithrawQR</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetBanksServlet</servlet-name>
+        <servlet-class>Controller.Paid.GetBanksServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GoogleVision</servlet-name>
+        <servlet-class>Controller.AICensor.GoogleVision</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Hive</servlet-name>
+        <servlet-class>Controller.AICensor.Hive</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>s_favorite</servlet-name>
         <url-pattern>/s_favorite</url-pattern>
@@ -28,6 +40,18 @@
     <servlet-mapping>
         <servlet-name>CreateWithrawQR</servlet-name>
         <url-pattern>/CreateWithrawQR</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetBanksServlet</servlet-name>
+        <url-pattern>/GetBanksServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GoogleVision</servlet-name>
+        <url-pattern>/googlevision</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Hive</servlet-name>
+        <url-pattern>/hive</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

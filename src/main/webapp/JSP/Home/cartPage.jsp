@@ -16,11 +16,12 @@
         <link rel="icon" href="img/core-img/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        <link rel="stylesheet" href="css/core-style.css">
-        <link rel="stylesheet" href="css/jsp_css/loader.css">
-        <link rel="stylesheet" href="css/avatar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/core-style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jsp_css/loader.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/avatar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
-        <link rel="stylesheet" href="css/css_cart.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/css_cart.css"/>
 
     </head>
     <body>
@@ -47,6 +48,7 @@
         <script src="${pageContext.request.contextPath}/js/JS_search.js"></script>
         <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
+        <script src="${pageContext.request.contextPath}/js/dropdown-handler.js"></script>
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
