@@ -229,7 +229,7 @@ public class LoginServlet extends HttpServlet {
 
     private void redirectUser(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String redirectUrl = (String) request.getSession().getAttribute("redirectUrl");
+        String redirectUrl = (String) request.getSession().getAttribute("redirectAfterLogin");
 
         // Nếu redirectUrl quay về LoginServlet thì chuyển sang home
         if (redirectUrl != null && !redirectUrl.toLowerCase().contains("loginservlet")) {

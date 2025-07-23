@@ -12,7 +12,10 @@ document.addEventListener('click', function (e) {
         let newQty = Math.max(1, parseInt(qtyInput.value) + delta);
         const realQuantity = document.querySelector(`input[name="qtyr_${productId}"]`).value;
         if (newQty > realQuantity)
+        {
+            alert("The product is out of stock. Current inventory quantity is: " + realQuantity);
             return;
+        }
         qtyInput.value = newQty;
         hidden.value = newQty;
         updatedCart.set(productId, newQty);

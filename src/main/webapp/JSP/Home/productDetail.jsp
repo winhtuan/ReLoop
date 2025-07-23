@@ -107,20 +107,24 @@
                                 </div>
                                 <!-- Add to Cart Form -->
                                 <form class="cart clearfix" action="${pageContext.request.contextPath}/s_addToCart" method="post">
-                                    <div class="cart-btn d-flex mb-50 align-items-center">
-                                        <p>Quantity</p>
-                                        <div class="quantity">
-                                            <span class="qty-minus" onclick="var effect = document.getElementById('qty');
+                                    <form class="cart clearfix" action="${pageContext.request.contextPath}/s_addToCart" method="post">
+
+                                        <div class="cart-btn d-flex mb-50">
+                                            <p>Quantity</p>
+                                            <div class="quantity">
+                                                <span class="qty-minus" onclick="var effect = document.getElementById('qty');
                                                     var qty = effect.value;
                                                     if (!isNaN(qty) && qty > 1)
                                                         effect.value--;
-                                                    return false;"><ion-icon name="chevron-down-outline"></ion-icon></span>
-                                            <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
-                                            <span class="qty-plus" onclick="var effect = document.getElementById('qty');
+                                                    return false;"><ion-icon name="chevron-down-outline"></ion-icon></i></span>
+
+                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
+                                                <span class="qty-plus" onclick="var effect = document.getElementById('qty');
                                                     var qty = effect.value;
                                                     if (!isNaN(qty))
                                                         effect.value++;
                                                     return false;"><ion-icon name="chevron-up-outline"></ion-icon></span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="amado-btn-group cart-buy-group">
@@ -182,7 +186,7 @@
         <!-- ##### Main Content Wrapper End ##### -->
 
         <c:import url="/JSP/Home/Footer.jsp" />
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
         <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
         <!-- Popper js -->
@@ -205,26 +209,70 @@
                                                     setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
                                                 });
 
-                                                // Tab switching and scroll to comment
-                                                document.addEventListener('DOMContentLoaded', function () {
-                                                    const tabLinks = document.querySelectorAll('.tab-link');
-                                                    const tabContents = document.querySelectorAll('.tab-content');
-                                                    tabLinks.forEach(link => {
-                                                        link.addEventListener('click', function () {
-                                                            tabLinks.forEach(l => l.classList.remove('active'));
-                                                            tabContents.forEach(c => c.classList.remove('active'));
-                                                            this.classList.add('active');
-                                                            document.getElementById(this.dataset.tab).classList.add('active');
+                                                // Xử lý click vào "Review" để trượt xuống Customer Reviews
+                                                document.addEventListener("DOMContentLoaded", function () {
+                                                    const reviewLink = document.querySelector(".scroll-to-reviews");
+                                                    const feedbackSection = document.getElementById("customer-reviews");
+
+                                                    if (reviewLink && feedbackSection) {
+                                                        reviewLink.addEventListener("click", function (e) {
+                                                            e.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+                                                            feedbackSection.scrollIntoView({behavior: "smooth"}); // Trượt mượt mà đến section
                                                         });
-                                                    });
-                                                    // Scroll to comment tab when clicking review link
-                                                    const reviewLink = document.querySelector('.review-link');
-                                                    if (reviewLink) {
-                                                        reviewLink.addEventListener('click', function (e) {
-                                                            e.preventDefault();
-                                                            document.querySelector('.tab-link[data-tab="commentTab"]').click();
-                                                            document.getElementById('productTabs').scrollIntoView({behavior: 'smooth'});
-                                                        });
+                                                    }
+
+                                                    // Tạo sao động dựa trên trung bình rating
+                                                    const ratingElement = document.getElementById("product-rating");
+                                                    const averageRatingSpan = document.querySelector(".average-rating");
+                                                    let averageRating = parseFloat(averageRatingSpan.getAttribute("data-rating")) || 0;
+                                                    console.log("Average Rating:", averageRating); // Debug
+
+                                                    if (ratingElement) {
+                                                        for (let i = 0; i < 5; i++) {
+                                                            const starWrapper = document.createElement("span");
+                                                            starWrapper.className = "star-wrapper";
+                                                            starWrapper.style.position = "relative";
+                                                            starWrapper.style.display = "inline-block";
+                                                            starWrapper.style.width = "20px";
+                                                            starWrapper.style.height = "20px";
+                                                            starWrapper.style.marginRight = "2px";
+
+                                                            // Tạo sao nền (star-outline)
+                                                            const starOutline = document.createElement("ion-icon");
+                                                            starOutline.setAttribute("name", "star-outline");
+                                                            starOutline.setAttribute("aria-hidden", "true");
+                                                            starOutline.style.color = "#ddd"; // Màu nền xám
+                                                            starOutline.style.fontSize = "20px";
+                                                            starOutline.style.position = "absolute";
+                                                            starOutline.style.top = "0";
+                                                            starOutline.style.left = "0";
+
+                                                            // Tạo sao lấp đầy
+                                                            const starFillWrapper = document.createElement("span");
+                                                            starFillWrapper.className = "star-fill-wrapper";
+                                                            starFillWrapper.style.position = "absolute";
+                                                            starFillWrapper.style.top = "0";
+                                                            starFillWrapper.style.left = "0";
+                                                            starFillWrapper.style.overflow = "hidden";
+                                                            starFillWrapper.style.width = (averageRating - i > 0 ? Math.min(1, averageRating - i) * 100 : 0) + "%";
+                                                            starFillWrapper.style.height = "100%";
+
+                                                            const starFill = document.createElement("ion-icon");
+                                                            starFill.setAttribute("name", "star");
+                                                            starFill.setAttribute("aria-hidden", "true");
+                                                            starFill.style.color = "#f39c12"; // Màu cam giống Shopee
+                                                            starFill.style.fontSize = "20px";
+                                                            starFill.style.position = "absolute";
+                                                            starFill.style.top = "0";
+                                                            starFill.style.left = "0";
+
+                                                            starFillWrapper.appendChild(starFill);
+                                                            starWrapper.appendChild(starOutline);
+                                                            starWrapper.appendChild(starFillWrapper);
+                                                            ratingElement.insertBefore(starWrapper, averageRatingSpan);
+                                                        }
+                                                        averageRatingSpan.style.display = "none"; // Ẩn span chứa dữ liệu
+
                                                     }
                                                 });
         </script>
@@ -242,6 +290,66 @@
             <c:remove var="messCartAdd" scope="request" />
         </c:if>
 
+                // Gán dữ liệu vào các input hidden
+                document.getElementById("denounceReason").value = reason;
+                document.getElementById("denounceDescription").value = desc;
+
+                // Submit form
+                document.getElementById("denounceForm").submit();
+            }
+
+
+            let selectedReason = "";
+
+            function showPopup() {
+                document.getElementById("popupOverlay").style.display = "flex";
+                document.getElementById("step1").style.display = "block";
+                document.getElementById("step2").style.display = "none";
+            }
+
+            function hidePopup() {
+                document.getElementById("popupOverlay").style.display = "none";
+            }
+
+            function selectReason(el) {
+                selectedReason = el.innerText;
+                document.getElementById("selectedReasonText").innerText = "Reason: " + selectedReason;
+                document.getElementById("denounceReason").value = selectedReason; // ✅ sửa lại chỗ này
+                document.getElementById("step1").style.display = "none";
+                document.getElementById("step2").style.display = "block";
+            }
+
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const productId = this.dataset.productid;
+                    const quantityy = document.getElementById("qty").value;
+
+                    fetch('s_addToCart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            postID: productId,
+                            quantity: quantityy
+                        })
+                    })
+                            .then(response => {
+                                if (response.ok) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Thêm vào giỏ hàng',
+                                        text: "Thêm vào giỏ hàng thành công",
+                                        confirmButtonText: 'OK'
+                                    });
+                                } else {
+                                    console.error('Lỗi khi thêm giỏ hàng');
+                                }
+                            });
+                });
+            });
+        </script>
     </body>
 
 </html>

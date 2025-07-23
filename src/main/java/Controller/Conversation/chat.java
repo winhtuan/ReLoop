@@ -157,17 +157,17 @@ public class chat {
                     String messageId = json.getString("messageId");
                     MessageDAO.recallMessage(messageId, fromUserId);
 
-                    JsonObject recallNotify = Json.createObjectBuilder()
-                            .add("type", "recall")
-                            .add("messageId", messageId)
-                            .add("fromUserId", fromUserId)
-                            .add("toUserId", toUserId)
-                            .add("sentAt", LocalDateTime.now().toString())
-                            .build();
+                        JsonObject recallNotify = Json.createObjectBuilder()
+                                .add("type", "recall")
+                                .add("messageId", messageId)
+                                .add("fromUserId", fromUserId)
+                                .add("toUserId", toUserId)
+                                .add("sentAt", LocalDateTime.now().toString())
+                                .build();
 
-                    sendToBoth(fromUserId, toUserId, recallNotify);
+                        sendToBoth(fromUserId, toUserId, recallNotify);
                     break;
-                }
+                    }
                 case "block": {
                     String blockedId = json.getString("blockedId");
                     new blockDAO().blockUser(fromUserId, blockedId);

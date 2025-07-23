@@ -20,8 +20,7 @@
         <link rel="stylesheet" href="css/jsp_css/loader.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
         <link rel="stylesheet" href="css/avatar.css">
-        <link rel="stylesheet" href="css/notification.css">
-        
+        <link rel="stylesheet" href="css/notification.css">   
   </head>
     <body>
         <!-- Page Preloder -->

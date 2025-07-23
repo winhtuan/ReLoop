@@ -38,6 +38,8 @@
 
         <c:import url="/JSP/Home/Footer.jsp" />
 
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <script src="js/jquery/jquery-2.2.4.min.js"></script>
         <script src="js/lib_js/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
