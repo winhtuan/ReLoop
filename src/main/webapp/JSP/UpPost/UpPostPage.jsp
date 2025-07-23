@@ -33,9 +33,6 @@
         <script>
             // Truyền contextPath qua JavaScript
             window.contextPath = "${pageContext.request.contextPath}";
-            console.log("Raw categoriesJson:", '${categoriesJson}');
-            console.log("Raw categoryAttributesJson:", '${categoryAttributesJson}');
-            console.log("Raw categoryStateOptionsJson:", '${categoryStateOptionsJson}');
 
             try {
                 window.categoryTree = JSON.parse('${categoriesJson}' || '{}');
@@ -47,10 +44,6 @@
                 window.categoryAttributes = {};
                 window.categoryStateOptions = {};
             }
-
-            console.log("Parsed window.categoryTree:", window.categoryTree);
-            console.log("Parsed window.categoryAttributes:", window.categoryAttributes);
-            console.log("Parsed window.categoryStateOptions:", window.categoryStateOptions);
             if (Object.keys(window.categoryTree).length === 0) {
                 console.error("No category tree loaded!");
             }

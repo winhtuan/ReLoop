@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.DAO.admin;
 
 import Model.entity.post.Product;
@@ -15,16 +11,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Admin
- */
 public class AdminPostDAO {
 
     public List<Product> approvalPost() {
         String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
                 + "FROM reloop_v2.product "
-                + "WHERE moderation_status = 'pending'";
+                + "WHERE  moderation_status IN ('pending', 'warn')";
         List<Product> list = new ArrayList<>();
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();

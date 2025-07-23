@@ -122,7 +122,7 @@
                         </thead>
                         <tbody id="postTableBody" class="text-gray-800">
                             <c:forEach var="product" items="${approvalPosts}">
-                                <tr class="border-b">
+                                <tr class="border-b ${product.moderationStatus == 'warn' ? 'bg-red-100' : ''}">
                                     <td class="px-4 py-2">
                                         <img src="${imageMap[product.productId]}" class="rounded w-[60px] h-auto" />
                                     </td>
