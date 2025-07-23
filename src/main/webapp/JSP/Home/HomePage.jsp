@@ -20,10 +20,8 @@
         <link rel="stylesheet" href="css/jsp_css/loader.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
         <link rel="stylesheet" href="css/avatar.css">
-        <link rel="stylesheet" href="css/notification.css">
-        <link rel="stylesheet" href="css/category-menu.css">
-
-    </head>
+        <link rel="stylesheet" href="css/notification.css">   
+  </head>
     <body>
         <!-- Page Preloder -->
         <div id="preloader">
@@ -65,8 +63,8 @@
                 setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
             });
         </script>
-        <!<!-- category -->
-        <script src="js/dropdown-handler.js"></script>
+        <!-- category -->
+        <script src="${pageContext.request.contextPath}/js/dropdown-handler.js"></script>
         <c:if test="${not empty sessionScope.Message}">
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
@@ -94,6 +92,6 @@
             </script>
         </c:if>
         <script src="js/conversation/JS_chatBox.js"></script>
-
+        
     </body>
 </html>

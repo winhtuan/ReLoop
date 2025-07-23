@@ -5,9 +5,9 @@
 package Controller;
 
 import Model.DAO.commerce.favoriteDAO;
+import Model.DAO.post.CategoryDAO;
 import Model.entity.post.Product;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,7 @@ public class s_favorite extends HttpServlet {
         String userId = request.getParameter("userId");
         favoriteDAO favoriteDAO = new favoriteDAO();
         List<Product> favoriteList = favoriteDAO.getFavoriteProducts(userId);
-
+        request.setAttribute("categoryList", new CategoryDAO().getAllCategories());
         request.setAttribute("favorites", favoriteList);
         request.getRequestDispatcher("JSP/Commerce/Favorite.jsp").forward(request, response);
     }
