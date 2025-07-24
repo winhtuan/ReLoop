@@ -1,5 +1,6 @@
 package Model.DAO.pay;
 
+import Model.entity.pay.Transaction;
 import Utils.DBUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,11 +31,11 @@ public class TransactionDAO {
 
     // Phương thức để ghi nhận giao dịch vào bảng transaction_logs
     public boolean logTransaction(String userId, String transactionType,
-                                  double amount, double balanceBefore, double balanceAfter,
-                                  String referenceId, String description, String status) {
+            double amount, double balanceBefore, double balanceAfter,
+            String referenceId, String description, String status) {
         // SQL để chèn dữ liệu vào bảng transaction_logs
         String sql = "INSERT INTO transaction_logs (transaction_id, user_id, type, amount, balance_before, balance_after, reference_id, description, created_at, status) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Tạo mã giao dịch mới (transaction_id)
@@ -64,4 +65,35 @@ public class TransactionDAO {
             return false;
         }
     }
+
+    public boolean logTransaction(Transaction tx) {
+        String sql = "INSERT INTO transaction_logs (transaction_id, user_id, type, amount, balance_before, balance_after, reference_id, description, created_at, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Tạo transactionId và createdAt nếu chưa có
+            String transactionId = tx.getTransactionId() != null ? tx.getTransactionId() : generateTransactionId();
+            Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+
+            // Gán giá trị vào PreparedStatement
+            stmt.setString(1, transactionId);
+            stmt.setString(2, tx.getUserId());
+            stmt.setString(3, tx.getType());
+            stmt.setDouble(4, tx.getAmount());
+            stmt.setDouble(5, tx.getBalanceBefore());
+            stmt.setDouble(6, tx.getBalanceAfter());
+            stmt.setString(7, tx.getReferenceId());
+            stmt.setString(8, tx.getDescription());
+            stmt.setTimestamp(9, createdAt);
+            stmt.setString(10, tx.getStatus());
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
