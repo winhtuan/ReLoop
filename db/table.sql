@@ -366,3 +366,12 @@ CREATE TABLE WithdrawalRequest (
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES Users(user_id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE following_follower (
+    follower_id CHAR(7) NOT NULL,
+    following_id CHAR(7) NOT NULL,
+    followed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, following_id),
+    CONSTRAINT FK_following_follower_follower FOREIGN KEY (follower_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT FK_following_follower_following FOREIGN KEY (following_id) REFERENCES users(user_id) ON DELETE CASCADE
+);

@@ -39,23 +39,18 @@ public class AccountDao {
             if (rs.next()) {
                 String hashedPassword = rs.getString("password");
                 if (BCrypt.checkpw(password, hashedPassword)) {
-                    LocalDate regisDate = null;
-                    Date date = rs.getDate("regisDate");
-                    if (date != null) {
-                        regisDate = date.toLocalDate();
-                    }
+
+                    Date regisDate = rs.getDate("regisDate"); // ✅ Không cần chuyển sang LocalDate
 
                     return new Account(
                             rs.getString("acc_id"),
                             rs.getString("password"),
                             rs.getString("email"),
-                            regisDate,
+                            regisDate, // ✅ dùng Date
                             rs.getString("user_id"),
                             rs.getString("verification_token"),
                             rs.getBoolean("is_verified")
                     );
-                } else {
-                    return null;
                 }
             }
             return null;
@@ -121,53 +116,36 @@ public class AccountDao {
 
             stmt.setString(1, id); // acc_id
 
-            // Handle password
-            if (account.getPassword() != null) {
-                stmt.setString(2, account.getPassword());
+            // Password
+            stmt.setString(2, account.getPassword());
+
+            // Email
+            stmt.setString(3, account.getEmail());
+
+            // ✅ Handle regisDate: từ java.util.Date sang java.sql.Timestamp
+            java.util.Date utilDate = account.getRegisDate();
+            if (utilDate != null) {
+                stmt.setTimestamp(4, new java.sql.Timestamp(utilDate.getTime()));
             } else {
-                stmt.setNull(2, java.sql.Types.VARCHAR);
+                stmt.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
             }
 
-            // Handle email
-            if (account.getEmail() != null) {
-                stmt.setString(3, account.getEmail());
-            } else {
-                stmt.setNull(3, java.sql.Types.VARCHAR);
-            }
-
-            // Handle regisDate (dùng LocalDateTime và Timestamp)
-            LocalDateTime regisDateTime;
-            if (account.getRegisDate() != null) {
-                // Giả sử getRegisDate() trả về LocalDate, convert sang LocalDateTime
-                LocalDate regisDate = account.getRegisDate();
-                regisDateTime = regisDate.atStartOfDay(); // Mặc định là 0 giờ nếu chỉ có ngày
-            } else {
-                regisDateTime = LocalDateTime.now();
-            }
-
-            stmt.setTimestamp(4, java.sql.Timestamp.valueOf(regisDateTime));
-
-            // Handle userid
+            // userId
             stmt.setString(5, account.getUserId());
 
-            // Handle verification_token
-            if (account.getVerificationToken() != null) {
-                stmt.setString(6, account.getVerificationToken());
-            } else {
-                stmt.setNull(6, java.sql.Types.VARCHAR);
-            }
+            // verification_token
+            stmt.setString(6, account.getVerificationToken());
 
-            // Handle is_verified
-            stmt.setInt(7, account.isVerified() ? 1 : 0);
+            // is_verified
+            stmt.setBoolean(7, account.isVerified());
 
-            // Thực thi lệnh INSERT
             stmt.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("Lỗi tạo tài khoản mới: " + ex.getMessage());
-            id = null; // Trả về null nếu có lỗi
+            id = null;
         }
 
-        return id; // Trả về acc_id mới
+        return id;
     }
 
     public Account getAccountByEmail(String email) {
@@ -176,17 +154,13 @@ public class AccountDao {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                LocalDate regisDate = null;
-                Date date = rs.getDate("regisDate");
-                if (date != null) {
-                    regisDate = date.toLocalDate();
-                }
+                Date regisDate = rs.getDate("regisDate"); // Không cần chuyển sang LocalDate
 
                 return new Account(
                         rs.getString("acc_id"),
                         rs.getString("password"),
                         rs.getString("email"),
-                        regisDate,
+                        regisDate, // truyền trực tiếp java.util.Date
                         rs.getString("user_id"),
                         rs.getString("verification_token"),
                         rs.getBoolean("is_verified"),
@@ -226,17 +200,13 @@ public class AccountDao {
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                LocalDate regisDate = null;
-                Date date = rs.getDate("regisDate");
-                if (date != null) {
-                    regisDate = date.toLocalDate();
-                }
+                Date regisDate = rs.getDate("regisDate"); // ✅ Không convert sang LocalDate
 
                 Account acc = new Account(
                         rs.getString("acc_id"),
                         null, // Password omitted for security reasons
                         rs.getString("email"),
-                        regisDate,
+                        regisDate, // ✅ truyền đúng kiểu java.util.Date
                         rs.getString("user_id"),
                         rs.getString("verification_token"),
                         rs.getBoolean("is_verified")
