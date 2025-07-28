@@ -32,7 +32,7 @@ public class ConversationDAO {
      * tạo mới và trả về đối tượng Conversation tương ứng.
      */
     public Conversation getConversation(String user1Id, String user2Id) {
-        String sql= "SELECT conversation_id, sender_id, receiver_id, product_id FROM conversation WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)";
+        String sql = "SELECT conversation_id, sender_id, receiver_id, product_id FROM conversation WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)";
 
         try (Connection conn = Utils.DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -43,7 +43,7 @@ public class ConversationDAO {
             ps.setString(4, user1Id);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {                   
+                if (rs.next()) {
                     return new Conversation(
                             rs.getString("conversation_id"),
                             rs.getString("sender_id"),
@@ -165,6 +165,54 @@ public class ConversationDAO {
             e.printStackTrace();  // hoặc dùng log framework
             return false;
         }
+    }
+
+    public String getLeastBusySupporterId() {
+        String sql = "SELECT u.user_id " +
+             "FROM users u " +
+             "LEFT JOIN ( " +
+             "    SELECT sender_id AS user_id FROM conversation " +
+             "    UNION ALL " +
+             "    SELECT receiver_id FROM conversation " +
+             ") conv ON u.user_id = conv.user_id " +
+             "WHERE u.role = 'supporter' " +
+             "GROUP BY u.user_id " +
+             "ORDER BY COUNT(conv.user_id) ASC " +
+             "LIMIT 1";
+
+        try (Connection conn = Utils.DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("user_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getSupporterInConversation(String customerId) {
+        String sql = "SELECT u.user_id "
+                + "FROM conversation c "
+                + "JOIN users u ON "
+                + "(u.user_id = c.sender_id AND c.receiver_id = ?) OR "
+                + "(u.user_id = c.receiver_id AND c.sender_id = ?) "
+                + "WHERE u.role = 'supporter' "
+                + "LIMIT 1";
+
+        try (Connection conn = Utils.DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, customerId);
+            ps.setString(2, customerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("user_id");  // Trả về supporter
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Không tìm thấy hoặc không có supporter
     }
 
     public static void main(String[] args) {

@@ -73,7 +73,7 @@ public class AccountDao {
     }
 
     public boolean updateToken(String email, String token) {
-        String query = "UPDATE Account SET verification_token = ? WHERE email = ?";
+String query = "UPDATE Account SET verification_token = ? WHERE email = ?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, token);
             ps.setString(2, email);
@@ -149,7 +149,7 @@ public class AccountDao {
     }
 
     public Account getAccountByEmail(String email) {
-        String query = "SELECT * FROM Account WHERE email = ?";
+String query = "SELECT * FROM Account WHERE email = ?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
@@ -214,7 +214,7 @@ public class AccountDao {
                 list.add(acc);
             }
         } catch (SQLException e) {
-            System.out.println("Error retrieving accounts: " + e.getMessage());
+System.out.println("Error retrieving accounts: " + e.getMessage());
         }
         return list;
     }
@@ -281,7 +281,7 @@ public class AccountDao {
 
     public Boolean checkIsAdmin(String user_id) {
         String sql = "SELECT role FROM users WHERE user_id = ?";
-        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, user_id);
             ResultSet rs = ps.executeQuery();
@@ -358,8 +358,7 @@ public class AccountDao {
     public String getPasswordById(String user_id) {
         String password = null;
         String sql = "SELECT password FROM Account WHERE user_id = ?";
-
-        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user_id);
             ResultSet rs = ps.executeQuery();
 

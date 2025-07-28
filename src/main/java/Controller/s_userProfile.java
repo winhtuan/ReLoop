@@ -5,6 +5,7 @@
 package Controller;
 
 import Model.DAO.commerce.FollowDAO;
+import Model.DAO.post.CategoryDAO;
 import Model.entity.auth.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -40,6 +41,7 @@ public class s_userProfile extends HttpServlet {
             request.setAttribute("follower", followerCount);
             request.setAttribute("listfollowing", listFollowing);
             request.setAttribute("listfollower", listFollower);
+            request.setAttribute("categoryList", new CategoryDAO().getAllCategories());
             request.setAttribute("user", user);
 
             if ("admin".equals(user.getRole())) {

@@ -37,3 +37,4 @@ config.properties
 *.bak
 *.swp
 *.tmp
+/nbproject/

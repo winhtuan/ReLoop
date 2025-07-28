@@ -9,7 +9,7 @@
                 More About <a href="${pageContext.request.contextPath}/JSP/UpPost/postingRule.jsp" style="color:#fbb710;">ReLoop's posting rules</a>
             </p>
         </div>
-        <form action="${pageContext.request.contextPath}/savePostServlet" method="post" enctype="multipart/form-data" id="postForm">
+        <form action="${pageContext.request.contextPath}/savePostServlet" method="post" enctype="multipart/form-data" id="postForm" onsubmit="return false;">
             <div class="upload-and-category row" style="gap: 0;">
                 <div class="image-upload-container col-md-5 mb-3 mb-md-0">
                     <label for="productImages" class="image-upload">
@@ -28,14 +28,18 @@
             </div>
             <input type="hidden" name="categoryId" id="categoryInput">
             <div class="d-flex justify-content-end mt-4">
-                <button type="submit" class="amado-btn">Post Ad</button>
+                <button type="submit" class="amado-btn" id="submitPostBtn">Post Ad</button>
             </div>
         </form>
         <div id="categoryModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button id="backButton" class="hidden">←</button>
-                    <button id="closeButton">×</button>
+                    <button id="backButton" class="hidden">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                    </button>
+                    <button id="closeButton">
+                        <ion-icon name="close-outline"></ion-icon>
+                    </button>
                 </div>
                 <ul id="categoryList" class="category-list"></ul>
             </div>

@@ -322,8 +322,7 @@ public class ProductDao {
         }
         return products;
     }
-    
-    
+
     public List<Product> getProductsByCategoryIdsAndFilter(List<Integer> categoryIds, Double minPrice, Double maxPrice, String state) {
         List<Product> products = new ArrayList<>();
         if (categoryIds == null || categoryIds.isEmpty()) {
@@ -339,7 +338,7 @@ public class ProductDao {
         }
         if (maxPrice != null) {
             sql.append(" AND price <= ?");
-        } 
+        }
         if (state != null && !state.isEmpty()) {
             sql.append(" AND state = ?");
         }
@@ -383,7 +382,7 @@ public class ProductDao {
         return products;
     }
 
-    public String saveProduct(Product product, List<ProductAttributeValue> attributeValues, List<ProductImage> images) throws SQLException {
+    public String saveProduct(Product product, List<ProductAttributeValue> attributeValues, List<ProductImage> images, String moderationStatus) throws SQLException {
         String generatedProductId = null;
         Connection conn = null;
 
@@ -392,15 +391,15 @@ public class ProductDao {
             conn.setAutoCommit(false);
 
             // Lưu product
-            String sqlProduct = "INSERT INTO product (user_id, category_id, title, description, price, location, state, status, is_priority, updated_at) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            String sqlProduct = "INSERT INTO product (user_id, category_id, title, description, price, location, state, status, moderation_status, is_priority, updated_at) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
             try (PreparedStatement ps = conn.prepareStatement(sqlProduct)) {
                 LOGGER.info("Executing SQL: " + sqlProduct);
                 LOGGER.info("Setting parameters: userId=" + product.getUserId() + ", categoryId=" + product.getCategoryId()
                         + ", title=" + product.getTitle() + ", description=" + product.getDescription()
                         + ", price=" + product.getPrice() + ", location=" + product.getLocation()
                         + ", state=" + product.getState() + ", status=" + product.getStatus()
-                        + ", isPriority=" + product.isIsPriority());
+                        + ", moderationStatus=" + moderationStatus + ", isPriority=" + product.isIsPriority());
 
                 ps.setString(1, product.getUserId());
                 ps.setInt(2, product.getCategoryId());
@@ -410,7 +409,8 @@ public class ProductDao {
                 ps.setString(6, product.getLocation());
                 ps.setString(7, product.getState());
                 ps.setString(8, product.getStatus());
-                ps.setBoolean(9, product.isIsPriority());
+                ps.setString(9, moderationStatus); // <--- Đã thêm đúng vị trí
+                ps.setBoolean(10, product.isIsPriority());
 
                 int affectedRows = ps.executeUpdate();
                 if (affectedRows == 0) {
@@ -490,12 +490,6 @@ public class ProductDao {
                     LOGGER.severe("Failed to close connection: " + e.getMessage());
                 }
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        for (Product a : new ProductDao().searchProducts("s")) {
-            System.out.println(a.getImages().get(0).getImageUrl());
         }
     }
 

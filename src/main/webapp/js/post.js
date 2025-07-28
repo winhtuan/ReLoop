@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  
+
     const cards = document.querySelectorAll(".product-card-wrap");
     const perPage = 8;
     const total = cards.length;
@@ -16,10 +16,20 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = start; i < end && i < total; i++) {
             cards[i].style.display = "";
         }
-        renderPagination(); // Cập nhật lại nút khi chuyển trang
+        renderPagination();
         document.querySelector(".headPost")?.scrollIntoView({behavior: "smooth"});
 
+        // Cập nhật currentPage vào URL
+        const url = new URL(window.location);
+        url.searchParams.set("page", page);
+        window.history.pushState({}, "", url);
+        const urlInputs = document.querySelectorAll(".currentPageInput");
+        urlInputs.forEach(input => {
+            input.value = page;
+        });
+
     };
+
 
     const renderPagination = () => {
         let html = "";
@@ -64,19 +74,53 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    showPage(1);
+//    const params = new URLSearchParams(window.location.search);
+//    const initialPage = parseInt(params.get("page")) || 1;
+//    showPage(initialPage);
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const categoryBar = document.getElementById("categoryBar");
     const btnLeft = document.getElementById("catBtnLeft");
     const btnRight = document.getElementById("catBtnRight");
     const scrollAmount = 150; // Số px cuộn mỗi lần (tùy chỉnh nếu muốn)
 
-    btnLeft.addEventListener("click", function() {
-        categoryBar.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    btnLeft.addEventListener("click", function () {
+        categoryBar.scrollBy({left: -scrollAmount, behavior: 'smooth'});
     });
-    btnRight.addEventListener("click", function() {
-        categoryBar.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    btnRight.addEventListener("click", function () {
+        categoryBar.scrollBy({left: scrollAmount, behavior: 'smooth'});
     });
 });
+
+
+document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const productId = this.dataset.productid;
+
+        fetch('s_addToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                postID: productId,
+                quantity: 1
+            })
+        })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thêm vào giỏ hàng',
+                            text: "Thêm vào giỏ hàng thành công",
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        console.error('Lỗi khi thêm giỏ hàng');
+                    }
+                });
+    });
+});
+

@@ -1,6 +1,5 @@
 package Model.entity.auth;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 public class Account {

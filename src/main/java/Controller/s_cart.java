@@ -1,11 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package Controller;
 
 import Model.DAO.commerce.CartDAO;
-import Model.DAO.post.ProductDao;
+import Model.DAO.post.CategoryDAO;
 import Model.entity.auth.Account;
 import Model.entity.auth.User;
 import Model.entity.post.Product;
@@ -30,6 +26,7 @@ public class s_cart extends HttpServlet {
         Account ac = (Account) se.getAttribute("user");
         Map<User, List<Product>> ls = new CartDAO().getCartGroupedBySeller(ac.getUserId());
         se.setAttribute("cartItems", ls);
+        request.setAttribute("categoryList", new CategoryDAO().getAllCategories());
         request.getRequestDispatcher("JSP/Home/cartPage.jsp").forward(request, response);
     }
 

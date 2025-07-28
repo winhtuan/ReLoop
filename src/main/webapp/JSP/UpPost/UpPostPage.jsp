@@ -5,15 +5,13 @@
     <head>
         <title>Create Post</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/createPost.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
         <link rel="icon" href="img/core-img/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="css/core-style.css">
-        <link rel="stylesheet" href="css/jsp_css/loader.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/core-style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jsp_css/loader.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
-        <link rel="stylesheet" href="css/avatar.css">
-        <link rel="stylesheet" href="css/notification.css">
-        <link rel="stylesheet" href="css/category-menu.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/avatar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
     </head>
     <body>
 
@@ -35,9 +33,6 @@
         <script>
             // Truyền contextPath qua JavaScript
             window.contextPath = "${pageContext.request.contextPath}";
-            console.log("Raw categoriesJson:", '${categoriesJson}');
-            console.log("Raw categoryAttributesJson:", '${categoryAttributesJson}');
-            console.log("Raw categoryStateOptionsJson:", '${categoryStateOptionsJson}');
 
             try {
                 window.categoryTree = JSON.parse('${categoriesJson}' || '{}');
@@ -49,10 +44,6 @@
                 window.categoryAttributes = {};
                 window.categoryStateOptions = {};
             }
-
-            console.log("Parsed window.categoryTree:", window.categoryTree);
-            console.log("Parsed window.categoryAttributes:", window.categoryAttributes);
-            console.log("Parsed window.categoryStateOptions:", window.categoryStateOptions);
             if (Object.keys(window.categoryTree).length === 0) {
                 console.error("No category tree loaded!");
             }
@@ -64,8 +55,10 @@
             }
         </script>
         <script src="${pageContext.request.contextPath}/js/categorySelect.js"></script>
+        <script src="${pageContext.request.contextPath}/js/dropdown-handler.js"></script>
         <script src="${pageContext.request.contextPath}/js/notification.js"></script>
         <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
+        <script src="${pageContext.request.contextPath}/js/googleVision.js"></script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script>

@@ -20,11 +20,16 @@ public class callLogin extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        // Lấy URL trang trước đó
+        String referer = request.getHeader("Referer");
+        if (referer != null) {
+            request.getSession().setAttribute("redirectAfterLogin", referer);
+        }
         request.getSession().setAttribute("Message", "Please login to use the feature.");
         request.getRequestDispatcher("JSP/Home/HomePage.jsp").forward(request, response);
     }
 
-    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

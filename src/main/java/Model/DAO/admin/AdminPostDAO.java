@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.DAO.admin;
 
 import Model.entity.post.Product;
 import Model.entity.post.ProductImage;
+import Model.entity.post.ProductReport;
 import Utils.DBUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,16 +11,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Admin
- */
 public class AdminPostDAO {
 
     public List<Product> approvalPost() {
         String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
                 + "FROM reloop_v2.product "
-                + "WHERE moderation_status = 'pending'";
+                + "WHERE  moderation_status IN ('pending', 'warn')";
         List<Product> list = new ArrayList<>();
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -42,7 +35,28 @@ public class AdminPostDAO {
         }
         return list;
     }
-
+    public List<Product> allPost() {
+        String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
+                + "FROM reloop_v2.product "
+                + "WHERE moderation_status = 'approved'";
+        List<Product> list = new ArrayList<>();
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setProductId(rs.getString("product_id"));
+                product.setUserId(rs.getString("user_id"));
+                product.setTitle(rs.getString("title"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getBigDecimal("price").intValue());
+                product.setModerationStatus(rs.getString("moderation_status"));
+                list.add(product);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy danh sách tài khoản chưa bị khóa: " + e.getMessage());
+        }
+        return list;
+    }
     public List<ProductImage> image(String productId) {
         String sql = "SELECT image_url FROM reloop_v2.product_images WHERE product_id = ?";
         List<ProductImage> list = new ArrayList<>();
@@ -260,16 +274,106 @@ public class AdminPostDAO {
 
         return email;
     }
-    
-   public static void main(String[] args) {
-    AdminPostDAO dAO = new AdminPostDAO();
-    String email = dAO.getUserEmailByUserId("CUS0014");
-    
-    if (email != null) {
-        System.out.println("Email tìm được: " + email);
-    } else {
-        System.out.println("Không tìm thấy email cho user_id = Cus0014");
+
+    public List<ProductReport> getPendingReports() {
+        List<ProductReport> list = new ArrayList<>();
+        String sql = "SELECT report_id, product_id, reporter_id, reason, description, reported_at, status "
+                + "FROM product_reports WHERE status = 'pending'";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ProductReport report = new ProductReport();
+                report.setReportId(rs.getString("report_id"));
+                report.setProductId(rs.getString("product_id"));
+                report.setUserId(rs.getString("reporter_id"));
+                report.setReason(rs.getString("reason"));
+                report.setDescription(rs.getString("description"));
+                report.setReportedAt(rs.getDate("reported_at"));
+                report.setStatus(rs.getString("status"));
+
+                list.add(report);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy danh sách báo cáo sản phẩm pending: " + e.getMessage());
+        }
+
+        return list;
     }
+    public List<ProductReport> getActionTakenReports() {
+    List<ProductReport> list = new ArrayList<>();
+    String sql = "SELECT report_id, product_id, reporter_id, reason, description, reported_at, status, " +
+                 "handler_id, handler_name " +
+                 "FROM product_reports WHERE status = 'action_taken'";
+
+    try (Connection conn = DBUtils.getConnect();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            ProductReport report = new ProductReport();
+            report.setReportId(rs.getString("report_id"));
+            report.setProductId(rs.getString("product_id"));
+            report.setUserId(rs.getString("reporter_id"));
+            report.setReason(rs.getString("reason"));
+            report.setDescription(rs.getString("description"));
+            report.setReportedAt(rs.getDate("reported_at"));
+            report.setStatus(rs.getString("status"));
+            report.setHandlerId(rs.getString("handler_id"));     // 👈 thêm dòng này
+            report.setHandlerName(rs.getString("handler_name")); // 👈 và dòng này
+
+            list.add(report);
+        }
+    } catch (SQLException e) {
+        System.out.println("Lỗi khi lấy danh sách báo cáo sản phẩm action_taken: " + e.getMessage());
+    }
+
+    return list;
 }
+
+    public boolean markReportAsActionTaken(String reportId, String handlerId, String handlerName) {
+        String sql = "UPDATE product_reports "
+                + "SET status = 'action_taken', handler_id = ?, handler_name = ? "
+                + "WHERE report_id = ? AND status = 'pending'";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, handlerId);
+            ps.setString(2, handlerName);
+            ps.setString(3, reportId);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật trạng thái báo cáo: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteReportById(String reportId) {
+        String sql = "DELETE FROM product_reports WHERE report_id = ?";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, reportId);
+            int rowsAffected = ps.executeUpdate();
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi xóa báo cáo sản phẩm: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        AdminPostDAO dAO = new AdminPostDAO();
+        String email = dAO.getUserEmailByUserId("CUS0014");
+
+        if (email != null) {
+            System.out.println("Email tìm được: " + email);
+        } else {
+            System.out.println("Không tìm thấy email cho user_id = Cus0014");
+        }
+    }
 
 }
