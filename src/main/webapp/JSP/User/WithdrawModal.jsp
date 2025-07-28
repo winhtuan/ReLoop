@@ -10,7 +10,7 @@
         <h2 class="text-3xl font-bold text-yellow-700 mb-8 text-center flex items-center justify-center gap-2">
             <i className="fas fa-money-bill-wave text-yellow-400"></i> Withdraw Request
         </h2>
-        <form id="withdrawForm" class="space-y-6">
+        <form id="withdrawForm" class="space-y-6" action="WithdrawServlet" method="POST">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="flex flex-col">
                     <label for="withdraw-bank" class="block text-base md:text-lg font-medium text-gray-700 mb-2 text-left">Bank</label>

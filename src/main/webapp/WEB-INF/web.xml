@@ -25,6 +25,10 @@
         <servlet-name>Hive</servlet-name>
         <servlet-class>Controller.AICensor.Hive</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>WithdrawServlet</servlet-name>
+        <servlet-class>Controller.Paid.WithdrawServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>s_favorite</servlet-name>
         <url-pattern>/s_favorite</url-pattern>
@@ -52,6 +56,10 @@
     <servlet-mapping>
         <servlet-name>Hive</servlet-name>
         <url-pattern>/hive</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WithdrawServlet</servlet-name>
+        <url-pattern>/WithdrawServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
