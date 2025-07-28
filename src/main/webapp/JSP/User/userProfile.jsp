@@ -34,13 +34,28 @@
                 }
             }
         </script>
-
+        <style>
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+            .animate-fadeIn {
+                animation: fadeIn 0.3s ease-out;
+            }
+        </style>
         <!-- Custom Styles -->
         <link rel="stylesheet" href="css/conversation/CSS_chatbox.css"/>
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
         <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="css/orderHistory.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
     </head>
     <body class="bg-gray-50 min-h-screen">
         <!-- Page Preloader -->
@@ -53,6 +68,7 @@
             <c:import url="/JSP/Home/Nav.jsp" />
             <div class="container mx-auto px-4 py-8">
                 <jsp:include page="/JSP/User/userProfileBody.jsp" />
+                <jsp:include page="/JSP/User/WithdrawModal.jsp"/>
             </div>
             <c:import url="/JSP/Home/Footer.jsp" />
         </div>
@@ -67,7 +83,8 @@
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script src="js/conversation/JS_chatBox.js"></script>
-
+        <script src="js/Load_Bank.js"></script>
+        <script src="${pageContext.request.contextPath}/js/dropdown-handler.js"></script>
         <!-- Preloader Fade-out -->
         <script>
             window.addEventListener("load", function () {
@@ -82,13 +99,13 @@
         <c:if test="${not empty sessionScope.Message}">
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
-                window.addEventListener("DOMContentLoaded", function () {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Thông báo',
-                        text: "${fn:escapeXml(sessionScope.Message)}"
-                    });
+            window.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thông báo',
+                    text: "${fn:escapeXml(sessionScope.Message)}"
                 });
+            });
             </script>
             <c:remove var="Message" scope="session" />
         </c:if>

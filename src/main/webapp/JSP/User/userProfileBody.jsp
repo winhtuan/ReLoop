@@ -3,232 +3,203 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!-- Google Material Symbols -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/core-style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-
-<div class="max-w-4xl mx-auto bg-white rounded-xl profile-container overflow-hidden">
-    <div class="bg-gradient-to-r from-yellow-100 to-yellow-200 p-6">
-        <h1 class="text-3xl font-bold text-gray-800">Profile Settings</h1>
-
-        <c:if test="${not empty success}">
-            <div class="mt-4 px-4 py-3 bg-green-100 border border-green-300 text-green-800 rounded">
-                <i class="fas fa-check-circle mr-2"></i> ${success}
+<div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl border border-yellow-100 mt-10 overflow-hidden">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-yellow-50 via-yellow-100 to-yellow-200 px-10 py-8 flex flex-col md:flex-row items-center gap-8 border-b border-yellow-200">
+        <div class="relative w-36 h-36 flex-shrink-0">
+            <img id="avatar-preview"
+                 src="${empty user.srcImg ? 'images/default-avatar.png' : user.srcImg}"
+                 alt="Avatar"
+                 class="w-36 h-36 rounded-full object-cover border-4 border-yellow-300 shadow-lg transition-transform duration-300 hover:scale-105" />
+            <label class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 text-white flex items-center justify-center w-36 h-36 rounded-full cursor-pointer transition">
+                <i class="fas fa-camera text-2xl"></i>
+                <input type="file" class="hidden" id="avatar-input" name="avatar" accept="image/*" form="profile-form">
+            </label>
+        </div>
+        <div class="flex-1 flex flex-col gap-2">
+            <h2 class="text-3xl font-extrabold text-gray-800 tracking-tight mb-1">${user.fullName}</h2>
+            <div class="flex gap-8 text-center">
+                <div>
+                    <div class="text-gray-500 text-xs">Followers</div>
+                    <div class="font-bold text-yellow-600 text-xl">${follower}</div>
+                </div>
+                <div>
+                    <div class="text-gray-500 text-xs">Following</div>
+                    <div class="font-bold text-yellow-600 text-xl">${following}</div>
+                </div>
+                <div>
+                    <div class="text-gray-500 text-xs">Balance</div>
+                    <div class="font-bold text-yellow-600 text-xl mb-1">${user.balance}$</div>
+                    <button onclick="showWithdrawModal()" class="px-4 py-1.5 bg-yellow-400 text-white rounded-lg shadow hover:bg-yellow-500 transition font-semibold">
+                        <i class="fas fa-money-bill-wave mr-1"></i> Withdraw
+                    </button>
+                </div>
             </div>
-        </c:if>
-        <c:if test="${not empty error}">
-            <div class="mt-4 px-4 py-3 bg-red-100 border border-red-300 text-red-800 rounded">
-                <i class="fas fa-exclamation-circle mr-2"></i> ${error}
-            </div>
-        </c:if>
-
+            <c:if test="${not empty success}">
+                <div class="mt-2 px-4 py-2 bg-green-100 border border-green-300 text-green-800 rounded-xl shadow flex items-center gap-2">
+                    <i class="fas fa-check-circle text-lg"></i> <span>${success}</span>
+                </div>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="mt-2 px-4 py-2 bg-red-100 border border-red-300 text-red-800 rounded-xl shadow flex items-center gap-2">
+                    <i class="fas fa-exclamation-circle text-lg"></i> <span>${error}</span>
+                </div>
+            </c:if>
+        </div>
     </div>
-
-    <div class="p-6 md:p-8">
-        <div class="flex flex-col gap-8">
-            <!-- Avatar -->
-            <div class="flex flex-col md:flex-row md:items-center gap-6">
-                <div class="relative w-32 h-32">
-                    <img id="avatar-preview"
-                         src="${empty user.srcImg ? 'images/default-avatar.png' : user.srcImg}"
-                         alt="Avatar"
-                         class="w-32 h-32 rounded-full object-cover" />
-                    <label class="absolute inset-0 bg-black bg-opacity-40 text-white flex items-center justify-center w-32 h-32 rounded-full cursor-pointer hover:bg-opacity-60 transition">
-                        <i class="fas fa-camera"></i>
-                        <input type="file" class="hidden" id="avatar-input" name="avatar" accept="image/*" form="profile-form">
-                    </label>
-                </div>
-                <div class="flex-1">
-                    <h2 id="fullname-display" class="text-2xl font-bold text-gray-800 mb-4">${user.fullName}</h2>
-                    <div class="flex space-x-6 text-center">
-                        <div>
-                            <div class="text-gray-600">Followers</div>
-                            <div class="font-bold text-yellow-600">${follower}</div>
-                        </div>
-                        <div>
-                            <div class="text-gray-600">Following</div>
-                            <div class="font-bold text-yellow-600">${following}</div>
-                        </div>
-                        <div>
-                            <div class="text-gray-600">Balance</div>
-                            <div class="font-bold text-yellow-600 mb-1">${user.balance}$</div>
-                            <button onclick="openWithdrawModal()" class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
-                                <i class="fas fa-money-bill-wave mr-1"></i> Withdraw
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tabs -->
-            <div class="flex space-x-4">
-                <button onclick="showSection('profile')" class="tab-btn text-gray-700 hover:text-yellow-600">Profile</button>
-                <button onclick="showSection('following')" class="tab-btn text-gray-700 hover:text-yellow-600">Following</button>
-                <button onclick="showSection('follower')" class="tab-btn text-gray-700 hover:text-yellow-600">Follower</button>
-                <button onclick="showSection('premium')" class="tab-btn text-gray-700 hover:text-yellow-600">Premium Expiry</button>
-            </div>
-
-            <!-- Profile Section -->
-            <div id="section-profile" class="pt-6">
-                <form id="profile-form" action="UpdateUserProfileServlet" method="post" enctype="multipart/form-data">
-                    <!-- Full Name -->
-                    <div class="mb-4">
+    <!-- Tabs -->
+    <div class="flex space-x-2 px-10 pt-6 border-b border-yellow-200 bg-white">
+        <button onclick="showSection('profile')" class="tab-btn px-5 py-2 text-gray-700 font-semibold rounded-t-lg border-b-4 border-transparent hover:border-yellow-400 hover:text-yellow-600 transition">Profile</button>
+        <button onclick="showSection('following')" class="tab-btn px-5 py-2 text-gray-700 font-semibold rounded-t-lg border-b-4 border-transparent hover:border-yellow-400 hover:text-yellow-600 transition">Following</button>
+        <button onclick="showSection('follower')" class="tab-btn px-5 py-2 text-gray-700 font-semibold rounded-t-lg border-b-4 border-transparent hover:border-yellow-400 hover:text-yellow-600 transition">Follower</button>
+        <button onclick="showSection('premium')" class="tab-btn px-5 py-2 text-gray-700 font-semibold rounded-t-lg border-b-4 border-transparent hover:border-yellow-400 hover:text-yellow-600 transition">Premium</button>
+    </div>
+    <!-- Content -->
+    <div class="p-10 bg-white">
+        <!-- Profile Section -->
+        <div id="section-profile" class="space-y-8">
+            <form id="profile-form" action="UpdateUserProfileServlet" method="post" enctype="multipart/form-data" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
                         <label class="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
                         <div class="flex">
                             <input type="text" name="fullName" id="fullname" value="${user.fullName}"
-                                   class="flex-1 px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 focus:bg-white" readonly>
-                            <button type="button" onclick="enableEdit('fullname')" class="ml-2 px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
+                                   class="flex-1 px-4 py-2 border border-yellow-200 rounded-lg bg-gray-50 text-gray-700 focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition" readonly>
+                            <button type="button" onclick="enableEdit('fullname')" class="ml-2 px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 shadow transition">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </div>
                     </div>
-
-                    <!-- Email -->
-                    <div class="mb-4">
+                    <div>
                         <label class="block mb-1 text-sm font-medium text-gray-700">Email</label>
                         <div class="flex">
                             <input type="email" name="email" id="Email" value="${user.email}"
-                                   class="flex-1 px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 focus:bg-white" readonly>
-                            <button type="button" onclick="enableEdit('Email')" class="ml-2 px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
+                                   class="flex-1 px-4 py-2 border border-yellow-200 rounded-lg bg-gray-50 text-gray-700 focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition" readonly>
+                            <button type="button" onclick="enableEdit('Email')" class="ml-2 px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 shadow transition">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </div>
                     </div>
-
-                    <!-- Phone -->
-                    <div class="mb-4">
+                    <div>
                         <label class="block mb-1 text-sm font-medium text-gray-700">Phone</label>
                         <div class="flex">
                             <input type="tel" name="phone" id="phone" value="${user.phoneNumber}"
-                                   class="flex-1 px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 focus:bg-white" readonly>
-                            <button type="button" onclick="enableEdit('phone')" class="ml-2 px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
+                                   class="flex-1 px-4 py-2 border border-yellow-200 rounded-lg bg-gray-50 text-gray-700 focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition" readonly>
+                            <button type="button" onclick="enableEdit('phone')" class="ml-2 px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 shadow transition">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </div>
                     </div>
-
-                    <!-- Address -->
-                    <div class="mb-6">
+                    <div>
                         <label class="block mb-1 text-sm font-medium text-gray-700">Address</label>
                         <div class="flex">
                             <textarea name="address" id="address" rows="2"
-                                      class="flex-1 px-4 py-2 border rounded-lg bg-gray-100 text-gray-700 focus:bg-white" readonly>${user.address}</textarea>
-                            <button type="button" onclick="enableEdit('address')" class="ml-2 px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
+                                      class="flex-1 px-4 py-2 border border-yellow-200 rounded-lg bg-gray-50 text-gray-700 focus:bg-white focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition" readonly>${user.address}</textarea>
+                            <button type="button" onclick="enableEdit('address')" class="ml-2 px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 shadow transition">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </div>
                     </div>
-
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="openPasswordModal()" class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
-                            <i class="fas fa-key mr-2"></i> Change Password
-                        </button>
-                        <button type="submit" class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200">
-                            <i class="fas fa-save mr-2"></i> Save
-                        </button>
-                    </div>
-                </form>
-
+                </div>
+                <div class="flex justify-end space-x-3 mt-4">
+                    <button type="button" onclick="openPasswordModal()" class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 border border-yellow-300 shadow">
+                        <i class="fas fa-key mr-2"></i> Change Password
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 shadow font-semibold">
+                        <i class="fas fa-save mr-2"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!-- Following Section -->
+        <div id="section-following" class="hidden">
+            <div class="flex justify-end items-center mb-4">
+                <input type="text" id="search-following" placeholder="Search..." 
+                       class="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
             </div>
-
-            <!-- Following Section -->
-            <div id="section-following" class="hidden">
-                <!-- Search Bar -->
-                <div class="flex justify-end items-center mb-4">
-                    <input type="text" id="search-following" placeholder="Search..." 
-                           class="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-
-                <!-- Table -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm text-left border border-gray-200" id="followingTable">
-                        <thead class="bg-gray-100 text-gray-700 uppercase">
-                            <tr>
-                                <th class="px-4 py-2 border-b">Avatar</th>
-                                <th class="px-4 py-2 border-b">Username</th>
-                                <th class="px-4 py-2 border-b text-right">
-                                    <div class="pr-[29px]">Actions</div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-gray-800">
-                            <c:forEach var="user" items="${listfollowing}">
-                                <tr class="border-b hover:bg-gray-50 transition-none">
-                                    <!-- Avatar -->
-                                    <td class="px-4 py-2">
-                                        <a href="ListProductServlet?userId=${user.userId}">
-                                            <img src="${user.srcImg}" alt="avatar"
-                                                 class="w-10 h-10 rounded-full object-cover border border-gray-300 shadow-sm hover:scale-105 transition" />
-                                        </a>
-                                    </td>
-
-                                    <!-- Full Name -->
-                                    <td class="px-4 py-2">
-                                        <a href="ListProductServlet?userId=${user.userId}"
-                                           class="block text-[15px] font-medium text-black transform-none transition-none"
-                                           style="transform: none; transition: none;">
-                                            ${user.fullName}
-                                        </a>
-                                    </td>
-
-                                    <!-- Actions -->
-                                    <td class="px-4 py-2 pr-6 text-right">
-                                        <form method="post" action="UnFollowServlet">
-                                            <input type="hidden" name="followingId" value="${user.userId}" />
-                                            <button type="submit"
-                                                    class="inline-flex items-center gap-1 px-3 py-1 border border-red-500 text-red-600 hover:bg-red-50 hover:border-red-600 rounded-full transition duration-200 text-sm font-medium">
-                                                <span class="material-symbols-rounded text-base">person_remove</span>
-                                                Unfollow
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-
-                    </table>
-                    <div id="pagination-following" class="mt-6 flex justify-center"></div>
-                </div>
-
-            </div>
-
-            <!-- Follower Section -->
-            <div id="section-follower" class="hidden">
-                <!-- Search Bar -->
-                <div class="flex justify-end items-center mb-4">
-                    <input type="text" id="search-follower" placeholder="Search..." 
-                           class="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-
-                <!-- Table -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm text-left border border-gray-200" id="followerTable">
-                        <thead class="bg-gray-100 text-gray-700 uppercase">
-                            <tr>
-                                <th class="px-4 py-2 border-b">Avatar</th>
-                                <th class="px-4 py-2 border-b">Username</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-gray-800">
-                            <c:forEach var="user" items="${listfollower}">
-                                <tr class="border-b">
-                                    <td class="px-4 py-2">
-                                        <img src="${user.srcImg}" alt="avatar" class="w-10 h-10 rounded-full object-cover" />
-                                    </td>
-                                    <!-- Full Name -->
-                                    <td class="px-4 py-2 font-medium text-gray-900">
+            <div class="overflow-x-auto rounded-xl shadow">
+                <table class="min-w-full text-sm text-left border border-gray-200 bg-white rounded-xl overflow-hidden" id="followingTable">
+                    <thead class="bg-yellow-50 text-gray-700 uppercase">
+                        <tr>
+                            <th class="px-4 py-2 border-b">Avatar</th>
+                            <th class="px-4 py-2 border-b">Username</th>
+                            <th class="px-4 py-2 border-b text-right">
+                                <div class="pr-[29px]">Actions</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-800">
+                        <c:forEach var="user" items="${listfollowing}">
+                            <tr class="border-b hover:bg-yellow-50 transition">
+                                <td class="px-4 py-2">
+                                    <a href="ListProductServlet?userId=${user.userId}">
+                                        <img src="${user.srcImg}" alt="avatar"
+                                             class="w-10 h-10 rounded-full object-cover border border-yellow-200 shadow-sm hover:scale-105 transition" />
+                                    </a>
+                                </td>
+                                <td class="px-4 py-2">
+                                    <a href="ListProductServlet?userId=${user.userId}"
+                                       class="block text-[15px] font-medium text-black">
                                         ${user.fullName}
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                    <div id="pagination-follower" class="mt-6 flex justify-center"></div>
-                </div>
+                                    </a>
+                                </td>
+                                <td class="px-4 py-2 pr-6 text-right">
+                                    <form method="post" action="UnFollowServlet">
+                                        <input type="hidden" name="followingId" value="${user.userId}" />
+                                        <button type="submit"
+                                                class="inline-flex items-center gap-1 px-3 py-1 border border-red-400 text-red-600 hover:bg-red-50 hover:border-red-600 rounded-full transition duration-200 text-sm font-medium">
+                                            <span class="material-symbols-rounded text-base">person_remove</span>
+                                            Unfollow
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+                <div id="pagination-following" class="mt-6 flex justify-center"></div>
             </div>
-
-            <!-- Premium Section -->
-            <div id="section-premium" class="hidden">
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <h3 class="text-lg font-semibold text-yellow-700 mb-2">Your Premium Membership</h3>
+        </div>
+        <!-- Follower Section -->
+        <div id="section-follower" class="hidden">
+            <div class="flex justify-end items-center mb-4">
+                <input type="text" id="search-follower" placeholder="Search..." 
+                       class="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            </div>
+            <div class="overflow-x-auto rounded-xl shadow">
+                <table class="min-w-full text-sm text-left border border-gray-200 bg-white rounded-xl overflow-hidden" id="followerTable">
+                    <thead class="bg-yellow-50 text-gray-700 uppercase">
+                        <tr>
+                            <th class="px-4 py-2 border-b">Avatar</th>
+                            <th class="px-4 py-2 border-b">Username</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-800">
+                        <c:forEach var="user" items="${listfollower}">
+                            <tr class="border-b hover:bg-yellow-50 transition">
+                                <td class="px-4 py-2">
+                                    <img src="${user.srcImg}" alt="avatar" class="w-10 h-10 rounded-full object-cover border border-yellow-200" />
+                                </td>
+                                <td class="px-4 py-2 font-medium text-gray-900">
+                                    ${user.fullName}
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+                <div id="pagination-follower" class="mt-6 flex justify-center"></div>
+            </div>
+        </div>
+        <!-- Premium Section -->
+        <div id="section-premium" class="hidden">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-8 shadow flex items-center gap-6">
+                <i class="fas fa-crown text-yellow-400 text-4xl"></i>
+                <div>
+                    <h3 class="text-xl font-semibold text-yellow-700 mb-2">Your Premium Membership</h3>
                     <p class="text-gray-700">
                         Expiration Date:
                         <span class="font-semibold text-yellow-600">
@@ -242,28 +213,26 @@
             </div>
         </div>
     </div>
-
     <!-- Change Password Modal -->
     <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-xl p-6 w-full max-w-md">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">Change Password</h2>
-            <form id="change-password-form" action="ChangePasswordServlet" method="post">
-                <div class="mb-4">
+        <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-xl">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Change Password</h2>
+            <form id="change-password-form" action="ChangePasswordServlet" method="post" class="space-y-4">
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                    <input type="password" name="currentPassword" id="current-password" class="w-full px-4 py-2 border rounded" required>
+                    <input type="password" name="currentPassword" class="w-full px-4 py-2 border border-yellow-200 rounded-lg focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition" required>
                 </div>
-                <div class="mb-4">
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                    <input type="password" name="newPassword" id="new-password" class="w-full px-4 py-2 border rounded" required>
+                    <input type="password" name="newPassword" class="w-full px-4 py-2 border border-yellow-200 rounded-lg focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition" required>
                 </div>
-                <div class="mb-4">
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                    <input type="password" name="confirm-password" id="confirm-password" class="w-full px-4 py-2 border rounded" required>
+                    <input type="password" name="confirmPassword" class="w-full px-4 py-2 border border-yellow-200 rounded-lg focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition" required>
                 </div>
-                <div id="change-password-error" class="text-red-600 text-sm mb-3 hidden"></div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closePasswordModal()" class="px-4 py-2 border rounded hover:bg-gray-100">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Change</button>
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button" onclick="closePasswordModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 border border-gray-300">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 shadow font-semibold">Save</button>
                 </div>
             </form>
         </div>
@@ -296,6 +265,11 @@
 
     function closePasswordModal() {
         document.getElementById('password-modal').classList.add('hidden');
+    }
+
+    function openWithdrawModal() {
+        if (window.showWithdrawModal)
+            window.showWithdrawModal();
     }
 
     document.getElementById('avatar-input').addEventListener('change', function (e) {
