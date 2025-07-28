@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UsersServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -31,6 +32,10 @@ public class UsersServlet extends HttpServlet {
         // Lấy danh sách tất cả Customer đã có cuộc trò chuyện với user
         List<User> users = new UserDao().listAllCustomers(currentUser.getUserId());
 
+        String spID = new ConversationDAO().getSupporterInConversation(currentUser.getUserId());
+        users.removeIf(u -> (u.getUserId().equalsIgnoreCase(spID)));
+        req.setAttribute("supporterID", spID);
+
         req.setAttribute("cus", user);
         req.setAttribute("userList", users);
         req.getRequestDispatcher("JSP/Conversation/chat.jsp").forward(req, resp);
@@ -47,17 +52,15 @@ public class UsersServlet extends HttpServlet {
         }
         // Lấy Customer hiện tại
         User user = new UserDao().getUserById(currentUser.getUserId());
-        Conversation conver= new ConversationDAO().getConversation(currentUser.getUserId(), sellerId);
-        if(conver == null)
-        {
+        Conversation conver = new ConversationDAO().getConversation(currentUser.getUserId(), sellerId);
+        if (conver == null) {
             try {
                 conver = new ConversationDAO().createConversation(currentUser.getUserId(), sellerId, productId);
             } catch (SQLException ex) {
                 Logger.getLogger(UsersServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        if(!productId.equalsIgnoreCase(conver.getProductId()))
-        {
+        if (!productId.equalsIgnoreCase(conver.getProductId())) {
             new ConversationDAO().updateProductId(conver.getConversationId(), productId);
         }
         // Lấy danh sách user đã trò chuyện
@@ -69,13 +72,15 @@ public class UsersServlet extends HttpServlet {
             users.remove(c);
             users.add(0, c);
         }
-        for(User a:users)
-        {
+        for (User a : users) {
             System.out.println(a);
         }
+        String spID = new ConversationDAO().getSupporterInConversation(currentUser.getUserId());
+        users.removeIf(u -> (u.getUserId().equalsIgnoreCase(spID)));
         req.setAttribute("sellid", sellerId);
         req.setAttribute("cus", user);
         req.setAttribute("userList", users);
+        req.setAttribute("supporterID", spID);
         req.getRequestDispatcher("JSP/Conversation/chat.jsp").forward(req, resp);
     }
 }

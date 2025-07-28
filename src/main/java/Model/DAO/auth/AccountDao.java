@@ -39,23 +39,18 @@ public class AccountDao {
             if (rs.next()) {
                 String hashedPassword = rs.getString("password");
                 if (BCrypt.checkpw(password, hashedPassword)) {
-                    LocalDate regisDate = null;
-                    Date date = rs.getDate("regisDate");
-                    if (date != null) {
-                        regisDate = date.toLocalDate();
-                    }
+
+                    Date regisDate = rs.getDate("regisDate"); // ✅ Không cần chuyển sang LocalDate
 
                     return new Account(
                             rs.getString("acc_id"),
                             rs.getString("password"),
                             rs.getString("email"),
-                            regisDate,
+                            regisDate, // ✅ dùng Date
                             rs.getString("user_id"),
                             rs.getString("verification_token"),
                             rs.getBoolean("is_verified")
                     );
-                } else {
-                    return null;
                 }
             }
             return null;
@@ -78,7 +73,7 @@ public class AccountDao {
     }
 
     public boolean updateToken(String email, String token) {
-        String query = "UPDATE Account SET verification_token = ? WHERE email = ?";
+String query = "UPDATE Account SET verification_token = ? WHERE email = ?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, token);
             ps.setString(2, email);
@@ -121,72 +116,51 @@ public class AccountDao {
 
             stmt.setString(1, id); // acc_id
 
-            // Handle password
-            if (account.getPassword() != null) {
-                stmt.setString(2, account.getPassword());
+            // Password
+            stmt.setString(2, account.getPassword());
+
+            // Email
+            stmt.setString(3, account.getEmail());
+
+            // ✅ Handle regisDate: từ java.util.Date sang java.sql.Timestamp
+            java.util.Date utilDate = account.getRegisDate();
+            if (utilDate != null) {
+                stmt.setTimestamp(4, new java.sql.Timestamp(utilDate.getTime()));
             } else {
-                stmt.setNull(2, java.sql.Types.VARCHAR);
+                stmt.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
             }
 
-            // Handle email
-            if (account.getEmail() != null) {
-                stmt.setString(3, account.getEmail());
-            } else {
-                stmt.setNull(3, java.sql.Types.VARCHAR);
-            }
-
-            // Handle regisDate (dùng LocalDateTime và Timestamp)
-            LocalDateTime regisDateTime;
-            if (account.getRegisDate() != null) {
-                // Giả sử getRegisDate() trả về LocalDate, convert sang LocalDateTime
-                LocalDate regisDate = account.getRegisDate();
-                regisDateTime = regisDate.atStartOfDay(); // Mặc định là 0 giờ nếu chỉ có ngày
-            } else {
-                regisDateTime = LocalDateTime.now();
-            }
-
-            stmt.setTimestamp(4, java.sql.Timestamp.valueOf(regisDateTime));
-
-            // Handle userid
+            // userId
             stmt.setString(5, account.getUserId());
 
-            // Handle verification_token
-            if (account.getVerificationToken() != null) {
-                stmt.setString(6, account.getVerificationToken());
-            } else {
-                stmt.setNull(6, java.sql.Types.VARCHAR);
-            }
+            // verification_token
+            stmt.setString(6, account.getVerificationToken());
 
-            // Handle is_verified
-            stmt.setInt(7, account.isVerified() ? 1 : 0);
+            // is_verified
+            stmt.setBoolean(7, account.isVerified());
 
-            // Thực thi lệnh INSERT
             stmt.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("Lỗi tạo tài khoản mới: " + ex.getMessage());
-            id = null; // Trả về null nếu có lỗi
+            id = null;
         }
 
-        return id; // Trả về acc_id mới
+        return id;
     }
 
     public Account getAccountByEmail(String email) {
-        String query = "SELECT * FROM Account WHERE email = ?";
+String query = "SELECT * FROM Account WHERE email = ?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                LocalDate regisDate = null;
-                Date date = rs.getDate("regisDate");
-                if (date != null) {
-                    regisDate = date.toLocalDate();
-                }
+                Date regisDate = rs.getDate("regisDate"); // Không cần chuyển sang LocalDate
 
                 return new Account(
                         rs.getString("acc_id"),
                         rs.getString("password"),
                         rs.getString("email"),
-                        regisDate,
+                        regisDate, // truyền trực tiếp java.util.Date
                         rs.getString("user_id"),
                         rs.getString("verification_token"),
                         rs.getBoolean("is_verified"),
@@ -200,14 +174,23 @@ public class AccountDao {
         return null;
     }
 
-    public void updatePassword(String email, String newPassword) {
+    public boolean updatePassword(String email, String newPassword) {
         String query = "UPDATE Account SET password = ? WHERE email = ?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+
+            // Hash mật khẩu mới
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+            // Gán giá trị tham số
+            ps.setString(1, hashedPassword);
             ps.setString(2, email);
-            ps.executeUpdate();
+
+            // Thực thi truy vấn và kiểm tra xem có dòng nào bị ảnh hưởng không
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // Trả về true nếu có ít nhất một dòng được cập nhật
         } catch (SQLException e) {
-            System.out.println("Lỗi khi cập nhật mật khẩu: " + e);
+            System.out.println("Lỗi khi cập nhật mật khẩu: " + e.getMessage());
+            return false;
         }
     }
 
@@ -217,17 +200,13 @@ public class AccountDao {
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                LocalDate regisDate = null;
-                Date date = rs.getDate("regisDate");
-                if (date != null) {
-                    regisDate = date.toLocalDate();
-                }
+                Date regisDate = rs.getDate("regisDate"); // ✅ Không convert sang LocalDate
 
                 Account acc = new Account(
                         rs.getString("acc_id"),
                         null, // Password omitted for security reasons
                         rs.getString("email"),
-                        regisDate,
+                        regisDate, // ✅ truyền đúng kiểu java.util.Date
                         rs.getString("user_id"),
                         rs.getString("verification_token"),
                         rs.getBoolean("is_verified")
@@ -235,7 +214,7 @@ public class AccountDao {
                 list.add(acc);
             }
         } catch (SQLException e) {
-            System.out.println("Error retrieving accounts: " + e.getMessage());
+System.out.println("Error retrieving accounts: " + e.getMessage());
         }
         return list;
     }
@@ -270,16 +249,17 @@ public class AccountDao {
             ps.executeUpdate();
         }
     }
+
     public void updateOfflineAt(String userId) {
-    String sql = "UPDATE Account SET offline_at = ? WHERE user_id = ?";
-    try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
-        ps.setString(2, userId);
-        ps.executeUpdate();
-    } catch (SQLException e) {
-        System.out.println("Lỗi khi cập nhật offline_at: " + e.getMessage());
+        String sql = "UPDATE Account SET offline_at = ? WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setString(2, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật offline_at: " + e.getMessage());
+        }
     }
-}
 
     public String getUserId(String email) {
         String sql = "SELECT user_id FROM account WHERE email = ?";
@@ -301,7 +281,7 @@ public class AccountDao {
 
     public Boolean checkIsAdmin(String user_id) {
         String sql = "SELECT role FROM users WHERE user_id = ?";
-        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, user_id);
             ResultSet rs = ps.executeQuery();
@@ -373,6 +353,23 @@ public class AccountDao {
             e.printStackTrace();
             return null; // Lỗi DB
         }
+    }
+
+    public String getPasswordById(String user_id) {
+        String password = null;
+        String sql = "SELECT password FROM Account WHERE user_id = ?";
+try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user_id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                password = rs.getString("password");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return password;
     }
 
     public static void main(String[] args) {

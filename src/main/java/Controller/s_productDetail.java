@@ -7,6 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import Model.DAO.auth.UserDao;
+import Model.entity.auth.User;
 
 public class s_productDetail extends HttpServlet {
 
@@ -14,13 +16,22 @@ public class s_productDetail extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String id = request.getParameter("productId");
-        if(id==null)
-        {
-            id=(String) request.getAttribute("productId");
+        if (id == null) {
+            id = (String) request.getAttribute("productId");
         }
         Product p = null;
         p = new ProductDao().getProductById(id);
+        if (p != null) {
+            User user = new UserDao().getUserById(p.getUserId());
+            p.setUser(user);
+        }
         request.getSession().setAttribute("product", p);
+
+        // Gọi servlet s_Feedback để lấy feedback
+        request.setAttribute("productId", id);
+        request.getRequestDispatcher("/s_Feedback").include(request, response);
+
+        // Forward trực tiếp sau khi include
         request.getRequestDispatcher("JSP/Home/productDetail.jsp").forward(request, response);
     }
 
@@ -28,14 +39,21 @@ public class s_productDetail extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String id = request.getParameter("productId");
-        if(id==null)
-        {
-            id=(String) request.getAttribute("productId");
+        if (id == null) {
+            id = (String) request.getAttribute("productId");
         }
         Product p = null;
         p = new ProductDao().getProductById(id);
+        if (p != null) {
+            User user = new UserDao().getUserById(p.getUserId());
+            p.setUser(user);
+        }
         request.getSession().setAttribute("product", p);
+
+        // Gọi servlet s_Feedback để lấy feedback
+        request.setAttribute("productId", id);
+        request.getRequestDispatcher("/s_Feedback").include(request, response);
+
         request.getRequestDispatcher("JSP/Home/productDetail.jsp").forward(request, response);
     }
-
 }

@@ -20,6 +20,7 @@ public class Product {
     private Date updatedAt;
     private String state;
     private int quantity;
+    private int cQuantity;
     private List<ProductImage> images;
     private User user;
 
@@ -34,6 +35,26 @@ public class Product {
     public Product() {
     }
 
+    public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, String moderationStatus, boolean isPriority, Date createdAt, Date updatedAt, String state, int quantity, int cQuantity, List<ProductImage> images, User user) {
+        this.productId = productId;
+        this.userId = userId;
+        this.categoryId = categoryId;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.location = location;
+        this.status = status;
+        this.moderationStatus = moderationStatus;
+        this.isPriority = isPriority;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.state = state;
+        this.quantity = quantity;
+        this.cQuantity = cQuantity;
+        this.images = images;
+        this.user = user;
+    }
+    
     public Product(String productId, String userId, Integer categoryId, String title, String description, int price, String location, String status, String moderationStatus, boolean isPriority, Date createdAt, Date updatedAt, List<ProductImage> images) {
         this.productId = productId;
         this.userId = userId;
@@ -101,6 +122,16 @@ public class Product {
         this.images = images;
     }
 
+    public int getcQuantity() {
+        return cQuantity;
+    }
+
+    public void setcQuantity(int cQuantity) {
+        this.cQuantity = cQuantity;
+    }
+
+    
+    
     public String getProductId() {
         return productId;
     }

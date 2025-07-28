@@ -1,6 +1,7 @@
 package Controller.Paid;
 
 import Model.DAO.auth.UserDao;
+import Model.DAO.post.CategoryDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -14,6 +15,7 @@ public class Premium extends HttpServlet {
             throws ServletException, IOException {
         String user_id = request.getParameter("user_id");
         request.getSession().setAttribute("cus", new UserDao().getUserById(user_id));
+        request.setAttribute("categoryList", new CategoryDAO().getAllCategories());
         request.getRequestDispatcher("/JSP/Premium/PremiumService.jsp").forward(request, response);
     }
 

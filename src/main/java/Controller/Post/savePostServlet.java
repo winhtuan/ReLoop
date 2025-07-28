@@ -34,9 +34,9 @@ public class savePostServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json"); // Đặt content type là JSON
         response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession();
         Account acc = (Account) session.getAttribute("user");
@@ -96,7 +96,17 @@ public class savePostServlet extends HttpServlet {
         product.setDescription((String) data.get("productDescription"));
         product.setLocation((String) data.get("productLocation"));
         product.setState((String) data.get("productState"));
-        product.setStatus("active");
+        // Set status based on moderation_status
+        String moderationStatus = null;
+        if (data.containsKey("moderation_status")) {
+            moderationStatus = (String) data.get("moderation_status");
+        } else if (request.getParameter("moderation_status") != null) {
+            moderationStatus = request.getParameter("moderation_status");
+        }
+        if (moderationStatus == null) {
+            moderationStatus = "pending";
+        }
+        System.out.println(moderationStatus);
         product.setIsPriority(false);
 
         List<ProductAttributeValue> attributeValues = new ArrayList<>();
@@ -135,7 +145,7 @@ public class savePostServlet extends HttpServlet {
         }
 
         try {
-            String productId = productDAO.saveProduct(product, attributeValues, images);
+            String productId = productDAO.saveProduct(product, attributeValues, images, moderationStatus);
             LOGGER.info("Product saved with ID: " + productId);
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("{\"success\":true,\"message\":\"Ad posted successfully\",\"productId\":\"" + productId + "\"}");
@@ -145,5 +155,5 @@ public class savePostServlet extends HttpServlet {
             response.getWriter().write("{\"success\":false,\"message\":\"Failed to save product: " + e.getMessage() + "\"}");
         }
     }
-    
+
 }

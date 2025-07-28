@@ -192,3 +192,12 @@ INSERT INTO product_images (img_id, product_id, image_url, is_primary) VALUES
 (91, 'PRD0091', 'https://cdn.chotot.com/5z4vBDFVV-An2x5nEt31C6GBbDcdYv1YPfaWFKwBe0k/preset:listing/plain/ee906645141388c97e267ded879acadf-2935218872512084396.jpg', 1),
 (92, 'PRD0092', 'https://cdn.chotot.com/ZJeA_Im5bN4BRFLHeEelvw9-Nt-hBo7wEV-5t_isMOI/preset:listing/plain/7361119749a7f8d1f4cada0e11c556f3-2934953585880782823.jpg', 1),
 (93, 'PRD0093', 'https://cdn.chotot.com/u9JWJfweGkiOAqrx75zqH4imGuyUHvuTJ-jSmWylMQM/preset:listing/plain/c92e664a68d316eaeca0636fa58698a7-2935212509139521063.jpg', 1);
+
+INSERT INTO WithdrawalRequest (user_id, amount, bank_code, account_number, account_name, add_info, status)
+VALUES
+('CUS0001', 500000, 'vietinbank', '113366668888', 'John Smitch', 'Withdraw for hosting fee', 'PENDING'),
+('CUS0002', 750000, 'vcb', '112233445566', 'John Doe', 'Payment for project', 'APPROVED'),
+('CUS0003', 1000000, 'acb', '556677889900', 'Alice Johnson', 'Refund request', 'REJECTED'),
+('CUS0005', 1200000, 'tcb', '998877665544', 'Emma Brown', 'Monthly withdrawal', 'PENDING'),
+('CUS0008', 300000, 'mbbank', '887766554433', 'Mason Martinez', 'Freelance payment', 'APPROVED'),
+('CUS0011', 150000, 'bidv', '223344556677', 'Isabella Lee', 'Support service withdrawal', 'PENDING');

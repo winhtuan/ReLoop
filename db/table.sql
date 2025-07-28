@@ -155,9 +155,27 @@ CREATE TABLE orders (
 );
 alter table orders add column shipfee int;
 ALTER TABLE orders
-MODIFY COLUMN status ENUM('pending', 'paid', 'shipping', 'delivered', 'cancelled', 'refunded');
+MODIFY COLUMN status ENUM('pending', 'paid', 'shipping', 'delivered', 'cancelled', 'refunded', 'received');
 
 CREATE INDEX idx_orders_user_id ON orders(user_id);
+
+SELECT o.*, u.FullName
+FROM orders o
+JOIN users u ON o.user_id = u.user_id
+WHERE o.status = 'received';
+
+UPDATE orders
+SET status = 'pending'
+WHERE status = 'received';
+
+UPDATE feedback
+SET rating = 4
+WHERE feedback_id = 'FDB0002';
+
+select * from feedback;
+select * from orders;
+select * from order_items;
+select * from product;
 
 -- 13. conversation
 CREATE TABLE conversation (
@@ -319,3 +337,32 @@ CREATE TABLE product_images_sequence (
     last_number INT
 );
 
+CREATE TABLE feedback (
+    feedback_id CHAR(7) NOT NULL PRIMARY KEY CHECK (feedback_id LIKE 'FDB____'),
+    order_id CHAR(7) NOT NULL,
+    user_id CHAR(7) NOT NULL,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_feedback_order FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    CONSTRAINT FK_feedback_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_feedback_order_id ON feedback(order_id);
+CREATE INDEX idx_feedback_user_id ON feedback(user_id);
+
+CREATE TABLE WithdrawalRequest (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id CHAR(7) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    bank_code VARCHAR(50) NOT NULL,
+    account_number VARCHAR(50) NOT NULL,
+    account_name VARCHAR(100) NOT NULL,
+    add_info VARCHAR(255),
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES Users(user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);

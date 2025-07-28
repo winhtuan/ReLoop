@@ -5,6 +5,7 @@
 package Controller.Admin;
 
 import Model.DAO.admin.AdminPostDAO;
+import Model.entity.auth.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -34,7 +36,7 @@ public class StatictisServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             AdminPostDAO dao = new AdminPostDAO();
-
+            
             int totalUsers = dao.getTotalUsers();
             int totalProducts = dao.getTotalProducts();
             int todayProducts = dao.getTodayTotalProducts();
@@ -43,9 +45,17 @@ public class StatictisServlet extends HttpServlet {
             request.setAttribute("totalUsers", totalUsers);
             request.setAttribute("totalProducts", totalProducts);
             request.setAttribute("todayProducts", todayProducts);
-
-            // Forward tới dashboard.jsp
-            request.getRequestDispatcher("/JSP/Admin/dashboard.jsp").forward(request, response);
+            HttpSession session = request.getSession(false);
+            if(session != null){
+                User user = (User) session.getAttribute("cus");
+                if(user.getFullName() != null && user.getPhoneNumber() != null && user.getAddress() != null){
+                    request.getRequestDispatcher("/JSP/Admin/dashboard.jsp").forward(request, response);
+                }else{
+                    request.getRequestDispatcher("s_userProfile").forward(request, response);
+                }
+            }else{
+                request.getRequestDispatcher("/JSP/Admin/JoinIn.jsp").forward(request, response);
+            }        
         }
     }
 

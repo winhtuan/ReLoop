@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,30 +12,36 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
         <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        html, body { height: 100%; margin: 0; padding: 0; }
-        body { display: flex; flex-direction: row; }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 100vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            background-color: #fff;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-        .sidebar-nav { flex-grow: 1; }
-        main, .content-wrapper {
-            margin-left: 260px;
-            width: calc(100% - 260px);
-            padding: 1rem;
-            flex-grow: 1;
-        }
-    </style>
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                margin: 7px;
+                padding: 0;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 2px solid #ccc;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s ease;
+            }
+
+            .user-avatar:hover {
+                transform: scale(1.05);
+                border-color: #007bff;
+            }
+
+            .role-badge {
+                display: inline-block;
+                font-size: 12px;
+                font-weight: 600;
+                color: #856404;
+                background-color: #fff3cd;
+                border: 1px solid #ffeeba;
+                padding: 2px 8px;
+                border-radius: 20px;
+                margin-top: 4px;
+                width: fit-content;
+            }
+        </style>
     </head>
 
     <body>
@@ -57,6 +64,27 @@
             <nav class="sidebar-nav">
                 <!-- Primary Top Nav -->
                 <ul class="nav-list primary-nav">
+                    <li class="nav-item">
+                        <c:if test="${not empty cus}">                           
+                            <a href="s_userProfile" class="nav-link user-info-link" style="margin: 0;padding: 0;">
+                                <img src="${cus.srcImg}" alt="Avatar" class="user-avatar rounded-circle">
+                                <div class="user-info-text">
+                                    <span class="nav-label font-semibold">${cus.fullName}</span><br>
+                                    <span class="nav-label role-badge">
+                                        <c:choose>
+                                            <c:when test="${cus.role == 'admin'}">Admin</c:when>                                           
+                                        </c:choose>
+                                    </span>
+                                </div>
+                            </a>
+                        </c:if>
+                        <ul class="dropdown-menu">
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-title">Profile</a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
                         <a href="${pageContext.request.contextPath}/StatictisServlet" class="nav-link">
                             <span class="material-symbols-rounded">dashboard</span>
@@ -105,7 +133,9 @@
                             <li class="nav-item">
                                 <a class="nav-link dropdown-title">Post</a>
                             </li>
-
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/PostServlet" class="nav-link dropdown-link">Post</a>
+                            </li>
                             <li class="nav-item">
                                 <a href="${pageContext.request.contextPath}/ApprovalPost" class="nav-link dropdown-link">Approval Post</a>
                             </li>
@@ -117,7 +147,27 @@
                             </li>
                         </ul>
                     </li>
-
+                    
+                    <li class="nav-item dropdown-container">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <span class="material-symbols-outlined">wallet</span>
+                            <span class="nav-label">Money</span>
+                            <span class="dropdown-icon material-symbols-rounded">keyboard_arrow_down</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-title">Revenue</a>
+                            </li>
+                            <li class="nav-item">
+                                <!--<a href="${pageContext.request.contextPath}/" class="nav-link dropdown-link">Total Revenue</a>-->
+                                <a href="#" class="nav-link dropdown-link">Total Revenue</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="${pageContext.request.contextPath}/WithdrawServlet" class="nav-link dropdown-link">Withdrawal Request</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
                     <li class="nav-item dropdown-container">
                         <a href="#" class="nav-link dropdown-toggle">
                             <span class="material-symbols-outlined">report</span>
@@ -129,10 +179,10 @@
                                 <a class="nav-link dropdown-title">Report</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link dropdown-link">Product Reports</a>
+                                <a href="${pageContext.request.contextPath}/ProductReportPost" class="nav-link dropdown-link">Product Reports</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link dropdown-link">Handle Reports</a>
+                                <a href="${pageContext.request.contextPath}/HandleReportPost" class="nav-link dropdown-link">Handle Reports</a>
                             </li>
                         </ul>
                     </li>
@@ -168,4 +218,4 @@
     </body>
 
     <script src="${pageContext.request.contextPath}/js/sidebar.js"></script>
-    </html>
+</html>

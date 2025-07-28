@@ -443,7 +443,9 @@
         <script src="js/lib_js/plugins.js"></script>
         <!-- js -->
         <script src="js/active.js"></script>
+
         <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
+
         <!-- Ion Icons -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -593,6 +595,7 @@
                                             }
                                         });
         </script>
+
         <!<!-- category -->
         <script src="js/dropdown-handler.js"></script>
     </body>
