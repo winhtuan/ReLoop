@@ -200,7 +200,15 @@ public class LoginServlet extends HttpServlet {
                         request.getSession().setAttribute("user", acc);
                         request.getRequestDispatcher("StatictisServlet").forward(request, response);
                         return;
-                    } else if (isuser || isshopkeeper) {
+                   } else if(issuportier){
+                        request.getSession().setAttribute("cus", user);
+                        request.getSession().setAttribute("user", acc);
+                        request.getRequestDispatcher("SupporterServlet").forward(request, response);
+                        return;
+                    }
+                    else if (isuser || isshopkeeper) {
+                        request.getSession().setAttribute("cus", user);
+                        request.getSession().setAttribute("user", acc);
                         int cartN = new CartDAO().getTotalQuantityByUserId(acc.getUserId());
                         request.getSession().setAttribute("cartN", cartN);
                         redirectUser(request, response);

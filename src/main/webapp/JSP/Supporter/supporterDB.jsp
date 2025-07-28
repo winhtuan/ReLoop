@@ -104,12 +104,12 @@
 <body>
 
     <!-- Sidebar nếu có -->
-    <%--<c:import url="sidebar.jsp" />--%>
+    <jsp:include page="sidebarS.jsp"/>
 
     <main class="flex-1">
         <!-- Header -->
         <div class="header">
-            <h1>Post Table Manager</h1>
+            <h1>Supporter DashBoard</h1>
         </div>
 
         <!-- Stats Cards -->
