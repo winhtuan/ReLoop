@@ -739,7 +739,7 @@ body, .main-content-wrapper {
 }
 
 /* --- Empty Cart --- */
-.empty-cart {
+/*.empty-cart {
   text-align: center;
   background: var(--main-white);
   padding: 60px 40px;
@@ -773,4 +773,4 @@ body, .main-content-wrapper {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-}
+}*/

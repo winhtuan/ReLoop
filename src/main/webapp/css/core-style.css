@@ -2153,4 +2153,29 @@ img {
         flex: 0 0 100%; /* 1 mục trên mỗi hàng ở màn hình nhỏ */
     }
 }
+
+/* Ghi đè layout form đăng bài nằm sát phải, không còn khoảng trắng */
+.main-content-wrapper {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+}
+.main-content-wrapper .single-product-area {
+  margin-top: 20px !important;
+}
+.main-content-wrapper .single-product-area {
+  position: relative !important;
+  flex: 1 1 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+.main-content-wrapper .single-product-area > div {
+  width: 100%;
+  max-width: 900px;
+}
 /* ##### The End ##### */

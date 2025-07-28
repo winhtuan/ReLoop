@@ -29,7 +29,10 @@ public class chat {
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
         HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
-        Account account = (Account) httpSession.getAttribute("user");
+        Account account = null;
+        if (httpSession != null) {
+            account = (Account) httpSession.getAttribute("user");
+        }
         if (account != null) {
             String userId = account.getUserId();
             User user = new UserDao().getUserById(userId);
@@ -49,6 +52,15 @@ public class chat {
                     .build();
 
             session.getAsyncRemote().sendText(unreadNotice.toString());
+        } else {
+            // Gửi thông báo lỗi về client và không đóng kết nối ngay
+            JsonObject errorMsg = Json.createObjectBuilder()
+                    .add("type", "error")
+                    .add("message", "Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại để sử dụng chat.")
+                    .build();
+            session.getAsyncRemote().sendText(errorMsg.toString());
+            // Nếu muốn đóng luôn kết nối, bỏ comment dòng sau:
+            // try { session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "User logged out")); } catch (Exception e) { e.printStackTrace(); }
         }
     }
 
@@ -145,17 +157,17 @@ public class chat {
                     String messageId = json.getString("messageId");
                     MessageDAO.recallMessage(messageId, fromUserId);
 
-                    JsonObject recallNotify = Json.createObjectBuilder()
-                            .add("type", "recall")
-                            .add("messageId", messageId)
-                            .add("fromUserId", fromUserId)
-                            .add("toUserId", toUserId)
-                            .add("sentAt", LocalDateTime.now().toString())
-                            .build();
+                        JsonObject recallNotify = Json.createObjectBuilder()
+                                .add("type", "recall")
+                                .add("messageId", messageId)
+                                .add("fromUserId", fromUserId)
+                                .add("toUserId", toUserId)
+                                .add("sentAt", LocalDateTime.now().toString())
+                                .build();
 
-                    sendToBoth(fromUserId, toUserId, recallNotify);
+                        sendToBoth(fromUserId, toUserId, recallNotify);
                     break;
-                }
+                    }
                 case "block": {
                     String blockedId = json.getString("blockedId");
                     new blockDAO().blockUser(fromUserId, blockedId);

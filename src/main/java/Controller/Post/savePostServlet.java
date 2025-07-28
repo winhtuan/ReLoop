@@ -18,18 +18,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Hong Quan
- */
 @WebServlet(name = "savePostServlet", urlPatterns = {"/savePostServlet"})
 public class savePostServlet extends HttpServlet {
 
@@ -37,61 +31,12 @@ public class savePostServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(savePostServlet.class.getName());
     private final ProductDao productDAO = new ProductDao();
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet savePostServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet savePostServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json"); // Đặt content type là JSON
         response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession();
         Account acc = (Account) session.getAttribute("user");
@@ -151,7 +96,17 @@ public class savePostServlet extends HttpServlet {
         product.setDescription((String) data.get("productDescription"));
         product.setLocation((String) data.get("productLocation"));
         product.setState((String) data.get("productState"));
-        product.setStatus("active");
+        // Set status based on moderation_status
+        String moderationStatus = null;
+        if (data.containsKey("moderation_status")) {
+            moderationStatus = (String) data.get("moderation_status");
+        } else if (request.getParameter("moderation_status") != null) {
+            moderationStatus = request.getParameter("moderation_status");
+        }
+        if (moderationStatus == null) {
+            moderationStatus = "pending";
+        }
+        System.out.println(moderationStatus);
         product.setIsPriority(false);
 
         List<ProductAttributeValue> attributeValues = new ArrayList<>();
@@ -190,7 +145,7 @@ public class savePostServlet extends HttpServlet {
         }
 
         try {
-            String productId = productDAO.saveProduct(product, attributeValues, images);
+            String productId = productDAO.saveProduct(product, attributeValues, images, moderationStatus);
             LOGGER.info("Product saved with ID: " + productId);
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("{\"success\":true,\"message\":\"Ad posted successfully\",\"productId\":\"" + productId + "\"}");
@@ -200,15 +155,5 @@ public class savePostServlet extends HttpServlet {
             response.getWriter().write("{\"success\":false,\"message\":\"Failed to save product: " + e.getMessage() + "\"}");
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

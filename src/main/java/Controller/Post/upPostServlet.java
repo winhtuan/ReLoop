@@ -55,12 +55,13 @@ public class upPostServlet extends HttpServlet {
         System.out.println("CategoryStateOptions from DAO raw: " + (categoryStateOptions != null ? categoryStateOptions : "null"));
         String categoryStateOptionsJson = gson.toJson(categoryStateOptions != null ? categoryStateOptions : new HashMap<>());
         System.out.println("Serialized categoryStateOptionsJson: " + categoryStateOptionsJson); // Debug JSON output
-
+        
+        request.setAttribute("categoryList", new CategoryDAO().getAllCategories());
         // Đẩy lên JSP
         request.setAttribute("categoriesJson", categoriesJson);
         request.setAttribute("categoryAttributesJson", categoryAttributesJson);
         request.setAttribute("categoryStateOptionsJson", categoryStateOptionsJson);
-        request.getRequestDispatcher("/JSP/Home/createPost.jsp").forward(request, response);
+        request.getRequestDispatcher("/JSP/UpPost/UpPostPage.jsp").forward(request, response);
     }
 
     @Override

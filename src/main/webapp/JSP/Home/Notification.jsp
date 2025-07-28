@@ -43,5 +43,7 @@
 <!-- Toast Notification Modal -->
 <div id="toastNotification" class="toast-notification">
     <span id="toastMessage"></span>
-    
+
+    <button class="toast-close" onclick="hideToast()"></button>
+
 </div>

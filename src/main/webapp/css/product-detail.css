@@ -76,9 +76,13 @@
 .seller-name-hz {
     font-weight: 700;
     color: #222;
+    font-size: 18px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 160px;
+    vertical-align: middle;
 }
 
 .seller-rating-hz {
@@ -263,8 +267,9 @@
 }
 .cart-buy-group .amado-btn-custom {
     margin-right: 0;
-    min-width: 170px;
-    font-size: 17px;
+    width: 50%;
+    flex: 1;
+    font-size: 15px;
     padding: 16px 0;
 }
 @media (max-width: 600px) {
@@ -274,8 +279,8 @@
     }
     .cart-buy-group .amado-btn-custom {
         width: 100%;
-        min-width: unset;
-        font-size: 15px;
+        flex: unset;
+        font-size: 14px;
     }
 }
 

@@ -21,9 +21,11 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
 import Model.DAO.auth.UserDao;
+import Model.DAO.conversation.ConversationDAO;
 import Utils.AppConfig;
 import Utils.DBUtils;
 import java.time.LocalDate;
+import java.util.Date;
 
 public class RegisterServlet extends HttpServlet {
 
@@ -81,7 +83,7 @@ public class RegisterServlet extends HttpServlet {
                     accId,
                     hashedPassword,
                     email,
-                    LocalDate.now(),
+                    new Date(),
                     String.valueOf(user_id),
                     token,
                     false
@@ -90,6 +92,8 @@ public class RegisterServlet extends HttpServlet {
             // Insert Account
             String newAccId = new AccountDao().newAccount(account);
             if (newAccId != null) {
+                ConversationDAO condao=new ConversationDAO();
+               condao.createConversation(user_id,condao.getLeastBusySupporterId(),"PRD0003");
                 boolean emailSent = sendConfirmationEmail(email, token);
                 if (emailSent) {
                     printSuccess(out, "Registration Successful!", "Please check your email (" + email + ") to verify your account.", "/ReLoop/home");

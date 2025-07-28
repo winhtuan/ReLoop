@@ -2,6 +2,7 @@ package Controller;
 
 import Model.DAO.auth.UserDao;
 import Model.DAO.commerce.OrderDao;
+import Model.DAO.pay.voucherDAO;
 import Model.entity.auth.Account;
 import Model.entity.auth.User;
 import Model.entity.commerce.Order;
@@ -60,10 +61,13 @@ public class s_cartBuy extends HttpServlet {
         OrderService orderService = new OrderService();
         Map<String, Integer> productQuantities = orderService.parseProductQuantities(request, productIds);
         Map<String, List<OrderItem>> bySeller = orderService.groupItemsBySeller(productIds, productQuantities);
-        
+
         String currentMaxOrderId = new OrderDao().generateOrderId(); // e.g. ORD0020
         List<Order> pendingOrders = orderService.createPendingOrders(bySeller, currentMaxOrderId);
         List<Voucher> allVouchers = new OrderDao().getAllVoucher();
+        List<Voucher> userVouchers = new voucherDAO().getVouchersByUser(buyerId);
+        request.getSession().setAttribute("userVouchers", userVouchers);
+
         // Save pendingOrders & buyer to session
         request.getSession().setAttribute("goongapi", new AppConfig().get("map.apikey"));
         request.getSession().setAttribute("pendingOrders", pendingOrders);

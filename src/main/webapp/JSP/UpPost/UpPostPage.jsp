@@ -1,60 +1,38 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
         <title>Create Post</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/createPost.css">
+        <link rel="icon" href="img/core-img/favicon.ico">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/core-style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jsp_css/loader.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/avatar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
     </head>
     <body>
-        <div class="post-container">
-            <h2 class="section-title">Products Images and Videos</h2>
-            <p class="section-sub">
-                More About <a href="#" style="color:#007bff;">ReLoop's posting rules</a>
-            </p>
 
-            <form action="${pageContext.request.contextPath}/savePostServlet" method="post" enctype="multipart/form-data" id="postForm">
-                <!-- Container flex cho upload và dropdown -->
-                <div class="upload-and-category">
-                    <!-- Upload ảnh và preview -->
-                    <div class="image-upload-container">
-                        <label for="productImages" class="image-upload">
-                            <input type="file" name="productImages" id="productImages" accept="image/*" multiple>
-                            <span>Image must be at least 240x240 in size</span>
-                        </label>
-                        <div id="imagePreview" class="image-preview"></div>
-                        <label for="productImages" class="upload-add" id="uploadAdd" style="display: none;">+</label>
-                    </div>
+        <!-- Page Preloder -->
+        <div id="preloader">
+            <div class="loader"></div>
+        </div>
 
-                    <!-- Container cho danh mục và form fields -->
-                    <div class="category-and-fields">
-                        <div class="custom-dropdown" id="categoryDropdown">
-                            <div class="dropdown-selected" id="dropdownSelected">Choose</div>
-                        </div>
-                        <div id="formFields" class="hidden"></div>
-                    </div>
-                </div>
-                <input type="hidden" name="categoryId" id="categoryInput">
-            </form>
+        <c:import url="/JSP/Home/Search.jsp" />
 
-            <!-- Modal cho menu danh mục -->
-            <div id="categoryModal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button id="backButton" class="hidden">←</button>
-                        <button id="closeButton">×</button>
-                    </div>
-                    <ul id="categoryList" class="category-list"></ul>
-                </div>
+        <!-- ##### Main Content Wrapper Start ##### -->
+        <div class="main-content-wrapper d-flex clearfix" style="display: flex; flex-direction: row; align-items: flex-start; width: 100vw;">
+            <c:import url="/JSP/Home/Nav.jsp" />
+            <div class="single-product-area section-padding-100-0">
+                <c:import url="/JSP/UpPost/createPost.jsp" />
             </div>
         </div>
 
         <script>
             // Truyền contextPath qua JavaScript
             window.contextPath = "${pageContext.request.contextPath}";
-            console.log("Raw categoriesJson:", '${categoriesJson}');
-            console.log("Raw categoryAttributesJson:", '${categoryAttributesJson}');
-            console.log("Raw categoryStateOptionsJson:", '${categoryStateOptionsJson}');
 
             try {
                 window.categoryTree = JSON.parse('${categoriesJson}' || '{}');
@@ -66,10 +44,6 @@
                 window.categoryAttributes = {};
                 window.categoryStateOptions = {};
             }
-
-            console.log("Parsed window.categoryTree:", window.categoryTree);
-            console.log("Parsed window.categoryAttributes:", window.categoryAttributes);
-            console.log("Parsed window.categoryStateOptions:", window.categoryStateOptions);
             if (Object.keys(window.categoryTree).length === 0) {
                 console.error("No category tree loaded!");
             }
@@ -81,9 +55,21 @@
             }
         </script>
         <script src="${pageContext.request.contextPath}/js/categorySelect.js"></script>
+        <script src="${pageContext.request.contextPath}/js/dropdown-handler.js"></script>
+        <script src="${pageContext.request.contextPath}/js/notification.js"></script>
+        <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
+        <script src="${pageContext.request.contextPath}/js/googleVision.js"></script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
+        <script>
+            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
+            window.addEventListener("load", function () {
+                const preloader = document.getElementById("preloader");
+                preloader.style.opacity = "0";
+                preloader.style.pointerEvents = "none";
+                setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
+            });
+        </script>
         <script>
             // Thêm preview ảnh và xử lý upload
             document.getElementById('productImages').addEventListener('change', function (e) {
@@ -136,7 +122,7 @@
                                 // Cập nhật input file
                                 const dt = new DataTransfer();
                                 const input = document.getElementById('productImages');
-                                const { files } = input;
+                                const {files} = input;
                                 for (let i = 0; i < files.length; i++) {
                                     const file = files[i];
                                     if (!imgContainer.contains(img)) {

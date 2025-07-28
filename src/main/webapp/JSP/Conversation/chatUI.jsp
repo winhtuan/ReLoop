@@ -32,7 +32,7 @@
                         </div>
                         <div class="chat-list">
                             <ul id="userList">
-                                <li data-user-id="CUS0003" onclick="selectChatUser('CUS0003', 'Supporter')">
+                                <li data-user-id="CUS0003" onclick="selectChatUser('${supporterID}', 'Supporter')">
                                     <img src="${pageContext.request.contextPath}/img/message-img/customer-support.png" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fbb710; margin-right: 5px;"/>
                                     <div>
                                         <strong>Supporter</strong><br>
@@ -77,7 +77,7 @@
                                 </div>
                             </div>
                             <div id="chat-header-product" class="chat-header-product" style="display: none;">
-                                <a href="#"><img id="chat-product-image" class="chat-header-product-img" /></a>
+                                <a href="#" id="linktoproduct"><img id="chat-product-image" class="chat-header-product-img" /></a>
                                 <div class="chat-header-product-info">
                                     <strong id="chat-product-title"></strong>
                                     <span id="chat-product-price"></span>
@@ -90,9 +90,10 @@
                         </div>
 
                         <div class="inputBox chat-input-wrap" style="position: relative; display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                            <label class="chat-btn" id="emojiBtn" style="cursor: pointer; font-size: 20px;">
+                            <button type="button" id="emojiBtn" class="chat-btn" style="cursor: pointer; font-size: 20px; background: none; border: none;">
                                 <ion-icon name="happy-outline"></ion-icon>
-                            </label>
+                            </button>
+                            
                             <div id="emojiPicker" style="position: absolute; bottom: 60px; left: 0; display: none; z-index: 1000;"></div>
 
                             <label id="imageUploadLabel" class="chat-btn" for="imageUpload" style="cursor: pointer; font-size: 20px;">
@@ -117,6 +118,7 @@
         const currentUsername = "${cus.fullName}";
         let currentChatUserId = null;
         let currentChatUserName = null;
+        const supporterID = "${requestScope.supporterID}";
 
         const contextPathI = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
 
@@ -136,7 +138,7 @@
             }
             if (msg.type === "block_status") {
                 const messageInput = document.getElementById("messageInput");
-                const sendBtn = document.querySelector(".inputBox button");
+                const sendBtn = document.querySelector(".chat-btn-send");
                 const blockBtn = document.getElementById("blockBtn");
                 const unblockBtn = document.getElementById("unblockBtn");
                 const blockNotice = document.getElementById("blockNotice");
@@ -157,7 +159,7 @@
                         unblockBtn.style.display = "inline-block";
                     else
                         unblockBtn.style.display = "none";
-                    blockNotice.textContent = msg.status === "blocked_by_me" ? "Bạn đã block người dùng này" : "Người dùng này đã block bạn";
+                    blockNotice.textContent = msg.status === "blocked_by_me" ? "You have blocked this user" : "	You have been blocked by this user";
                     blockNotice.style.display = "block";
                 } else if (msg.status === "unblocked_by_me" || msg.status === "unblocked_me") {
                     messageInput.style.display = "block";
@@ -226,7 +228,11 @@
 
         // Close emoji picker if clicking outside
         document.addEventListener("click", function (event) {
-            if (!emojiPickerContainer.contains(event.target) && event.target !== emojiBtn) {
+            if (
+                    !emojiPickerContainer.contains(event.target) &&
+                    !emojiBtn.contains(event.target)
+                    )
+            {
                 emojiPickerContainer.style.display = "none";
             }
         });

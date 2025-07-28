@@ -1,0 +1,122 @@
+/* Modal styles */
+.feedback-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.feedback-modal-content {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 5px solid #ffc107;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Căn giữa theo cả chiều ngang và dọc */
+
+    width: 80%;
+    max-width: 300px;
+    z-index: 1001;
+}
+
+
+.feedback-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.feedback-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+#feedbackOrderId {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+}
+
+.feedback-modal-close {
+    font-size: 20px;
+    cursor: pointer;
+    color: #555;
+}
+
+.feedback-modal-close:hover {
+    color: #000;
+}
+
+.feedback-modal-body {
+    margin-top: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.feedback-modal-body p {
+    margin-bottom: 10px;
+}
+
+.rating {
+    display: flex;
+    flex-direction: row-reverse; /* Đảo vị trí input để dùng ~ đúng */
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.rating input[type="radio"] {
+    display: none;
+}
+
+.rating label {
+    font-size: 20px;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.rating input[type="radio"]:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #ffc107;
+}
+
+#feedbackComment {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.feedback-modal-btn {
+    background: #fff;
+    border: 1px solid #ffc107;
+    border-radius: 5px;
+    padding: 6px 12px;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    font-size: 14px;
+}
+
+.feedback-modal-btn:hover {
+    background: #ffc107;
+    color: #fff;
+}
+body.modal-open {
+    overflow: hidden;
+}
