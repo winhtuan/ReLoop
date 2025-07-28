@@ -9,10 +9,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.*;
 import org.json.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 @MultipartConfig
 public class GoogleVision extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(GoogleVision.class.getName());
+    private static final int TIMEOUT_SECONDS = 30;
+    private static final int MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+    
     private final String apiKey = new AppConfig().get("vision.api_key");
     private final String apiUrl = new AppConfig().get("vision.api_url");
 
@@ -30,17 +36,45 @@ public class GoogleVision extends HttpServlet {
         JSONObject result = new JSONObject();
 
         try {
+            LOGGER.info("🚀 Starting Google Vision API request");
+            
+            // Validate API key
+            if (apiKey == null || apiKey.trim().isEmpty()) {
+                LOGGER.severe("❌ Google Vision API key is null or empty");
+                response.setStatus(500);
+                result.put("error", "Google Vision API key not configured");
+                response.getWriter().write(result.toString());
+                return;
+            }
+            
+            LOGGER.info("✅ API Key configured: " + apiKey.substring(0, 10) + "...");
+            LOGGER.info("🌐 API URL: " + apiUrl);
+
             Part filePart = request.getPart("file");
             if (filePart == null) {
+                LOGGER.warning("❌ No file uploaded");
                 response.setStatus(400);
                 result.put("error", "No file uploaded");
                 response.getWriter().write(result.toString());
                 return;
             }
 
+            // Check file size
+            if (filePart.getSize() > MAX_IMAGE_SIZE) {
+                LOGGER.warning("❌ File too large: " + filePart.getSize() + " bytes");
+                response.setStatus(400);
+                result.put("error", "File too large. Maximum size is 10MB");
+                response.getWriter().write(result.toString());
+                return;
+            }
+
+            LOGGER.info("📁 Processing file: " + filePart.getSubmittedFileName() + " (" + filePart.getSize() + " bytes)");
+
             InputStream fileContent = filePart.getInputStream();
             byte[] imageBytes = fileContent.readAllBytes();
             String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+
+            LOGGER.info("🔄 Image encoded to base64, size: " + base64Image.length() + " characters");
 
             JSONObject image = new JSONObject();
             image.put("content", base64Image);
@@ -62,17 +96,28 @@ public class GoogleVision extends HttpServlet {
 
             // Append api_key to url
             String fullApiUrl = apiUrl + "?key=" + apiKey;
+            LOGGER.info("📡 Sending request to Google Vision API: " + fullApiUrl);
+            
             URL url = new URL(fullApiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setRequestProperty("User-Agent", "ReLoop/1.0");
             conn.setDoOutput(true);
+            conn.setConnectTimeout(TIMEOUT_SECONDS * 1000);
+            conn.setReadTimeout(TIMEOUT_SECONDS * 1000);
+
+            LOGGER.info("⏱️ Connection timeout set to " + TIMEOUT_SECONDS + " seconds");
 
             try (OutputStream os = conn.getOutputStream()) {
-                os.write(postData.toString().getBytes("UTF-8"));
+                String jsonPayload = postData.toString();
+                LOGGER.info("📤 Sending JSON payload, size: " + jsonPayload.length() + " characters");
+                os.write(jsonPayload.getBytes("UTF-8"));
             }
 
             int status = conn.getResponseCode();
+            LOGGER.info("📥 Response status: " + status);
+            
             InputStream is = (status < 400) ? conn.getInputStream() : conn.getErrorStream();
             StringBuilder sb = new StringBuilder();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"))) {
@@ -81,14 +126,20 @@ public class GoogleVision extends HttpServlet {
             }
             conn.disconnect();
 
+            String responseBody = sb.toString();
+            LOGGER.info("📄 Response body length: " + responseBody.length() + " characters");
+
             if (status >= 400) {
+                LOGGER.severe("❌ Google Vision API error: " + status + " - " + responseBody);
                 response.setStatus(status);
-                result.put("error", "Vision API error: " + sb.toString());
+                result.put("error", "Vision API error: " + responseBody);
+                result.put("status", status);
                 response.getWriter().write(result.toString());
                 return;
             }
 
-            JSONObject apiResponse = new JSONObject(sb.toString());
+            LOGGER.info("✅ Google Vision API request successful");
+            JSONObject apiResponse = new JSONObject(responseBody);
             JSONObject detection = apiResponse.getJSONArray("responses").getJSONObject(0);
 
             JSONObject safeSearch = detection.optJSONObject("safeSearchAnnotation");
@@ -96,15 +147,19 @@ public class GoogleVision extends HttpServlet {
             String violence = safeSearch != null ? safeSearch.optString("violence", "UNKNOWN") : "UNKNOWN";
             String racy = safeSearch != null ? safeSearch.optString("racy", "UNKNOWN") : "UNKNOWN";
 
+            LOGGER.info("🔍 Safe search results - Adult: " + adult + ", Violence: " + violence + ", Racy: " + racy);
+
             JSONArray labelAnnotations = detection.optJSONArray("labelAnnotations");
             List<String> weaponLabels = new ArrayList<>();
             if (labelAnnotations != null) {
+                LOGGER.info("🏷️ Processing " + labelAnnotations.length() + " labels");
                 for (int i = 0; i < labelAnnotations.length(); i++) {
                     JSONObject label = labelAnnotations.getJSONObject(i);
                     String desc = label.optString("description", "").toLowerCase();
                     for (String keyword : WEAPON_KEYWORDS) {
                         if (desc.contains(keyword)) {
                             weaponLabels.add(label.optString("description") + " (score: " + label.optDouble("score", 0) + ")");
+                            LOGGER.warning("⚠️ Weapon detected: " + label.optString("description"));
                             break;
                         }
                     }
@@ -115,12 +170,14 @@ public class GoogleVision extends HttpServlet {
             List<String> drugEntities = new ArrayList<>();
             if (webDetection != null && webDetection.has("webEntities")) {
                 JSONArray webEntities = webDetection.getJSONArray("webEntities");
+                LOGGER.info("🌐 Processing " + webEntities.length() + " web entities");
                 for (int i = 0; i < webEntities.length(); i++) {
                     JSONObject entity = webEntities.getJSONObject(i);
                     String desc = entity.optString("description", "").toLowerCase();
                     for (String keyword : DRUG_KEYWORDS) {
                         if (desc.contains(keyword)) {
                             drugEntities.add(entity.optString("description") + " (score: " + entity.optDouble("score", 0) + ")");
+                            LOGGER.warning("⚠️ Drug-related content detected: " + entity.optString("description"));
                             break;
                         }
                     }
@@ -145,6 +202,8 @@ public class GoogleVision extends HttpServlet {
                 isUnsafe = true; reasons.add("Possible drug-related content detected");
             }
 
+            LOGGER.info("📊 Final moderation result - Unsafe: " + isUnsafe + ", Reasons: " + reasons);
+
             result.put("safeSearch", safeSearch != null ? safeSearch : JSONObject.NULL);
             result.put("weaponLabels", weaponLabels);
             result.put("drugEntities", drugEntities);
@@ -152,10 +211,13 @@ public class GoogleVision extends HttpServlet {
             result.put("reasons", reasons);
 
             response.getWriter().write(result.toString());
+            LOGGER.info("✅ Google Vision moderation completed successfully");
 
         } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "💥 Error in Google Vision API", ex);
             response.setStatus(500);
-            result.put("error", ex.getMessage());
+            result.put("error", "Internal server error: " + ex.getMessage());
+            result.put("details", ex.toString());
             response.getWriter().write(result.toString());
         }
     }
