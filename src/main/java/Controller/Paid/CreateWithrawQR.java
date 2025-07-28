@@ -103,29 +103,17 @@ public class CreateWithrawQR extends HttpServlet {
     }
 
     private String buildQrModalHtml(String qrLink) {
-        return "<!DOCTYPE html>"
-                + "<html lang='en'>"
-                + "<head>"
-                + "  <meta charset='UTF-8'>"
-                + "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-                + "  <style>"
-                + "    .modal { display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
-                + "      background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }"
-                + "    .modal-content { background: #fff; padding: 20px; border-radius: 10px;"
-                + "      text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.2); }"
-                + "    .modal-content img { max-width: 300px; height: auto; }"
-                + "    .close-btn { margin-top: 10px; padding: 6px 12px; border: none; background: #f44336;"
-                + "      color: white; border-radius: 5px; cursor: pointer; }"
-                + "  </style>"
-                + "</head>"
-                + "<body>"
-                + "  <div class='modal' id='qrModal'>"
-                + "    <div class='modal-content'>"
-                + "      <img src='" + qrLink + "' alt='QR Code' />"
-                + "      <br><button class='close-btn' onclick='closeModal('qrModal')'>Đóng</button>"
-                + "    </div>"
+        return "<div class='modal' id='qrModal'>"
+                + "  <div class='modal-content'>"
+                + "    <h3 style='margin-bottom: 15px; font-size: 18px; font-weight: bold;'>QR Code</h3>"
+                + "    <img src='" + qrLink + "' alt='QR Code' style='max-width: 300px; height: auto; display: block; margin: 0 auto;' />"
+                + "    <br><button class='close-btn' style='margin-top: 10px; padding: 8px 16px; border: none; background: #f44336; color: white; border-radius: 5px; cursor: pointer; font-size: 14px;'>Close</button>"
                 + "  </div>"
-                + "</body>"
-                + "</html>";
+                + "</div>"
+                + "<style>"
+                + "  .modal { display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999; }"
+                + "  .modal-content { background: #fff; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.2); max-width: 90%; }"
+                + "  .close-btn:hover { background: #d32f2f !important; }"
+                + "</style>";
     }
 }

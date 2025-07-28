@@ -221,11 +221,36 @@
                                                                         userID
                                                                     })
                                                                 })
-                                                                        .then(res => res.text())
+                                                                                                                                                .then(res => res.text())
                                                                         .then(html => {
-                                                                            const modalContainer = document.createElement('div');
-                                                                            modalContainer.innerHTML = html;
-                                                                            document.body.appendChild(modalContainer);
+                                                                             const modalContainer = document.createElement('div');
+                                                                             modalContainer.innerHTML = html;
+                                                                             document.body.appendChild(modalContainer);
+
+                                                                             // Gắn event listener vào nút close
+                                                                             const closeBtn = modalContainer.querySelector('.close-btn');
+                                                                             if (closeBtn) {
+                                                                                 closeBtn.addEventListener('click', () => {
+                                                                                     modalContainer.remove();
+                                                                                 });
+                                                                             }
+
+                                                                             // Thêm event listener để đóng modal khi click bên ngoài
+                                                                             const modal = modalContainer.querySelector('.modal');
+                                                                             if (modal) {
+                                                                                 modal.addEventListener('click', (e) => {
+                                                                                     if (e.target === modal) {
+                                                                                         modalContainer.remove();
+                                                                                     }
+                                                                                 });
+                                                                             }
+
+                                                                             // Thêm event listener để đóng modal khi nhấn ESC
+                                                                             document.addEventListener('keydown', function(e) {
+                                                                                 if (e.key === 'Escape') {
+                                                                                     modalContainer.remove();
+                                                                                 }
+                                                                             });
 
                                                                         })
                                                                         .catch(err => {
