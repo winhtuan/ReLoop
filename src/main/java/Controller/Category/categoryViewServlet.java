@@ -4,6 +4,7 @@ import Model.DAO.post.CategoryDAO;
 import Model.DAO.post.ProductDao;
 import Model.entity.post.Category;
 import Model.entity.post.Product;
+import Service.NewPost;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jakarta.servlet.ServletException;
@@ -121,6 +122,7 @@ public class categoryViewServlet extends HttpServlet {
         }
         
         List<Product> productList = productDAO.getProductsByCategoryIdsAndFilter(categoryIdsForProducts, minPrice, maxPrice, state);
+        productList = new NewPost().filterPriorityPost(productList);
         System.out.println("Product list size: " + productList.size());
         request.setAttribute("currentCategory", category);
         request.setAttribute("productList", productList);
