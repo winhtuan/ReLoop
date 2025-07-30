@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="com.google.gson.Gson" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -55,18 +56,57 @@
                                         <c:param name="slug" value="${currentCategory.slug}"/>
                                     </c:if>
                                     <c:param name="location" value="Hà Nội"/>
+                                    <c:if test="${param.minPrice != null}">
+                                        <c:param name="minPrice" value="${param.minPrice}"/>
+                                    </c:if>
+                                    <c:if test="${param.maxPrice != null}">
+                                        <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                    </c:if>
+                                    <c:if test="${param.state != null}">
+                                        <c:param name="state" value="${param.state}"/>
+                                    </c:if>
+                                    <c:forEach var="attr" items="${paramValues['attr']}">
+                                        <c:param name="attr" value="${attr}"/>
+                                        <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                    </c:forEach>
                                 </c:url>
                                 <c:url var="locationDanang" value="categoryViewServlet">
                                     <c:if test="${currentCategory != null}">
                                         <c:param name="slug" value="${currentCategory.slug}"/>
                                     </c:if>
                                     <c:param name="location" value="Đà Nẵng"/>
+                                    <c:if test="${param.minPrice != null}">
+                                        <c:param name="minPrice" value="${param.minPrice}"/>
+                                    </c:if>
+                                    <c:if test="${param.maxPrice != null}">
+                                        <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                    </c:if>
+                                    <c:if test="${param.state != null}">
+                                        <c:param name="state" value="${param.state}"/>
+                                    </c:if>
+                                    <c:forEach var="attr" items="${paramValues['attr']}">
+                                        <c:param name="attr" value="${attr}"/>
+                                        <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                    </c:forEach>
                                 </c:url>
                                 <c:url var="locationHCM" value="categoryViewServlet">
                                     <c:if test="${currentCategory != null}">
                                         <c:param name="slug" value="${currentCategory.slug}"/>
                                     </c:if>
                                     <c:param name="location" value="Tp Hồ Chí Minh"/>
+                                    <c:if test="${param.minPrice != null}">
+                                        <c:param name="minPrice" value="${param.minPrice}"/>
+                                    </c:if>
+                                    <c:if test="${param.maxPrice != null}">
+                                        <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                    </c:if>
+                                    <c:if test="${param.state != null}">
+                                        <c:param name="state" value="${param.state}"/>
+                                    </c:if>
+                                    <c:forEach var="attr" items="${paramValues['attr']}">
+                                        <c:param name="attr" value="${attr}"/>
+                                        <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                    </c:forEach>
                                 </c:url>
                                 <a href="${locationHanoi}">Hà Nội</a>
                                 <a href="${locationDanang}">Đà Nẵng</a>
@@ -85,9 +125,8 @@
                                     <c:when test="${not empty categoryList and currentCategory != null}">
                                         <c:choose>
                                             <c:when test="${currentCategory.level == 0}">
-                                                <!-- Chỉ hiển thị Lv0 hiện tại một lần -->
                                                 <c:forEach var="cat" items="${categoryList}" varStatus="loop">
-                                                    <c:if test="${cat.level == 0 and loop.first}"> <!-- Chỉ lấy lần đầu tiên -->
+                                                    <c:if test="${cat.level == 0 and loop.first}">
                                                         <c:url var="categoryUrl" value="categoryViewServlet">
                                                             <c:param name="slug" value="${cat.slug}"/>
                                                             <c:if test="${param.minPrice != null}">
@@ -99,6 +138,10 @@
                                                             <c:if test="${param.state != null}">
                                                                 <c:param name="state" value="${param.state}"/>
                                                             </c:if>
+                                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                                <c:param name="attr" value="${attr}"/>
+                                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                                            </c:forEach>
                                                         </c:url>
                                                         <a href="${categoryUrl}" 
                                                            <c:if test="${cat.categoryId == currentCategory.categoryId}">class="active"</c:if>>
@@ -106,7 +149,6 @@
                                                         </a>
                                                     </c:if>
                                                 </c:forEach>
-                                                <!-- Hiển thị tất cả Lv1 con -->
                                                 <c:forEach var="cat" items="${categoryList}">
                                                     <c:if test="${cat.level == 1 and cat.parentId == currentCategory.categoryId}">
                                                         <c:url var="categoryUrl" value="categoryViewServlet">
@@ -120,6 +162,10 @@
                                                             <c:if test="${param.state != null}">
                                                                 <c:param name="state" value="${param.state}"/>
                                                             </c:if>
+                                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                                <c:param name="attr" value="${attr}"/>
+                                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                                            </c:forEach>
                                                         </c:url>
                                                         <a href="${categoryUrl}">
                                                             ${cat.name}
@@ -128,7 +174,6 @@
                                                 </c:forEach>
                                             </c:when>
                                             <c:when test="${currentCategory.level == 1}">
-                                                <!-- Hiển thị Lv0 cha -->
                                                 <c:set var="parentCat" value="${categoryList[0]}" />
                                                 <c:forEach var="cat" items="${categoryList}">
                                                     <c:if test="${cat.categoryId == currentCategory.parentId}">
@@ -146,11 +191,14 @@
                                                     <c:if test="${param.state != null}">
                                                         <c:param name="state" value="${param.state}"/>
                                                     </c:if>
+                                                    <c:forEach var="attr" items="${paramValues['attr']}">
+                                                        <c:param name="attr" value="${attr}"/>
+                                                        <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                                    </c:forEach>
                                                 </c:url>
                                                 <a href="${parentUrl}" class="parent-category">
                                                     ${parentCat.name}
                                                 </a>
-                                                <!-- Hiển thị các Lv1 thuộc Lv0 cha -->
                                                 <c:forEach var="cat" items="${categoryList}">
                                                     <c:if test="${cat.level == 1 and cat.parentId == parentCat.categoryId}">
                                                         <c:url var="categoryUrl" value="categoryViewServlet">
@@ -164,6 +212,10 @@
                                                             <c:if test="${param.state != null}">
                                                                 <c:param name="state" value="${param.state}"/>
                                                             </c:if>
+                                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                                <c:param name="attr" value="${attr}"/>
+                                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                                            </c:forEach>
                                                         </c:url>
                                                         <a href="${categoryUrl}" 
                                                            <c:if test="${cat.categoryId == currentCategory.categoryId}">class="active"</c:if>>
@@ -173,8 +225,7 @@
                                                 </c:forEach>
                                             </c:when>
                                         </c:choose>
-                                        <!-- Thêm mục Tất cả danh mục -->
-                                        <button class="all-categories-btn" onclick="showAllCategories(event)">Tất cả danh mục</button>
+                                        <button class="all-categories-btn" onclick="showAllCategories(event)">All Categories</button>
                                     </c:when>
                                     <c:otherwise>
                                         <p>Không có danh mục để hiển thị (Debug: categoryList is empty). Slug: ${param.slug}, MinPrice: ${param.minPrice}, MaxPrice: ${param.maxPrice}, State: ${param.state}</p>
@@ -185,7 +236,7 @@
 
                         <!-- Giá -->
                         <div class="filter-option dropdown">
-                            <button class="btn btn-outline">Giá <ion-icon name="chevron-down-outline"></ion-icon></button>
+                            <button class="btn btn-outline">Price <ion-icon name="chevron-down-outline"></ion-icon></button>
                             <div class="dropdown-content">
                                 <div class="price-slider">
                                     <div class="slider-track" id="sliderTrack">
@@ -198,19 +249,18 @@
                                     <span>-</span>
                                     <input type="text" id="maxPrice" placeholder="Giá đến" value="${param.maxPrice != null ? param.maxPrice : 20000000}" onchange="updateSliderFromInput()">
                                 </div>
-                                <button class="apply-price-btn">Áp dụng</button>
-                                <button class="clear-price-btn">Xóa lọc</button>
+                                <button class="apply-price-btn">Apply</button>
+                                <button class="clear-price-btn">Clear</button>
                             </div>
                         </div>
 
                         <!-- Tình trạng -->
                         <div class="filter-option dropdown">
-                            <button class="btn btn-outline">Tình trạng <ion-icon name="chevron-down-outline"></ion-icon></button>
+                            <button class="btn btn-outline">State <ion-icon name="chevron-down-outline"></ion-icon></button>
                             <div class="dropdown-content">
                                 <c:set var="isPetCategory" value="${currentCategory != null && currentCategory.categoryId >= 41 && currentCategory.categoryId <= 46}" />
                                 <c:choose>
                                     <c:when test="${isPetCategory}">
-                                        <!-- Lọc đặc biệt cho category_id 41-46 (Pets) -->
                                         <c:url var="stateAll" value="categoryViewServlet">
                                             <c:if test="${currentCategory != null}">
                                                 <c:param name="slug" value="${currentCategory.slug}"/>
@@ -221,6 +271,10 @@
                                             <c:if test="${param.maxPrice != null}">
                                                 <c:param name="maxPrice" value="${param.maxPrice}"/>
                                             </c:if>
+                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                <c:param name="attr" value="${attr}"/>
+                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                            </c:forEach>
                                         </c:url>
                                         <c:url var="stateYoung" value="categoryViewServlet">
                                             <c:if test="${currentCategory != null}">
@@ -233,6 +287,10 @@
                                             <c:if test="${param.maxPrice != null}">
                                                 <c:param name="maxPrice" value="${param.maxPrice}"/>
                                             </c:if>
+                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                <c:param name="attr" value="${attr}"/>
+                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                            </c:forEach>
                                         </c:url>
                                         <c:url var="stateAdult" value="categoryViewServlet">
                                             <c:if test="${currentCategory != null}">
@@ -245,13 +303,16 @@
                                             <c:if test="${param.maxPrice != null}">
                                                 <c:param name="maxPrice" value="${param.maxPrice}"/>
                                             </c:if>
+                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                <c:param name="attr" value="${attr}"/>
+                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                            </c:forEach>
                                         </c:url>
-                                        <a href="${stateAll}">Tất cả</a>
-                                        <a href="${stateYoung}">Con non</a>
-                                        <a href="${stateAdult}">Trưởng thành</a>
+                                        <a href="${stateAll}">All</a>
+                                        <a href="${stateYoung}">Young</a>
+                                        <a href="${stateAdult}">Adult</a>
                                     </c:when>
                                     <c:otherwise>
-                                        <!-- Lọc mặc định cho các category khác -->
                                         <c:url var="stateAll" value="categoryViewServlet">
                                             <c:if test="${currentCategory != null}">
                                                 <c:param name="slug" value="${currentCategory.slug}"/>
@@ -262,6 +323,10 @@
                                             <c:if test="${param.maxPrice != null}">
                                                 <c:param name="maxPrice" value="${param.maxPrice}"/>
                                             </c:if>
+                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                <c:param name="attr" value="${attr}"/>
+                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                            </c:forEach>
                                         </c:url>
                                         <c:url var="stateNew" value="categoryViewServlet">
                                             <c:if test="${currentCategory != null}">
@@ -274,6 +339,10 @@
                                             <c:if test="${param.maxPrice != null}">
                                                 <c:param name="maxPrice" value="${param.maxPrice}"/>
                                             </c:if>
+                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                <c:param name="attr" value="${attr}"/>
+                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                            </c:forEach>
                                         </c:url>
                                         <c:url var="stateOld" value="categoryViewServlet">
                                             <c:if test="${currentCategory != null}">
@@ -286,6 +355,10 @@
                                             <c:if test="${param.maxPrice != null}">
                                                 <c:param name="maxPrice" value="${param.maxPrice}"/>
                                             </c:if>
+                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                <c:param name="attr" value="${attr}"/>
+                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                            </c:forEach>
                                         </c:url>
                                         <c:url var="stateDamaged" value="categoryViewServlet">
                                             <c:if test="${currentCategory != null}">
@@ -298,15 +371,94 @@
                                             <c:if test="${param.maxPrice != null}">
                                                 <c:param name="maxPrice" value="${param.maxPrice}"/>
                                             </c:if>
+                                            <c:forEach var="attr" items="${paramValues['attr']}">
+                                                <c:param name="attr" value="${attr}"/>
+                                                <c:param name="attr_${attr}" value="${param['attr_'.concat(attr)]}"/>
+                                            </c:forEach>
                                         </c:url>
-                                        <a href="${stateAll}">Tất cả</a>
-                                        <a href="${stateNew}">Mới</a>
-                                        <a href="${stateOld}">Cũ</a>
-                                        <a href="${stateDamaged}">Hư hỏng nhẹ</a>
+                                        <a href="${stateAll}">All</a>
+                                        <a href="${stateNew}">New</a>
+                                        <a href="${stateOld}">Old</a>
+                                        <a href="${stateDamaged}">State Damaged</a>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
                         </div>
+
+                        <!-- Thuộc tính (Category Attributes) -->
+                        <c:if test="${not empty selectAttributes}">
+                            <c:forEach var="attr" items="${selectAttributes}">
+                                <div class="filter-option dropdown" id="attrDropdown_${attr.attributeId}">
+                                    <button class="btn btn-outline" id="attrButton_${attr.attributeId}">
+                                        <c:set var="selectedValue" value="${param['attr_'.concat(attr.attributeId)]}"/>
+                                        <c:choose>
+                                            <c:when test="${not empty selectedValue}">${selectedValue}</c:when>
+                                            <c:otherwise>${attr.name}</c:otherwise>
+                                        </c:choose>
+                                        <ion-icon name="chevron-down-outline"></ion-icon>
+                                    </button>
+                                    <div class="dropdown-content">
+                                        <c:url var="attrAll" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.state != null}">
+                                                <c:param name="state" value="${param.state}"/>
+                                            </c:if>
+                                            <c:forEach var="otherAttr" items="${paramValues['attr']}">
+                                                <c:if test="${otherAttr != attr.attributeId}">
+                                                    <c:param name="attr" value="${otherAttr}"/>
+                                                    <c:param name="attr_${otherAttr}" value="${param['attr_'.concat(otherAttr)]}"/>
+                                                </c:if>
+                                            </c:forEach>
+                                        </c:url>
+                                        <a href="${attrAll}">All</a>
+                                        <%
+                                            Model.entity.post.CategoryAttribute attribute = (Model.entity.post.CategoryAttribute) pageContext.getAttribute("attr");
+                                            String optionsJson = attribute.getOptions();
+                                            if (optionsJson != null && !optionsJson.isEmpty()) {
+                                                Gson gson = new Gson();
+                                                String[] options = gson.fromJson(optionsJson, String[].class);
+                                                for (String option : options) {
+                                                    pageContext.setAttribute("option", option);
+                                        %>
+                                        <c:url var="attrOption" value="categoryViewServlet">
+                                            <c:if test="${currentCategory != null}">
+                                                <c:param name="slug" value="${currentCategory.slug}"/>
+                                            </c:if>
+                                            <c:param name="attr" value="${attr.attributeId}"/>
+                                            <c:param name="attr_${attr.attributeId}" value="${option}"/>
+                                            <c:if test="${param.minPrice != null}">
+                                                <c:param name="minPrice" value="${param.minPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.maxPrice != null}">
+                                                <c:param name="maxPrice" value="${param.maxPrice}"/>
+                                            </c:if>
+                                            <c:if test="${param.state != null}">
+                                                <c:param name="state" value="${param.state}"/>
+                                            </c:if>
+                                            <c:forEach var="otherAttr" items="${paramValues['attr']}">
+                                                <c:if test="${otherAttr != attr.attributeId}">
+                                                    <c:param name="attr" value="${otherAttr}"/>
+                                                    <c:param name="attr_${otherAttr}" value="${param['attr_'.concat(otherAttr)]}"/>
+                                                </c:if>
+                                            </c:forEach>
+                                        </c:url>
+                                        <a href="${attrOption}" <c:if test="${param['attr_'.concat(attr.attributeId)] == option}">class="active"</c:if>>${option}</a>
+                                        <%
+                                                }
+                                            }
+                                        %>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </c:if>
                     </div>
 
                     <!-- PRODUCT LIST -->

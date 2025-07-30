@@ -3,6 +3,7 @@ package Controller.Category;
 import Model.DAO.post.CategoryDAO;
 import Model.DAO.post.ProductDao;
 import Model.entity.post.Category;
+import Model.entity.post.CategoryAttribute;
 import Model.entity.post.Product;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,9 +17,9 @@ import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "categoryViewServlet", urlPatterns = {"/categoryViewServlet"})
@@ -51,14 +52,13 @@ public class categoryViewServlet extends HttpServlet {
             return;
         }
 
-        // Lấy toàn bộ danh mục để hiển thị trong menu
         List<Category> allCategories = categoryDAO.getAllCategories();
         request.setAttribute("categoryList", allCategories);
 
         String slug = request.getParameter("slug");
         if (slug != null) {
-            slug = URLDecoder.decode(slug, StandardCharsets.UTF_8.toString()); // Decode slug
-            System.out.println("Decoded slug: " + slug); // Debug
+            slug = URLDecoder.decode(slug, StandardCharsets.UTF_8.toString());
+            System.out.println("Decoded slug: " + slug);
         } else {
             System.out.println("Slug is null");
         }
@@ -73,12 +73,22 @@ public class categoryViewServlet extends HttpServlet {
         String minPriceStr = request.getParameter("minPrice");
         String maxPriceStr = request.getParameter("maxPrice");
         String state = request.getParameter("state");
+        Map<Integer, String> attributeFilters = new HashMap<>();
+        String[] attrIds = request.getParameterValues("attr");
+        if (attrIds != null) {
+            for (String attrId : attrIds) {
+                String value = request.getParameter("attr_" + attrId);
+                if (value != null && !value.isEmpty()) {
+                    attributeFilters.put(Integer.parseInt(attrId), value);
+                }
+            }
+        }
 
         System.out.println("CategoryDAO initialized");
         ProductDao productDAO = new ProductDao();
 
         System.out.println("Category found: " + category.getName() + ", ID: " + category.getCategoryId() + ", Level: " + category.getLevel());
-        List<Category> categoryListForProducts; // Chỉ dùng để lấy sản phẩm, không phải menu
+        List<Category> categoryListForProducts;
         List<Integer> categoryIdsForProducts;
         if (category.getLevel() == 0) {
             System.out.println("Processing parent category, fetching self and sub-categories");
@@ -119,13 +129,16 @@ public class categoryViewServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-        
-        List<Product> productList = productDAO.getProductsByCategoryIdsAndFilter(categoryIdsForProducts, minPrice, maxPrice, state);
+
+        List<Product> productList = productDAO.getProductsByCategoryIdsAndFilter(categoryIdsForProducts, minPrice, maxPrice, state, attributeFilters);
         System.out.println("Product list size: " + productList.size());
+
+        List<CategoryAttribute> selectAttributes = categoryDAO.getSelectAttributesByCategoryId(category.getCategoryId());
+        request.setAttribute("selectAttributes", selectAttributes);
+
         request.setAttribute("currentCategory", category);
         request.setAttribute("productList", productList);
 
         request.getRequestDispatcher("/JSP/Home/category-product.jsp").forward(request, response);
     }
-
 }
