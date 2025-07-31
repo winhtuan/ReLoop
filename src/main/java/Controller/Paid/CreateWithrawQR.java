@@ -32,8 +32,21 @@ public class CreateWithrawQR extends HttpServlet {
         Connection conn = DBUtils.getConnect();
         WithdrawalRequestDAO dao = new WithdrawalRequestDAO(conn);
         String withdrawalIdStr = request.getParameter("withdrawalId");
-        dao.rejectRequestById(Integer.parseInt(withdrawalIdStr));
-        request.getRequestDispatcher("/WithdrawServlet").forward(request, response);
+        
+        // Kiểm tra null và empty trước khi parse
+        if (withdrawalIdStr == null || withdrawalIdStr.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: withdrawalId parameter is required");
+            return;
+        }
+        
+        try {
+            dao.rejectRequestById(Integer.parseInt(withdrawalIdStr));
+            request.getRequestDispatcher("/WithdrawServlet").forward(request, response);
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: Invalid withdrawalId format");
+        }
     }
 
     @Override
@@ -49,14 +62,33 @@ public class CreateWithrawQR extends HttpServlet {
         }
 
         JSONObject json = new JSONObject(sb.toString());
-        String withdrawalId = json.getString("withdrawalId");
+        String withdrawalId = json.optString("withdrawalId", null);
 
-        String bankCode = json.getString("bankCode");
-        String accountNumber = json.getString("accountNumber");
-        String accountName = json.getString("accountName");
-        String amount = json.getString("amount");
-        String addInfo = json.getString("addInfo");
-        String userID = json.getString("userID");
+        String bankCode = json.optString("bankCode", "");
+        String accountNumber = json.optString("accountNumber", "");
+        String accountName = json.optString("accountName", "");
+        String amount = json.optString("amount", null);
+        String addInfo = json.optString("addInfo", "");
+        String userID = json.optString("userID", null);
+        
+        // Kiểm tra các tham số bắt buộc
+        if (withdrawalId == null || withdrawalId.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: withdrawalId is required");
+            return;
+        }
+        
+        if (amount == null || amount.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: amount is required");
+            return;
+        }
+        
+        if (userID == null || userID.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: userID is required");
+            return;
+        }
 
         // Tạo QR link
         String encodedAddInfo = URLEncoder.encode(addInfo, "UTF-8");
@@ -68,7 +100,14 @@ public class CreateWithrawQR extends HttpServlet {
         );
         //Update balance
         Connection conn = DBUtils.getConnect();
-        int amountint = Integer.parseInt(amount);
+        int amountint;
+        try {
+            amountint = Integer.parseInt(amount);
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: Invalid amount format");
+            return;
+        }
         int balanceBefore = new UserDao().getUserBalance(conn, userID);
         int balanceAfter = balanceBefore - amountint;
         try {
@@ -94,7 +133,13 @@ public class CreateWithrawQR extends HttpServlet {
         TransactionDAO logDAO = new TransactionDAO();
         logDAO.logTransaction(log);
         WithdrawalRequestDAO dao = new WithdrawalRequestDAO(conn);
-        dao.approveRequestById(Integer.parseInt(withdrawalId));
+        try {
+            dao.approveRequestById(Integer.parseInt(withdrawalId));
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: Invalid withdrawalId format");
+            return;
+        }
 
         // Trả về HTML modal
         response.setContentType("text/html");

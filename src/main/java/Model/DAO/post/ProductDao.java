@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import Model.DAO.post.ProductImageDao;
 
 public class ProductDao {
 
@@ -22,22 +23,37 @@ public class ProductDao {
     public static List<Product> productList = null;
 
     public String generateProductId() {
-        String sql = "SELECT product_id FROM product ORDER BY product_id DESC LIMIT 1"; // MySQL dùng LIMIT 1
-        String prefix = "PRD";
-        int nextId = 1;
-
-        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
+        String sql = "SELECT last_number FROM product_sequence WHERE id = 1";
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                String lastId = rs.getString("product_id");
-                int num = Integer.parseInt(lastId.substring(2));
-                nextId = num + 1;
+                int lastNumber = rs.getInt("last_number");
+                return String.format("PRD%04d", lastNumber);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error generating product ID: " + e.getMessage());
         }
+        return null;
+    }
 
-        return String.format("%s%04d", prefix, nextId);
+    public int generateImageId() {
+        String sql = "SELECT last_number FROM product_images_sequence WHERE id = 1";
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("last_number");
+            } else {
+                // Initialize sequence if it doesn't exist
+                String initSql = "INSERT INTO product_images_sequence (id, last_number) VALUES (1, 0)";
+                try (PreparedStatement initStmt = con.prepareStatement(initSql)) {
+                    initStmt.executeUpdate();
+                }
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error generating image ID: " + e.getMessage());
+        }
+        return 0;
     }
 
     public Product getProductById(String productId) {
@@ -474,6 +490,24 @@ public class ProductDao {
 
             // Lưu ảnh với img_id tự động từ trigger
             if (images != null && !images.isEmpty()) {
+                // Check if sequence exists, if not initialize it
+                String checkSequenceSql = "SELECT COUNT(*) FROM product_images_sequence WHERE id = 1";
+                boolean sequenceExists = false;
+                try (PreparedStatement psCheckSequence = conn.prepareStatement(checkSequenceSql)) {
+                    ResultSet rs = psCheckSequence.executeQuery();
+                    if (rs.next()) {
+                        sequenceExists = rs.getInt(1) > 0;
+                    }
+                }
+                
+                if (!sequenceExists) {
+                    // Initialize sequence
+                    String initSequenceSql = "INSERT INTO product_images_sequence (id, last_number) VALUES (1, 0)";
+                    try (PreparedStatement psInitSequence = conn.prepareStatement(initSequenceSql)) {
+                        psInitSequence.executeUpdate();
+                    }
+                }
+                
                 String sqlImage = "INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?)";
                 try (PreparedStatement ps = conn.prepareStatement(sqlImage)) {
                     for (int i = 0; i < images.size(); i++) {
@@ -799,11 +833,44 @@ public class ProductDao {
                         }
                     }
                     if (!found && newImage.getImageUrl() != null) {
-                        String insertImageSql = "INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?)";
+                        // Generate img_id first - handle case where sequence doesn't exist
+                        String checkSequenceSql = "SELECT COUNT(*) FROM product_images_sequence WHERE id = 1";
+                        boolean sequenceExists = false;
+                        try (PreparedStatement psCheckSequence = conn.prepareStatement(checkSequenceSql)) {
+                            ResultSet rs = psCheckSequence.executeQuery();
+                            if (rs.next()) {
+                                sequenceExists = rs.getInt(1) > 0;
+                            }
+                        }
+                        
+                        if (!sequenceExists) {
+                            // Initialize sequence
+                            String initSequenceSql = "INSERT INTO product_images_sequence (id, last_number) VALUES (1, 0)";
+                            try (PreparedStatement psInitSequence = conn.prepareStatement(initSequenceSql)) {
+                                psInitSequence.executeUpdate();
+                            }
+                        }
+                        
+                        String updateSequenceSql = "UPDATE product_images_sequence SET last_number = last_number + 1 WHERE id = 1";
+                        try (PreparedStatement psUpdateSequence = conn.prepareStatement(updateSequenceSql)) {
+                            psUpdateSequence.executeUpdate();
+                        }
+                        
+                        String getImgIdSql = "SELECT last_number FROM product_images_sequence WHERE id = 1";
+                        int imgId = 0;
+                        try (PreparedStatement psGetImgId = conn.prepareStatement(getImgIdSql)) {
+                            ResultSet rs = psGetImgId.executeQuery();
+                            if (rs.next()) {
+                                imgId = rs.getInt("last_number");
+                            }
+                        }
+                        
+                        String insertImageSql = "INSERT INTO product_images (img_id, product_id, image_url, is_primary) VALUES (?, ?, ?, ?)";
                         try (PreparedStatement psInsertImage = conn.prepareStatement(insertImageSql)) {
-                            psInsertImage.setString(1, productId);
-                            psInsertImage.setString(2, newImage.getImageUrl());
-                            psInsertImage.setBoolean(3, images.indexOf(newImage) == 0);
+                            psInsertImage.setInt(1, imgId);
+                            psInsertImage.setString(2, productId);
+                            psInsertImage.setString(3, newImage.getImageUrl());
+                            psInsertImage.setBoolean(4, images.indexOf(newImage) == 0);
                             psInsertImage.executeUpdate();
                         }
                     }
