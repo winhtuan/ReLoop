@@ -249,3 +249,129 @@ h2 {
 .footer_area {
     width: 100%;
 }
+
+.order-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.order-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.order-status {
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-received {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-processing {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.info-row {
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.product-list ul {
+    list-style: none;
+    padding-left: 0;
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+.feedback-trigger-btn,
+.order-action-btn {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.feedback-trigger-btn:hover,
+.order-action-btn:hover {
+    background-color: #0056b3;
+}
+#pagination-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#pagination-controls button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+#pagination-controls button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+#pagination-controls button.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+#pagination-controls button:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+#filter-form input,
+#filter-form button {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+#filter-form button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+#filter-form button:hover {
+    background-color: #0056b3;
+}

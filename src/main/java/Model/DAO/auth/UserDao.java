@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import Model.entity.auth.User;
 import Utils.DBUtils;
+import java.math.BigDecimal;
 
 public class UserDao {
 
@@ -149,7 +150,7 @@ public class UserDao {
     }
 
     public static ArrayList<User> listAllCustomers(String uid) {
-        AccountDao accDAO=new AccountDao();
+        AccountDao accDAO = new AccountDao();
         ArrayList<User> customers = new ArrayList<>();
         String sql = "SELECT u.user_id, u.FullName, u.Address, u.PhoneNumber, u.email "
                 + "FROM conversation c "
@@ -220,20 +221,58 @@ public class UserDao {
     }
 
     public void updateUserProfile(User user) {
-    String sql = "UPDATE Users SET FullName = ?, email = ?, PhoneNumber = ?, Address = ?, img = ? WHERE user_id = ?";
-    try (Connection conn = DBUtils.getConnect();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, user.getFullName());
-        ps.setString(2, user.getEmail());
-        ps.setString(3, user.getPhoneNumber());
-        ps.setString(4, user.getAddress());
-        ps.setString(5, user.getSrcImg());
-        ps.setString(6, user.getUserId());
-        ps.executeUpdate();
-    } catch (Exception e) {
-        e.printStackTrace();
+        String sql = "UPDATE Users SET FullName = ?, email = ?, PhoneNumber = ?, Address = ?, img = ? WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user.getFullName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPhoneNumber());
+            ps.setString(4, user.getAddress());
+            ps.setString(5, user.getSrcImg());
+            ps.setString(6, user.getUserId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
+
+    public int getUserBalance(Connection conn, String userId) {
+        String sql = "SELECT balance FROM users WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("balance");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void updateUserBalance(Connection conn, String userId, int newBalance) throws Exception {
+        String sql = "UPDATE users SET balance = ? WHERE user_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, newBalance);
+            ps.setString(2, userId);
+            ps.executeUpdate();
+        }
+    }
+
+    public ArrayList<String> getListUserPremium() {
+        ArrayList<String> premiumUsers = new ArrayList<>();
+        String sql = "SELECT user_id FROM users WHERE is_premium = 1";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                premiumUsers.add(rs.getString("user_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return premiumUsers;
+    }
 
     public static void main(String[] args) {
         System.out.println(new UserDao().generateUserId());

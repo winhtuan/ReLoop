@@ -12,95 +12,117 @@
         <meta name="description" content="">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <!-- Title  -->
         <title>Reloop</title>
-        <!-- Favicon  -->
+
+        <!-- Styles -->
         <link rel="stylesheet" href="css/conversation/CSS_chatbox.css"/>
         <link rel="icon" href="img/core-img/favicon.ico">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
         <link rel="stylesheet" href="css/core-style.css">
         <link rel="stylesheet" href="css/jsp_css/loader.css">
         <link rel="stylesheet" href="css/avatar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/category-menu.css">
         <link rel="stylesheet" href="css/orderHistory.css"/>
-        <link rel="stylesheet" href="css/feedbackModal.css"/> <!-- Thêm CSS mới -->
+        <link rel="stylesheet" href="css/feedbackModal.css"/>
+
     </head>
     <body>
-        <!-- Page Preloder -->
-        <div id="preloader">
-            <div class="loader"></div>
-        </div>
+        <div id="preloader"><div class="loader"></div></div>
 
-        <c:import url="/JSP/Home/Search.jsp" />
+        <c:import url="/JSP/Home/Search.jsp"/>
         <c:import url="/JSP/Conversation/chatBox.jsp"/>
 
-        <!-- ##### Main Content Wrapper Start ##### -->
         <div class="main-content-wrapper d-flex clearfix">
-            <c:import url="/JSP/Home/Nav.jsp" />
+            <c:import url="/JSP/Home/Nav.jsp"/>
+
             <div class="container py-4" style="color: black;">
                 <h2>🧾 Order History</h2>
+                <div class="order-filter-bar" style="margin-bottom: 20px;">
+                    <form id="filter-form" onsubmit="return false;" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                        <input type="text" id="filter-product" placeholder="🔍 Product name..." />
+                        <input type="number" id="filter-min-amount" placeholder="Min amount (VND)" />
+                        <input type="number" id="filter-max-amount" placeholder="Max amount (VND)" />
+                        <input type="date" id="filter-date" />
+                        <button type="button" id="apply-filter">Apply Filter</button>
+                        <button type="button" id="reset-filter">Reset</button>
+                    </form>
+                </div>
 
-                <c:forEach var="order" items="${orders}">
-                    <div class="order-card" data-order-id="${order.orderId}">
-                        <div class="order-header">
-                            <h3><i class="fas fa-receipt"></i> Order ID: ${order.orderId}</h3>
-                            <span class="order-status status-${order.status}">
-                                <i class="fas fa-circle-notch"></i> ${order.status.toUpperCase()}
-                            </span>
-                        </div>
+                <div class="order-grid" id="order-grid">
+                    <c:forEach var="order" items="${orders}">
+                        <c:set var="productNames" value="" />
+                        <c:forEach var="item" items="${order.listItems}">
+                            <c:set var="productNames" value="${productNames}${item.productName}," />
+                        </c:forEach>
 
-                        <div class="info-row">
-                            <i class="far fa-calendar-alt"></i> Created Date: 
-                            <fmt:formatDate value="${order.createdAt}" pattern="dd/MM/yyyy HH:mm" />
-                        </div>
+                        <div class="order-card"
+                             data-order-id="${order.orderId}"
+                             data-total-amount="${order.totalAmount}"
+                             data-created-date="<fmt:formatDate value='${order.createdAt}' pattern='yyyy-MM-dd'/>"
+                             data-product-names="${fn:escapeXml(fn:toLowerCase(productNames))}">
 
-                        <div class="info-row">
-                            <i class="fas fa-money-bill-wave"></i> Total Amount: 
-                            <span class="total"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="" groupingUsed="true" /> VND</span>
-                        </div>
+                             <div class="order-header">
+                                <h3><i class="fas fa-receipt"></i> Order ID: ${order.orderId}</h3>
+                                <span class="order-status status-${fn:toLowerCase(order.status)}">
+                                    <i class="fas fa-circle-notch"></i> ${fn:toUpperCase(order.status)}
+                                </span>
+                            </div>
 
-                        <div class="info-row">
-                            <i class="fas fa-tag"></i> Discount: 
-                            <fmt:formatNumber value="${order.discountAmount}" type="currency" currencySymbol="" groupingUsed="true" /> VND
-                        </div>
+                            <div class="info-row">
+                                <i class="far fa-calendar-alt"></i> Created Date: 
+                                <fmt:formatDate value="${order.createdAt}" pattern="dd/MM/yyyy HH:mm"/>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-money-bill-wave"></i> Total Amount: 
+                                <span class="total">
+                                    <fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="" groupingUsed="true" maxFractionDigits="0"/> VND
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-tag"></i> Discount: 
+                                <fmt:formatNumber value="${order.discountAmount}" type="currency" currencySymbol="" groupingUsed="true" maxFractionDigits="0"/> VND
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-location-dot"></i> Shipping Address: ${order.shippingAddress}
+                            </div>
 
-                        <div class="info-row">
-                            <i class="fas fa-location-dot"></i> Shipping Address: ${order.shippingAddress}
-                        </div>
+                            <!-- Product list -->
+                            <div class="product-list">
+                                <h4><i class="fas fa-box"></i> Product Details</h4>
+                                <ul>
+                                    <c:forEach var="item" items="${order.listItems}">
+                                        <li>Product: ${item.productName}</li>
+                                        <li>Quantity: ${item.quantity}</li>
+                                        <li>Price: 
+                                            <fmt:formatNumber value="${item.price}" type="currency" currencySymbol="" groupingUsed="true" maxFractionDigits="0"/> VND
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
 
-                        <div class="product-list">
-                            <h4><i class="fas fa-box"></i> Product Details</h4>
-                            <ul>
-                                <c:forEach var="item" items="${order.listItems}">
-                                    <li>
-                                        🆔 Product: ${item.productName} | 
-                                        📦 Quantity: ${item.quantity} | 
-                                        💵 Price: 
-                                        <fmt:formatNumber value="${item.price}" type="currency" currencySymbol="" groupingUsed="true" /> VND
-                                    </li>
-                                </c:forEach>
-                            </ul>
+                            <!-- Action buttons -->
+                            <c:choose>
+                                <c:when test="${order.status == 'cancelled'}">
+                                    <!-- No buttons -->
+                                </c:when>
+                                <c:when test="${order.status == 'received'}">
+                                    <button class="feedback-trigger-btn" data-order-id="${order.orderId}">
+                                        <i class="fas fa-star"></i> Rate Order
+                                    </button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button class="order-action-btn" data-order-id="${order.orderId}">
+                                        <i class="fas fa-ellipsis-v"></i> Actions
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
-                        <!-- Buttons based on status -->
-                        <c:choose>
-                            <c:when test="${order.status == 'cancelled'}">
-                                <!-- Không hiển thị nút Actions khi trạng thái là cancelled -->
-                            </c:when>
-                            <c:when test="${order.status == 'received'}">
-                                <button class="feedback-trigger-btn" data-order-id="${order.orderId}">
-                                    <i class="fas fa-star"></i> Rate Order
-                                </button>
-                            </c:when>
-                            <c:otherwise>
-                                <button class="order-action-btn" data-order-id="${order.orderId}">
-                                    <i class="fas fa-ellipsis-v"></i> Actions
-                                </button>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </c:forEach>
+                    </c:forEach>
+                </div>
+
+                <div id="pagination-controls" style="margin-top: 15px;"></div>
+
             </div>
 
             <!-- Order Modal -->
@@ -143,57 +165,51 @@
                 </div>
             </div>
 
-            <c:import url="/JSP/Home/Footer.jsp" />
-            <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
-            <script src="js/jquery/jquery-2.2.4.min.js"></script>
-            <!-- Popper js -->
-            <script src="js/lib_js/popper.min.js"></script>
-            <!-- Bootstrap js -->
-            <script src="js/lib_js/bootstrap.min.js"></script>
-            <!-- Plugins js -->
-            <script src="js/lib_js/plugins.js"></script>
-            <!-- js -->
-            <script src="js/active.js"></script>
-            <script src="js/JS_search.js"></script>
-            <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
-            <script src="${pageContext.request.contextPath}/js/notification.js"></script>
-            <script src="${pageContext.request.contextPath}/js/dropdown-handler.js"></script>
-            <!-- Ion Icons -->
-            <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-            <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-            <script>
-                const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
-                window.addEventListener("load", function () {
-                    const preloader = document.getElementById("preloader");
-                    preloader.style.opacity = "0";
-                    preloader.style.pointerEvents = "none";
-                    setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
-                });
-            </script>
-            <c:if test="${not empty sessionScope.Message}">
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                <script>
-                modal.classList.add('show');
+            <c:import url="/JSP/Home/Footer.jsp"/>
+        </div>
 
-                window.addEventListener("DOMContentLoaded", function () {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Notification',
-                        text: "${fn:escapeXml(sessionScope.Message)}"
-                    });
-                });
-                </script>
-                <c:remove var="Message" scope="session" />
-            </c:if>
-            <c:if test="${not empty param.regis}">
-                <script>
-                    modal.classList.add('show');
-                    loginAcessRegister.classList.add('active');
-                </script>
-            </c:if>
-            <script src="js/conversation/JS_chatBox.js"></script>
-            <script src="js/JS_search.js"></script>
-            <script src="js/orderHistoryModal.js"></script>
-            <script src="js/feedbackModal.js"></script> <!-- Thêm JS mới -->
+        <!-- Scripts -->
+        <script src="js/jquery/jquery-2.2.4.min.js"></script>
+        <script src="js/lib_js/popper.min.js"></script>
+        <script src="js/lib_js/bootstrap.min.js"></script>
+        <script src="js/lib_js/plugins.js"></script>
+        <script src="js/active.js"></script>
+        <script src="js/JS_search.js"></script>
+        <script src="${pageContext.request.contextPath}/js/search-menu.js"></script>
+        <script src="${pageContext.request.contextPath}/js/notification.js"></script>
+        <script src="${pageContext.request.contextPath}/js/dropdown-handler.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <script>
+                        const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
+                        window.addEventListener("load", function () {
+                            const preloader = document.getElementById("preloader");
+                            preloader.style.opacity = "0";
+                            preloader.style.pointerEvents = "none";
+                            setTimeout(() => preloader.style.display = "none", 500);
+                        });
+        </script>
+        <c:if test="${not empty sessionScope.Message}">
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                        window.addEventListener("DOMContentLoaded", function () {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Notification',
+                                text: "${fn:escapeXml(sessionScope.Message)}"
+                            });
+                        });
+            </script>
+            <c:remove var="Message" scope="session"/>
+        </c:if>
+        <c:if test="${not empty param.regis}">
+            <script>
+                modal.classList.add('show');
+                loginAcessRegister.classList.add('active');
+            </script>
+        </c:if>
+        <script src="js/conversation/JS_chatBox.js"></script>
+        <script src="js/orderHistoryModal.js"></script>
+        <script src="js/feedbackModal.js"></script>
     </body>
 </html>

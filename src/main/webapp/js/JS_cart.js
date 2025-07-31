@@ -35,9 +35,12 @@ function updateSidebarTotal() {
         if (checkbox && checkbox.checked) {
             const qty = parseInt(qtyInput.value);
             const priceRaw = priceEl.innerText;
-            const priceText = priceRaw.replace(/\./g, '').replace(/[^0-9]/g, '');
+            const priceText = priceRaw.toString().substring(0,priceRaw.toLocaleString().indexOf(',')).replace(/\./g, '').replace(/[^0-9]/g, '');
             const price = parseInt(priceText);
-
+            console.log("priceRaw"+priceRaw);
+            console.log("priceText"+priceText);
+            console.log("price"+price);
+            console.log("qty"+qty);
             if (!isNaN(qty) && !isNaN(price)) {
                 subtotal += qty * price;
                 count++;
@@ -46,7 +49,7 @@ function updateSidebarTotal() {
             console.log(`Item ${index + 1} KHÔNG được chọn`);
         }
     });
-
+console.log(subtotal);
     document.querySelectorAll('.cart-sidebar-total-value').forEach(el => {
         el.innerText = subtotal.toLocaleString('en-US');
     });

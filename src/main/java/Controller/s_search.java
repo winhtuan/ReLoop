@@ -2,6 +2,7 @@ package Controller;
 
 import Model.DAO.post.ProductDao;
 import Model.entity.post.Product;
+import Service.NewPost;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -51,6 +52,7 @@ public class s_search extends HttpServlet {
             return;
         }
         productList = new ProductDao().searchProducts(keyword);
+        productList = new NewPost().filterPriorityPost(productList);
         request.getSession().setAttribute("allPost", productList);
         request.getRequestDispatcher("JSP/Post/NewPost.jsp").forward(request, response);
         //response.sendRedirect("JSP/Home/shop.html");

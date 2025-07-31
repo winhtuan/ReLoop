@@ -1,8 +1,8 @@
-// AI Image Moderation Integration for UpPostPage - DEBUG VERSION
+// AI Image Moderation Integration for UpPostPage - ENHANCED VERSION
 // This script sends ALL selected images to the GoogleVision servlet whenever the image selection changes
 
 (function () {
-    console.log('🚀 AI Moderation Script Loaded');
+    console.log('🚀 AI Moderation Script Loaded - Enhanced Version');
     
     document.addEventListener('DOMContentLoaded', function () {
         console.log('📄 DOM Content Loaded');
@@ -27,45 +27,35 @@
         let aiModerationPassed = true;
         let moderationResults = []; // Lưu kết quả kiểm duyệt của tất cả ảnh
         let isProcessing = false; // Prevent multiple simultaneous requests
-        let allFiles = []; // Lưu toàn bộ file đã chọn (merge cũ và mới)
+        let allFiles = [];
+        
+        // Configuration
+        const MAX_RETRY_ATTEMPTS = 3;
+        const RETRY_DELAY_MS = 2000;
+        const REQUEST_TIMEOUT_MS = 30000; // 30 seconds
 
-        // Create or get popup warning element
         function getOrCreatePopup() {
             let popup = document.getElementById('aiModerationPopup');
             if (!popup) {
-                console.log('🎨 Creating new popup element');
+                console.log('➕ Creating AI moderation popup');
                 popup = document.createElement('div');
                 popup.id = 'aiModerationPopup';
-                popup.style.position = 'fixed';
-                popup.style.top = '32px';
-                popup.style.right = '32px';
-                popup.style.zIndex = '9999';
-                popup.style.background = '#fff3cd';
-                popup.style.color = '#856404';
-                popup.style.border = '1.5px solid #ffeeba';
-                popup.style.borderRadius = '8px';
-                popup.style.padding = '18px 28px 18px 18px';
-                popup.style.fontWeight = '500';
-                popup.style.fontSize = '1rem';
-                popup.style.boxShadow = '0 4px 16px rgba(0,0,0,0.13)';
-                popup.style.maxWidth = '350px';
-                popup.style.lineHeight = '1.5';
-                popup.style.display = 'none';
-                popup.style.transition = 'all 0.3s';
-                popup.style.minWidth = '220px';
-                popup.innerHTML = '';
+                popup.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 9999;
+                    padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    max-width: 400px; max-height: 80vh; overflow-y: auto;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    font-size: 14px; line-height: 1.4;
+                    display: none;
+                `;
                 
-                // Close button
                 const closeBtn = document.createElement('button');
                 closeBtn.innerHTML = '&times;';
-                closeBtn.style.position = 'absolute';
-                closeBtn.style.top = '8px';
-                closeBtn.style.right = '12px';
-                closeBtn.style.background = 'none';
-                closeBtn.style.border = 'none';
-                closeBtn.style.fontSize = '1.3rem';
-                closeBtn.style.color = '#856404';
-                closeBtn.style.cursor = 'pointer';
+                closeBtn.style.cssText = `
+                    position: absolute; top: 8px; right: 12px;
+                    background: none; border: none; font-size: 1.3rem;
+                    cursor: pointer; color: #666;
+                `;
                 closeBtn.onclick = function () {
                     console.log('🎯 Popup close button clicked');
                     popup.style.display = 'none';
@@ -84,14 +74,11 @@
             // Close button
             const closeBtn = document.createElement('button');
             closeBtn.innerHTML = '&times;';
-            closeBtn.style.position = 'absolute';
-            closeBtn.style.top = '8px';
-            closeBtn.style.right = '12px';
-            closeBtn.style.background = 'none';
-            closeBtn.style.border = 'none';
-            closeBtn.style.fontSize = '1.3rem';
-            closeBtn.style.color = isError ? '#721c24' : '#856404';
-            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.cssText = `
+                position: absolute; top: 8px; right: 12px;
+                background: none; border: none; font-size: 1.3rem;
+                cursor: pointer; color: ${isError ? '#721c24' : '#856404'};
+            `;
             closeBtn.onclick = function () {
                 console.log('🎯 Popup close button clicked');
                 popup.style.display = 'none';
@@ -122,9 +109,33 @@
             popup.style.display = 'none';
         }
 
-        // Moderate a single image
-        async function moderateSingleImage(file, index) {
-            console.log(`🔍 Moderating image ${index + 1}/${moderationResults.length}:`, {
+        // Test network connectivity
+        async function testNetworkConnectivity() {
+            try {
+                console.log('🌐 Testing network connectivity...');
+                const testUrl = window.contextPath + '/googlevision-test';
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    timeout: 10000
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 Network test results:', data);
+                    return data;
+                } else {
+                    console.warning('⚠️ Network test failed:', response.status);
+                    return null;
+                }
+            } catch (error) {
+                console.error('💥 Network test error:', error);
+                return null;
+            }
+        }
+
+        // Moderate a single image with retry mechanism
+        async function moderateSingleImage(file, index, retryCount = 0) {
+            console.log(`🔍 Moderating image ${index + 1}/${moderationResults.length} (attempt ${retryCount + 1}):`, {
                 name: file.name,
                 size: file.size,
                 type: file.type
@@ -137,18 +148,31 @@
             console.log(`📡 Sending request to: ${apiUrl}`);
             
             try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+                
                 const startTime = Date.now();
                 const res = await fetch(apiUrl, {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    signal: controller.signal
                 });
                 
+                clearTimeout(timeoutId);
                 const duration = Date.now() - startTime;
                 console.log(`⏱️ API Response time: ${duration}ms, Status: ${res.status}`);
                 
                 if (!res.ok) {
                     const errorText = await res.text();
                     console.error(`❌ API Error ${res.status}:`, errorText);
+                    
+                    // Retry logic for network errors
+                    if (retryCount < MAX_RETRY_ATTEMPTS && (res.status >= 500 || res.status === 0)) {
+                        console.log(`🔄 Retrying in ${RETRY_DELAY_MS}ms... (${retryCount + 1}/${MAX_RETRY_ATTEMPTS})`);
+                        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                        return await moderateSingleImage(file, index, retryCount + 1);
+                    }
+                    
                     throw new Error(`AI moderation failed: ${res.status} - ${errorText}`);
                 }
                 
@@ -173,8 +197,16 @@
             } catch (err) {
                 console.error(`💥 Error moderating image ${index + 1}:`, {
                     error: err.message,
-                    fileName: file.name
+                    fileName: file.name,
+                    retryCount: retryCount
                 });
+                
+                // Retry logic for network errors
+                if (retryCount < MAX_RETRY_ATTEMPTS && (err.name === 'AbortError' || err.message.includes('network'))) {
+                    console.log(`🔄 Retrying in ${RETRY_DELAY_MS}ms... (${retryCount + 1}/${MAX_RETRY_ATTEMPTS})`);
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                    return await moderateSingleImage(file, index, retryCount + 1);
+                }
                 
                 return {
                     file: file,
@@ -200,12 +232,30 @@
             isProcessing = true;
             
             try {
+                // First, test network connectivity
+                const networkTest = await testNetworkConnectivity();
+                if (networkTest && !networkTest.summary.allTestsPassed) {
+                    console.warning('⚠️ Network connectivity issues detected:', networkTest);
+                    showPopup(`
+                        <div style="margin-bottom: 10px;"><strong>⚠️ Network Issues Detected:</strong></div>
+                        <div style="font-size: 0.9em; color: #856404;">
+                            Google Vision API connectivity test failed. This may affect image moderation.
+                            <br><br>Please check your internet connection and try again.
+                        </div>
+                    `, false);
+                }
+                
                 const results = [];
                 
                 // Process images sequentially to avoid overwhelming the server
                 for (let i = 0; i < files.length; i++) {
                     const result = await moderateSingleImage(files[i], i);
                     results.push(result);
+                    
+                    // Add small delay between requests to avoid rate limiting
+                    if (i < files.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
                 }
                 
                 console.log('📊 Moderation Results Summary:', {
@@ -429,6 +479,6 @@
         
         // Initialize moderation status
         setModerationStatus('pending');
-        console.log('🎯 AI Moderation Script Initialized Successfully');
+        console.log('🎯 AI Moderation Script Initialized Successfully - Enhanced Version');
     });
 })();

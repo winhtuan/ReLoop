@@ -46,6 +46,8 @@ public class s_userProfile extends HttpServlet {
 
             if ("admin".equals(user.getRole())) {
                 request.getRequestDispatcher("JSP/Admin/profileAdmin.jsp").forward(request, response);
+            } else if ("supporter".equals(user.getRole())) {
+                request.getRequestDispatcher("JSP/Supporter/profileSupporter.jsp").forward(request, response);
             } else {
                 request.getRequestDispatcher("JSP/User/userProfile.jsp").forward(request, response);
             }
