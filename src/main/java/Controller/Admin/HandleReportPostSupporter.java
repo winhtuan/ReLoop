@@ -4,11 +4,8 @@
  */
 package Controller.Admin;
 
-import Model.DAO.admin.AdminDAO;
 import Model.DAO.admin.AdminPostDAO;
-import Model.DAO.post.CategoryStats;
-import Model.entity.auth.User;
-import Model.entity.pay.MonthRevenue;
+import Model.entity.post.ProductReport;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,15 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 /**
  *
- * @author ACER
+ * @author Admin
  */
-@WebServlet(name = "StatictisServlet", urlPatterns = {"/StatictisServlet"})
-public class StatictisServlet extends HttpServlet {
+@WebServlet(name = "HandleReportPostSupporter", urlPatterns = {"/HandleReportPostSupporter"})
+public class HandleReportPostSupporter extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,36 +35,16 @@ public class StatictisServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            AdminPostDAO dao = new AdminPostDAO();
-            AdminDAO admin = new AdminDAO();
-            int totalUsers = dao.getTotalUsers();
-            int totalProducts = dao.getTotalProducts();
-            int todayProducts = dao.getTodayTotalProducts();
-            double revenue = admin.totalRevenue();
-
-            // Thống kê thêm
-            List<CategoryStats> topCategories = admin.getTop6CategoryProductCounts();
-            List<MonthRevenue> monthlyRevenue = admin.getMonthlyRevenue();
-
-            // Truyền dữ liệu sang JSP
-            request.setAttribute("totalUsers", totalUsers);
-            request.setAttribute("totalProducts", totalProducts);
-            request.setAttribute("todayProducts", todayProducts);
-            request.setAttribute("revenue", revenue);                      
-            request.setAttribute("topCategories", topCategories);          
-            request.setAttribute("monthlyRevenue", monthlyRevenue);        
-
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                User user = (User) session.getAttribute("cus");
-                if (user.getFullName() != null && user.getPhoneNumber() != null && user.getAddress() != null) {
-                    request.getRequestDispatcher("/JSP/Admin/dashboard.jsp").forward(request, response);
-                } else {
-                    request.getRequestDispatcher("s_userProfile").forward(request, response);
-                }
-            } else {
-                request.getRequestDispatcher("/JSP/Admin/JoinIn.jsp").forward(request, response);
-            }
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet HandleReportPostSupporter</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet HandleReportPostSupporter at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
     }
 
@@ -84,7 +60,7 @@ public class StatictisServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doPost(request, response);
     }
 
     /**
@@ -98,7 +74,14 @@ public class StatictisServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        AdminPostDAO reportDAO = new AdminPostDAO();
+        List<ProductReport> reports = reportDAO.getActionTakenReports();
+        
+        // Đưa vào thuộc tính request
+        request.setAttribute("Reports", reports);
+        
+        // Chuyển đến JSP hiển thị
+        request.getRequestDispatcher("/JSP/Supporter/HandleReportSupporter.jsp").forward(request, response);
     }
 
     /**

@@ -104,10 +104,10 @@
                             <a class="sp-nav-link sp-dropdown-title">Report</a>
                         </li>
                         <li class="sp-nav-item">
-                            <a href="#" class="sp-nav-link sp-dropdown-link">Product Reports</a>
+                            <a href="${pageContext.request.contextPath}/ProductReportPostSupporter" class="sp-nav-link sp-dropdown-link">Product Reports</a>
                         </li>
                         <li class="sp-nav-item">
-                            <a href="#" class="sp-nav-link sp-dropdown-link">Handle Reports</a>
+                            <a href="${pageContext.request.contextPath}/HandleReportPostSupporter" class="sp-nav-link sp-dropdown-link">Handle Reports</a>
                         </li>
                     </ul>
                 </li>
