@@ -1,6 +1,8 @@
 package Controller.Conversation;
 
+import Model.DAO.conversation.MessageDAO;
 import Model.DAO.post.ProductDao;
+import Model.entity.auth.User;
 import Model.entity.post.Product;
 import Utils.AppConfig;
 import com.google.gson.*;
@@ -53,27 +55,21 @@ public class s_chatBox extends HttpServlet {
         StringBuilder context = new StringBuilder();
         for (Product p : products) {
             context.append("• Tên: ").append(p.getTitle())
-                   .append(" - Mô tả: ").append(p.getDescription())
-                   .append(" - Giá: ").append(p.getPrice())
-                   .append("\n");
+                    .append(" - Mô tả: ").append(p.getDescription())
+                    .append(" - Giá: ").append(p.getPrice())
+                    .append("\n");
         }
 
-        String prompt =
-                "Bạn là một nhân viên hỗ trợ khách hàng am hiểu và thân thiện của một sàn thương mại điện tử đồ cũ.\n"
-              + "Dưới đây là danh sách một số sản phẩm chúng ta đang có:\n"
-              + context
-              + "\nKhách hàng hỏi: \"" + userMessage + "\"\n"
-              + "\nHãy dựa vào danh sách sản phẩm trên để trả lời câu hỏi của khách hàng một cách tự nhiên bằng tiếng Việt. sử dụng dấu xuống dòng '\\n' để tách ý"
-              + "Nếu câu hỏi không liên quan đến sản phẩm hoặc việc mua bán, hãy lịch sự trả lời rằng: \"Tôi chỉ có thể hỗ trợ các câu hỏi liên quan đến sản phẩm. Bạn có cần tôi giúp gì khác không ạ?\"";
+        String prompt
+                = "Bạn là một nhân viên hỗ trợ khách hàng am hiểu và thân thiện của một sàn thương mại điện tử đồ cũ.\n"
+                + "Dưới đây là danh sách một số sản phẩm chúng ta đang có:\n"
+                + context
+                + "\nKhách hàng hỏi: \"" + userMessage + "\"\n"
+                + "\nNếu câu hỏi liên quan đến các sản phẩm, hãy trả lời cụ thể, dễ hiểu và sử dụng dấu '\\n' để tách ý.\n"
+                + "Nếu câu hỏi không liên quan đến sản phẩm (ví dụ: báo cáo bài đăng, vấn đề tài khoản, lỗi hệ thống...), hãy chỉ trả lời: "
+                + "\"Cảm ơn bạn đã đặt câu hỏi. Hiện tại mình chưa thể hỗ trợ nội dung này. Sẽ có supporter liên hệ lại với bạn để hỗ trợ chi tiết hơn ạ.\"\n"
+                + "Sau đó có thể hỏi khách hàng muốn tìm thêm sản phẩm nào khác.";
 
-        // <<< THAY ĐỔI 3: Cấu trúc JSON Body chính xác cho Gemini API
-        // {
-        //   "contents": [{
-        //     "parts": [{
-        //       "text": "Your prompt here"
-        //     }]
-        //   }]
-        // }
         JsonObject part = new JsonObject();
         part.addProperty("text", prompt);
 
@@ -137,9 +133,18 @@ public class s_chatBox extends HttpServlet {
             aiReply = "Lỗi khi gọi API: " + status + ". Phản hồi từ server: " + responseStr;
             System.err.println(aiReply); // In lỗi ra console của server
         }
+
+        if (aiReply.contains("Sẽ có supporter liên hệ lại")) {
+            if (request.getSession().getAttribute("user") != null) {
+                User u = (User) request.getSession().getAttribute("cus");
+                String userId = u.getUserId();
+                new MessageDAO().saveToSupporter(userMessage, userId);
+            }
+        }
+
         // 6. Gửi phản hồi về client
         JsonObject result = new JsonObject();
         result.addProperty("response", aiReply.replace("* **", "<br><br>").replace("**", "<br>-"));
         response.getWriter().write(result.toString());
     }
-}   
+}

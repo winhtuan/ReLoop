@@ -161,7 +161,38 @@ public class MessageDAO {
         return null; // không tìm thấy
     }
 
+    public static void saveToSupporter(String userMessage, String userId) {
+        if (userId == null || userMessage == null || userMessage.isBlank()) {
+            return;
+        }
+        String conversationId = null;
+        // 1. Tìm conversation giữa user và supporter
+        String sqlFind = "SELECT c.conversation_id "
+                + "FROM conversation c "
+                + "JOIN users u ON c.receiver_id = u.user_id "
+                + "WHERE c.sender_id = ? AND u.role = 'supporter' "
+                + "LIMIT 1";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sqlFind)) {
+
+            ps.setString(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                conversationId = rs.getString("conversation_id");
+            }
+
+            // 2. Nếu đã có conversation thì lưu message
+            if (conversationId != null) {
+                System.out.println("njkahdhlashdkahsldkhalskd");
+                saveMessage(conversationId, userId, userMessage, "text");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) throws SQLException {
-        // Test ở đây nếu cần
     }
 }
