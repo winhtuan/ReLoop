@@ -159,10 +159,6 @@
                                 <a class="nav-link dropdown-title">Revenue</a>
                             </li>
                             <li class="nav-item">
-                                <!--<a href="${pageContext.request.contextPath}/" class="nav-link dropdown-link">Total Revenue</a>-->
-                                <a href="#" class="nav-link dropdown-link">Total Revenue</a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="${pageContext.request.contextPath}/CreateWithrawQR" class="nav-link dropdown-link">Withdrawal Request</a>
                             </li>
                         </ul>
