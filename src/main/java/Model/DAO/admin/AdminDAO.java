@@ -1,6 +1,9 @@
 package Model.DAO.admin;
 
+import Model.DAO.post.CategoryStats;
 import Model.entity.auth.User;
+import Model.entity.pay.MonthRevenue;
+import Model.entity.post.Category;
 import Utils.DBUtils;
 
 import java.sql.*;
@@ -181,6 +184,69 @@ public class AdminDAO {
         }
     }
 
+    public double totalRevenue() {
+        String sql = "SELECT SUM(total_amount) AS total_revenue FROM orders WHERE status IN ('paid', 'shipping', 'delivered')";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getDouble("total_revenue");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Ghi log hoặc xử lý tùy hệ thống
+        }
+        return 0;
+    }
+
+    public List<CategoryStats> getTop6CategoryProductCounts() {
+        List<CategoryStats> result = new ArrayList<>();
+        String sql = "SELECT c.name AS category_name, COUNT(p.product_id) AS total "
+                + "FROM categories c "
+                + "LEFT JOIN product p ON c.category_id = p.category_id "
+                + "GROUP BY c.name "
+                + "ORDER BY total DESC "
+                + "LIMIT 6";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String categoryName = rs.getString("category_name");
+                int total = rs.getInt("total");
+                result.add(new CategoryStats(categoryName, total));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Ghi log hoặc xử lý phù hợp hệ thống
+        }
+
+        return result;
+    }
+
+    public List<MonthRevenue> getMonthlyRevenue() {
+        String sql = "SELECT MONTH(created_at) AS month, SUM(total_amount) AS total "
+                + "FROM orders "
+                + "WHERE status IN ('paid', 'shipping', 'delivered') "
+                + "GROUP BY MONTH(created_at) "
+                + "ORDER BY MONTH(created_at)";
+
+        List<MonthRevenue> list = new ArrayList<>();
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new MonthRevenue(
+                        rs.getInt("month"),
+                        rs.getDouble("total")
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Ghi log nếu cần
+        }
+
+        return list;
+    }
+
     public static void main(String[] args) {
         AdminDAO dao = new AdminDAO();
 
@@ -195,6 +261,5 @@ public class AdminDAO {
             System.out.println("Khóa tài khoản thất bại hoặc user không tồn tại.");
         }
     }
-
 
 }

@@ -175,7 +175,11 @@ WHERE feedback_id = 'FDB0002';
 select * from feedback;
 select * from orders;
 select * from order_items;
-select * from product;
+select * from product_attribute_value;
+
+SELECT product_id, status, state, quantity
+FROM product
+WHERE product_id = 'PRD0001';
 
 -- 13. conversation
 CREATE TABLE conversation (
@@ -310,6 +314,8 @@ CREATE TABLE category_attribute (
     is_required BOOLEAN DEFAULT FALSE,
     CONSTRAINT FK_attr_category FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
 );
+select * from product_attribute_value;
+SELECT category_id FROM product WHERE product_id = 'PRD0096';
 
 CREATE TABLE product_attribute_value (
     product_id CHAR(7) NOT NULL,
@@ -365,4 +371,13 @@ CREATE TABLE WithdrawalRequest (
 
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES Users(user_id)
         ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE following_follower (
+    follower_id CHAR(7) NOT NULL,
+    following_id CHAR(7) NOT NULL,
+    followed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, following_id),
+    CONSTRAINT FK_following_follower_follower FOREIGN KEY (follower_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT FK_following_follower_following FOREIGN KEY (following_id) REFERENCES users(user_id) ON DELETE CASCADE
 );

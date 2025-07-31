@@ -258,6 +258,22 @@ public class UserDao {
         }
     }
 
+    public ArrayList<String> getListUserPremium() {
+        ArrayList<String> premiumUsers = new ArrayList<>();
+        String sql = "SELECT user_id FROM users WHERE is_premium = 1";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                premiumUsers.add(rs.getString("user_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return premiumUsers;
+    }
+
     public static void main(String[] args) {
         System.out.println(new UserDao().generateUserId());
     }

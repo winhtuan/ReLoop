@@ -42,7 +42,7 @@
                     </a>
                     <ul class="sub-category-list">
                         <c:forEach var="sub" items="${categoryList}">
-                            <c:if test="${sub.parentId == cat.categoryId}">
+                            <c:if test="${sub.parentId ne null and sub.parentId eq cat.categoryId}">
                                 <li class="sub-category-item">
                                     <a class="dropdown-link" href="categoryViewServlet?slug=${sub.slug}">
                                         <ion-icon name="chevron-forward-outline"></ion-icon> ${sub.name}

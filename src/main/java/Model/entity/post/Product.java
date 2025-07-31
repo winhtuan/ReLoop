@@ -23,6 +23,7 @@ public class Product {
     private int cQuantity;
     private List<ProductImage> images;
     private User user;
+    private List<ProductAttributeValue> attributeValues;
 
     public User getUser() {
         return user;
@@ -130,7 +131,13 @@ public class Product {
         this.cQuantity = cQuantity;
     }
 
-    
+    public List<ProductAttributeValue> getAttributeValues() {
+        return attributeValues;
+    }
+
+    public void setAttributeValues(List<ProductAttributeValue> attributeValues) {
+        this.attributeValues = attributeValues;
+    }
     
     public String getProductId() {
         return productId;
@@ -251,7 +258,7 @@ public class Product {
     public void setImages(List<ProductImage> images) {
         this.images = images;
     }
- 
+
 }
 
    

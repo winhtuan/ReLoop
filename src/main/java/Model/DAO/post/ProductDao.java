@@ -1,5 +1,6 @@
 package Model.DAO.post;
 
+import Model.entity.post.CategoryAttribute;
 import Model.entity.post.Product;
 import Model.entity.post.ProductAttributeValue;
 import Model.entity.post.ProductImage;
@@ -10,8 +11,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import Model.DAO.post.ProductImageDao;
 
 public class ProductDao {
 
@@ -19,22 +23,37 @@ public class ProductDao {
     public static List<Product> productList = null;
 
     public String generateProductId() {
-        String sql = "SELECT product_id FROM product ORDER BY product_id DESC LIMIT 1"; // MySQL dùng LIMIT 1
-        String prefix = "PRD";
-        int nextId = 1;
-
-        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
+        String sql = "SELECT last_number FROM product_sequence WHERE id = 1";
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                String lastId = rs.getString("product_id");
-                int num = Integer.parseInt(lastId.substring(2));
-                nextId = num + 1;
+                int lastNumber = rs.getInt("last_number");
+                return String.format("PRD%04d", lastNumber);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error generating product ID: " + e.getMessage());
         }
+        return null;
+    }
 
-        return String.format("%s%04d", prefix, nextId);
+    public int generateImageId() {
+        String sql = "SELECT last_number FROM product_images_sequence WHERE id = 1";
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("last_number");
+            } else {
+                // Initialize sequence if it doesn't exist
+                String initSql = "INSERT INTO product_images_sequence (id, last_number) VALUES (1, 0)";
+                try (PreparedStatement initStmt = con.prepareStatement(initSql)) {
+                    initStmt.executeUpdate();
+                }
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error generating image ID: " + e.getMessage());
+        }
+        return 0;
     }
 
     public Product getProductById(String productId) {
@@ -56,6 +75,8 @@ public class ProductDao {
                         rs.getTimestamp("created_at"),
                         rs.getTimestamp("updated_at")
                 );
+                product.setState(rs.getString("state").trim()); // Ánh xạ state
+                product.setQuantity(rs.getInt("quantity")); // Ánh xạ quantity
                 ProductImageDao imageDAO = new ProductImageDao();
                 product.setImages(imageDAO.getImagesByProductId(productId));
 
@@ -323,28 +344,38 @@ public class ProductDao {
         return products;
     }
 
-    public List<Product> getProductsByCategoryIdsAndFilter(List<Integer> categoryIds, Double minPrice, Double maxPrice, String state) {
+    public List<Product> getProductsByCategoryIdsAndFilter(List<Integer> categoryIds, Double minPrice, Double maxPrice, String state, Map<Integer, String> attributeFilters) {
         List<Product> products = new ArrayList<>();
         if (categoryIds == null || categoryIds.isEmpty()) {
             return products;
         }
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM product WHERE category_id IN (");
+        StringBuilder sql = new StringBuilder(
+                "SELECT DISTINCT p.* "
+                + "FROM product p "
+                + "LEFT JOIN product_attribute_value pav ON p.product_id = pav.product_id "
+                + "WHERE p.category_id IN ("
+        );
         sql.append(categoryIds.stream().map(id -> "?").collect(Collectors.joining(",")));
-        sql.append(") AND moderation_status = 'approved' AND status = 'active'");
+        sql.append(") AND p.moderation_status = 'approved' AND p.status = 'active'");
 
         if (minPrice != null) {
-            sql.append(" AND price >= ?");
+            sql.append(" AND p.price >= ?");
         }
         if (maxPrice != null) {
-            sql.append(" AND price <= ?");
+            sql.append(" AND p.price <= ?");
         }
         if (state != null && !state.isEmpty()) {
-            sql.append(" AND state = ?");
+            sql.append(" AND p.state = ?");
         }
+        if (attributeFilters != null && !attributeFilters.isEmpty()) {
+            for (Integer attrId : attributeFilters.keySet()) {
+                sql.append(" AND EXISTS (SELECT 1 FROM product_attribute_value pav2 WHERE pav2.product_id = p.product_id AND pav2.attr_id = ? AND pav2.value = ?)");
+            }
+        }
+        sql.append(" ORDER BY p.created_at DESC");
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-
             int index = 1;
             for (Integer id : categoryIds) {
                 ps.setInt(index++, id);
@@ -358,8 +389,14 @@ public class ProductDao {
             if (state != null && !state.isEmpty()) {
                 ps.setString(index++, state);
             }
+            if (attributeFilters != null && !attributeFilters.isEmpty()) {
+                for (Map.Entry<Integer, String> entry : attributeFilters.entrySet()) {
+                    ps.setInt(index++, entry.getKey());
+                    ps.setString(index++, entry.getValue());
+                }
+            }
 
-            ProductImageDao imageDAO = new ProductImageDao(); // Khởi tạo ProductImageDao
+            ProductImageDao imageDAO = new ProductImageDao();
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -453,6 +490,24 @@ public class ProductDao {
 
             // Lưu ảnh với img_id tự động từ trigger
             if (images != null && !images.isEmpty()) {
+                // Check if sequence exists, if not initialize it
+                String checkSequenceSql = "SELECT COUNT(*) FROM product_images_sequence WHERE id = 1";
+                boolean sequenceExists = false;
+                try (PreparedStatement psCheckSequence = conn.prepareStatement(checkSequenceSql)) {
+                    ResultSet rs = psCheckSequence.executeQuery();
+                    if (rs.next()) {
+                        sequenceExists = rs.getInt(1) > 0;
+                    }
+                }
+                
+                if (!sequenceExists) {
+                    // Initialize sequence
+                    String initSequenceSql = "INSERT INTO product_images_sequence (id, last_number) VALUES (1, 0)";
+                    try (PreparedStatement psInitSequence = conn.prepareStatement(initSequenceSql)) {
+                        psInitSequence.executeUpdate();
+                    }
+                }
+                
                 String sqlImage = "INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?)";
                 try (PreparedStatement ps = conn.prepareStatement(sqlImage)) {
                     for (int i = 0; i < images.size(); i++) {
@@ -550,4 +605,301 @@ public class ProductDao {
         return products;
     }
 
+    public List<CategoryAttribute> getCategoryAttributesByCategoryId(Integer categoryId) {
+        List<CategoryAttribute> categoryAttributes = new ArrayList<>();
+        if (categoryId == null) {
+            LOGGER.warning("categoryId is null in getCategoryAttributesByCategoryId");
+            return categoryAttributes;
+        }
+        String sql = "SELECT attr_id, category_id, name, input_type, options, is_required FROM category_attribute WHERE category_id = ?";
+
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, categoryId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    CategoryAttribute attr = new CategoryAttribute();
+                    attr.setAttributeId(rs.getInt("attr_id"));
+                    attr.setCategoryId(rs.getInt("category_id"));
+                    attr.setName(rs.getString("name"));
+                    attr.setInputType(rs.getString("input_type")); // Ánh xạ đúng cột input_type
+                    attr.setOptions(rs.getString("options"));
+                    attr.setRequired(rs.getBoolean("is_required"));
+                    categoryAttributes.add(attr);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Error retrieving category attributes by categoryId " + categoryId + ": " + e.getMessage());
+        }
+
+        return categoryAttributes;
+    }
+
+    public List<ProductAttributeValue> getAttributeValuesByProductId(String productId) {
+        List<ProductAttributeValue> attributeValues = new ArrayList<>();
+        String sql = "SELECT product_id, attr_id, value FROM product_attribute_value WHERE product_id = ?";
+
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setString(1, productId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ProductAttributeValue attrVal = new ProductAttributeValue();
+                    attrVal.setProductId(rs.getString("product_id"));
+                    attrVal.setAttributeId(rs.getInt("attr_id")); // Sửa tên cột
+                    attrVal.setValue(rs.getString("value"));
+                    attributeValues.add(attrVal);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Error retrieving attribute values by productId: " + e.getMessage());
+        }
+
+        return attributeValues;
+    }
+
+    public List<ProductImage> getProductImagesByProductId(String productId) {
+        List<ProductImage> images = new ArrayList<>();
+        String sql = "SELECT img_id, product_id, image_url, is_primary FROM product_images WHERE product_id = ?";
+
+        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setString(1, productId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                ProductImage image = new ProductImage();
+                image.setImgId(rs.getInt("img_id"));
+                image.setProductId(rs.getString("product_id"));
+                image.setImageUrl(rs.getString("image_url"));
+                image.setPrimary(rs.getBoolean("is_primary"));
+                images.add(image);
+            }
+        } catch (SQLException e) {
+            LOGGER.severe("Error retrieving product images by productId: " + e.getMessage());
+        }
+
+        return images;
+    }
+
+    public String updateProduct(Product product, List<ProductAttributeValue> attributeValues, List<ProductImage> images) {
+        Connection conn = null;
+        String productId = product.getProductId();
+
+        try {
+            conn = DBUtils.getConnect();
+            conn.setAutoCommit(false);
+
+            // Lấy thông tin sản phẩm hiện tại để so sánh
+            Product currentProduct = getProductById(productId);
+            if (currentProduct == null) {
+                throw new SQLException("Product not found with productId: " + productId);
+            }
+
+            // Xây dựng câu SQL động để cập nhật chỉ các trường thay đổi
+            StringBuilder sqlProduct = new StringBuilder("UPDATE product SET updated_at = NOW()");
+            List<Object> params = new ArrayList<>();
+            if (!Objects.equals(product.getUserId(), currentProduct.getUserId())) {
+                sqlProduct.append(", user_id = ?");
+                params.add(product.getUserId());
+            }
+            if (product.getCategoryId() != null && !product.getCategoryId().equals(currentProduct.getCategoryId())) {
+                sqlProduct.append(", category_id = ?");
+                params.add(product.getCategoryId());
+            }
+            if (!Objects.equals(product.getTitle(), currentProduct.getTitle())) {
+                sqlProduct.append(", title = ?");
+                params.add(product.getTitle());
+            }
+            if (!Objects.equals(product.getDescription(), currentProduct.getDescription())) {
+                sqlProduct.append(", description = ?");
+                params.add(product.getDescription());
+            }
+            if (product.getPrice() != currentProduct.getPrice()) {
+                sqlProduct.append(", price = ?");
+                params.add(product.getPrice());
+            }
+            if (!Objects.equals(product.getLocation(), currentProduct.getLocation())) {
+                sqlProduct.append(", location = ?");
+                params.add(product.getLocation());
+            }
+            if (!Objects.equals(product.getState(), currentProduct.getState())) {
+                sqlProduct.append(", state = ?");
+                params.add(product.getState());
+            }
+            if (!Objects.equals(product.getStatus(), currentProduct.getStatus())) {
+                sqlProduct.append(", status = ?");
+                params.add(product.getStatus() != null ? product.getStatus() : "active"); // Mặc định "active" nếu null
+            }
+            if (product.isIsPriority() != currentProduct.isIsPriority()) {
+                sqlProduct.append(", is_priority = ?");
+                params.add(product.isIsPriority());
+            }
+            if (product.getQuantity() != currentProduct.getQuantity()) {
+                sqlProduct.append(", quantity = ?");
+                params.add(product.getQuantity());
+            }
+            if (!Objects.equals(product.getModerationStatus(), currentProduct.getModerationStatus())) {
+                sqlProduct.append(", moderation_status = ?");
+                params.add(product.getModerationStatus() != null ? product.getModerationStatus() : "");
+            }
+
+            sqlProduct.append(" WHERE product_id = ?");
+            params.add(productId);
+
+            // Thực thi cập nhật sản phẩm
+            try (PreparedStatement ps = conn.prepareStatement(sqlProduct.toString())) {
+                for (int i = 0; i < params.size(); i++) {
+                    if (params.get(i) instanceof Integer) {
+                        ps.setInt(i + 1, (Integer) params.get(i));
+                    } else if (params.get(i) instanceof String) {
+                        ps.setString(i + 1, (String) params.get(i));
+                    } else if (params.get(i) instanceof Boolean) {
+                        ps.setBoolean(i + 1, (Boolean) params.get(i));
+                    }
+                }
+                int affectedRows = ps.executeUpdate();
+                if (affectedRows == 0) {
+                    LOGGER.warning("No rows updated for productId: " + productId + ". Possible no changes or invalid data.");
+                }
+            }
+
+            // Xử lý attributeValues
+            List<ProductAttributeValue> currentAttrs = getAttributeValuesByProductId(productId) != null ? getAttributeValuesByProductId(productId) : new ArrayList<>();
+            if (attributeValues != null) {
+                for (ProductAttributeValue currentAttr : currentAttrs) {
+                    boolean found = false;
+                    for (ProductAttributeValue newAttr : attributeValues) {
+                        if (currentAttr.getAttributeId() == newAttr.getAttributeId()
+                                && Objects.equals(currentAttr.getValue(), newAttr.getValue())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        String deleteAttrSql = "DELETE FROM product_attribute_value WHERE product_id = ? AND attr_id = ?";
+                        try (PreparedStatement psDeleteAttr = conn.prepareStatement(deleteAttrSql)) {
+                            psDeleteAttr.setString(1, productId);
+                            psDeleteAttr.setInt(2, currentAttr.getAttributeId());
+                            psDeleteAttr.executeUpdate();
+                        }
+                    }
+                }
+                for (ProductAttributeValue newAttr : attributeValues) {
+                    boolean found = false;
+                    for (ProductAttributeValue currentAttr : currentAttrs) {
+                        if (currentAttr.getAttributeId() == newAttr.getAttributeId()
+                                && Objects.equals(currentAttr.getValue(), newAttr.getValue())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found && newAttr.getValue() != null && !newAttr.getValue().isEmpty()) {
+                        String insertAttrSql = "INSERT INTO product_attribute_value (product_id, attr_id, value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE value = ?";
+                        try (PreparedStatement psInsertAttr = conn.prepareStatement(insertAttrSql)) {
+                            psInsertAttr.setString(1, productId);
+                            psInsertAttr.setInt(2, newAttr.getAttributeId());
+                            psInsertAttr.setString(3, newAttr.getValue());
+                            psInsertAttr.setString(4, newAttr.getValue());
+                            psInsertAttr.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            // Xử lý images
+            List<ProductImage> currentImages = getProductImagesByProductId(productId) != null ? getProductImagesByProductId(productId) : new ArrayList<>();
+            if (images != null) {
+                for (ProductImage currentImage : currentImages) {
+                    boolean found = false;
+                    for (ProductImage newImage : images) {
+                        if (currentImage.getImageUrl() != null && currentImage.getImageUrl().equals(newImage.getImageUrl())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        String deleteImageSql = "DELETE FROM product_images WHERE product_id = ? AND image_url = ?";
+                        try (PreparedStatement psDeleteImage = conn.prepareStatement(deleteImageSql)) {
+                            psDeleteImage.setString(1, productId);
+                            psDeleteImage.setString(2, currentImage.getImageUrl());
+                            psDeleteImage.executeUpdate();
+                        }
+                    }
+                }
+                for (ProductImage newImage : images) {
+                    boolean found = false;
+                    for (ProductImage currentImage : currentImages) {
+                        if (currentImage.getImageUrl() != null && currentImage.getImageUrl().equals(newImage.getImageUrl())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found && newImage.getImageUrl() != null) {
+                        // Generate img_id first - handle case where sequence doesn't exist
+                        String checkSequenceSql = "SELECT COUNT(*) FROM product_images_sequence WHERE id = 1";
+                        boolean sequenceExists = false;
+                        try (PreparedStatement psCheckSequence = conn.prepareStatement(checkSequenceSql)) {
+                            ResultSet rs = psCheckSequence.executeQuery();
+                            if (rs.next()) {
+                                sequenceExists = rs.getInt(1) > 0;
+                            }
+                        }
+                        
+                        if (!sequenceExists) {
+                            // Initialize sequence
+                            String initSequenceSql = "INSERT INTO product_images_sequence (id, last_number) VALUES (1, 0)";
+                            try (PreparedStatement psInitSequence = conn.prepareStatement(initSequenceSql)) {
+                                psInitSequence.executeUpdate();
+                            }
+                        }
+                        
+                        String updateSequenceSql = "UPDATE product_images_sequence SET last_number = last_number + 1 WHERE id = 1";
+                        try (PreparedStatement psUpdateSequence = conn.prepareStatement(updateSequenceSql)) {
+                            psUpdateSequence.executeUpdate();
+                        }
+                        
+                        String getImgIdSql = "SELECT last_number FROM product_images_sequence WHERE id = 1";
+                        int imgId = 0;
+                        try (PreparedStatement psGetImgId = conn.prepareStatement(getImgIdSql)) {
+                            ResultSet rs = psGetImgId.executeQuery();
+                            if (rs.next()) {
+                                imgId = rs.getInt("last_number");
+                            }
+                        }
+                        
+                        String insertImageSql = "INSERT INTO product_images (img_id, product_id, image_url, is_primary) VALUES (?, ?, ?, ?)";
+                        try (PreparedStatement psInsertImage = conn.prepareStatement(insertImageSql)) {
+                            psInsertImage.setInt(1, imgId);
+                            psInsertImage.setString(2, productId);
+                            psInsertImage.setString(3, newImage.getImageUrl());
+                            psInsertImage.setBoolean(4, images.indexOf(newImage) == 0);
+                            psInsertImage.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            conn.commit();
+            LOGGER.info("Product updated successfully with productId: " + productId);
+            return productId;
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    LOGGER.severe("Rollback successful due to: " + e.getMessage());
+                } catch (SQLException rollbackEx) {
+                    LOGGER.severe("Rollback failed: " + rollbackEx.getMessage());
+                }
+            }
+            LOGGER.log(Level.SEVERE, "Error updating product: " + e.getMessage(), e);
+            return null;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Failed to close connection: " + e.getMessage(), e);
+                }
+            }
+        }
+    }
 }

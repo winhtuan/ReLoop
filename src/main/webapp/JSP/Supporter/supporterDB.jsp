@@ -5,155 +5,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Post Table Manager</title>
+    <title>Supporter Dashboard</title>
 
-     <!-- Tailwind CSS -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- ✅ Font Awesome v6 (KHÔNG dùng integrity) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-    <!-- Google Font: Poppins -->
+    <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-        :root {
-            --text-primary: #2c3e50;
-            --text-secondary: #16a34a;
-            --text-warning: #f59e0b;
-            --text-danger: #dc2626;
-            --bg-gray: #f3f5f9;
-            --card-bg: #ffffff;
-            --border-color: #ddd;
-            --shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--card-bg);
-            margin: 0;
-            padding: 0;
-        }
-        main {
-            background: var(--card-bg);
-            min-height: 100vh;
-        }
-        main .header {
-            background: var(--bg-gray);
-            display: flex;
-            align-items: center;
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 50px;
-        }
-        main .header h1 {
-            font-size: 30px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 0;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
-            padding: 0 24px;
-        }
-        .stat-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            padding: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .stat-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: #6b7280;
-        }
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 4px;
-        }
-        .text-warning { color: var(--text-warning); }
-        .text-secondary { color: var(--text-secondary); }
-        .text-primary { color: #4f46e5; }
-        .text-danger { color: var(--text-danger); }
-        .bg-yellow-100 { background-color: #fef9c3; }
-        .bg-green-100 { background-color: #dcfce7; }
-        .bg-indigo-100 { background-color: #e0e7ff; }
-        .bg-red-100 { background-color: #fee2e2; }
-        .icon-wrapper {
-            padding: 12px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .material-symbols-rounded {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
-<body>
 
-    <!-- Sidebar nếu có -->
-    <%--<c:import url="sidebar.jsp" />--%>
+<body class="bg-white text-yellow-900">
 
-    <main class="flex-1">
+    <!-- Sidebar -->
+    <jsp:include page="sidebarS.jsp"/>
+
+    <main class="min-h-screen">
         <!-- Header -->
-        <div class="header">
-            <h1>Post Table Manager</h1>
+        <div class="bg-yellow-100 px-6 py-4 border-b border-yellow-300 mb-8 flex items-center shadow-sm">
+            <h1 class="text-2xl font-semibold text-yellow-800">Supporter Dashboard</h1>
         </div>
 
         <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div>
-                    <p class="stat-title">Pending Reports</p>
-                    <p class="stat-value text-warning">12</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6">
+            <!-- User count -->
+            <div class="bg-yellow-50 shadow-md rounded-xl p-6 flex items-center space-x-4 hover:shadow-lg transition">
+                <div class="p-4 bg-yellow-200 text-yellow-700 rounded-full">
+                    <span class="material-symbols-rounded text-3xl">person</span>
                 </div>
-                <div class="icon-wrapper bg-yellow-100 text-warning">
-                    <i class="fas fa-exclamation-triangle text-xl"></i>
+                <div>
+                    <h3 class="text-sm text-yellow-600">Users</h3>
+                    <p class="text-xl font-bold">${totalUsers}</p>
                 </div>
             </div>
 
-            <div class="stat-card">
-                <div>
-                    <p class="stat-title">Resolved Today</p>
-                    <p class="stat-value text-secondary">8</p>
+            <!-- Today's Posts -->
+            <div class="bg-yellow-50 shadow-md rounded-xl p-6 flex items-center space-x-4 hover:shadow-lg transition">
+                <div class="p-4 bg-yellow-200 text-yellow-700 rounded-full">
+                    <span class="material-symbols-rounded text-3xl">article</span>
                 </div>
-                <div class="icon-wrapper bg-green-100 text-secondary">
-                    <i class="fas fa-check-circle text-xl"></i>
+                <div>
+                    <h3 class="text-sm text-yellow-600">Posts Today</h3>
+                    <p class="text-xl font-bold">${todayProducts}</p>
                 </div>
             </div>
 
-            <div class="stat-card">
-                <div>
-                    <p class="stat-title">Active Chats</p>
-                    <p class="stat-value text-primary">5</p>
+            <!-- Revenue -->
+            <div class="bg-yellow-50 shadow-md rounded-xl p-6 flex items-center space-x-4 hover:shadow-lg transition">
+                <div class="p-4 bg-yellow-200 text-yellow-700 rounded-full">
+                    <span class="material-symbols-rounded text-3xl">attach_money</span>
                 </div>
-                <div class="icon-wrapper bg-indigo-100 text-primary">
-                    <i class="fas fa-comments text-xl"></i>
+                <div>
+                    <h3 class="text-sm text-yellow-600">Revenue</h3>
+                    <p class="text-xl font-bold">$${revenue}</p>
                 </div>
             </div>
 
-            <div class="stat-card">
-                <div>
-                    <p class="stat-title">Banned Users</p>
-                    <p class="stat-value text-danger">3</p>
+            <!-- Total Posts -->
+            <div class="bg-yellow-50 shadow-md rounded-xl p-6 flex items-center space-x-4 hover:shadow-lg transition">
+                <div class="p-4 bg-yellow-200 text-yellow-700 rounded-full">
+                    <span class="material-symbols-rounded text-3xl">summarize</span>
                 </div>
-                <div class="icon-wrapper bg-red-100 text-danger">
-                    <i class="fas fa-user-slash text-xl"></i>
+                <div>
+                    <h3 class="text-sm text-yellow-600">Total Posts</h3>
+                    <p class="text-xl font-bold">${totalProducts}</p>
                 </div>
             </div>
         </div>
+
+        <!-- Chat component -->
         <c:import url="/JSP/Conversation/chatUI.jsp" />
 
     </main>

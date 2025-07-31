@@ -49,6 +49,24 @@ public class ProductImageDao {
 
     // Insert new image
     public boolean insertImage(ProductImage image) throws SQLException {
+        // Check if sequence exists, if not initialize it
+        String checkSequenceSql = "SELECT COUNT(*) FROM product_images_sequence WHERE id = 1";
+        boolean sequenceExists = false;
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement psCheckSequence = conn.prepareStatement(checkSequenceSql)) {
+            ResultSet rs = psCheckSequence.executeQuery();
+            if (rs.next()) {
+                sequenceExists = rs.getInt(1) > 0;
+            }
+        }
+        
+        if (!sequenceExists) {
+            // Initialize sequence
+            String initSequenceSql = "INSERT INTO product_images_sequence (id, last_number) VALUES (1, 0)";
+            try (Connection conn = DBUtils.getConnect(); PreparedStatement psInitSequence = conn.prepareStatement(initSequenceSql)) {
+                psInitSequence.executeUpdate();
+            }
+        }
+        
         String sql = "INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = DBUtils.getConnect().prepareStatement(sql)) {
             stmt.setString(1, image.getProductId());
