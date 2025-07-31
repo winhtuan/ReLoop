@@ -136,10 +136,10 @@
       <button onclick="closeModal()" type="button" class="modal-close-button">
         <i class="fas fa-times"></i> Close
       </button>
-      <form action="BuyNowServlet" method="post" class="modal-buy-form">
+      <form action="EditProductServlet" method="get" class="modal-buy-form">
         <input type="hidden" name="productId">
         <button type="submit">
-          <i class="fas fa-shopping-cart"></i> Buy Now
+          <i class="fas fa-shopping-cart"></i> Edit
         </button>
       </form>
     </div>

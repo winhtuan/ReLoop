@@ -134,3 +134,35 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER trg_set_default_quantity
+BEFORE INSERT ON product
+FOR EACH ROW
+BEGIN
+    IF NEW.quantity IS NULL THEN
+        SET NEW.quantity = 1;
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+UPDATE product
+SET quantity = 1
+WHERE quantity IS NULL;
+
+DELIMITER //
+
+CREATE TRIGGER trg_set_default_status
+BEFORE INSERT ON product
+FOR EACH ROW
+BEGIN
+    IF NEW.status IS NULL THEN
+        SET NEW.status = 'active';
+    END IF;
+END;
+//
+
+DELIMITER ;

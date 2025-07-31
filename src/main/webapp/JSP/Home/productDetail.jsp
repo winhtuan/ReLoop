@@ -113,94 +113,96 @@
                                             <p>Quantity</p>
                                             <div class="quantity">
                                                 <span class="qty-minus" onclick="var effect = document.getElementById('qty');
-                                                    var qty = effect.value;
-                                                    if (!isNaN(qty) && qty > 1)
-                                                        effect.value--;
-                                                    return false;"><ion-icon name="chevron-down-outline"></ion-icon></i></span>
+                                                        var qty = effect.value;
+                                                        if (!isNaN(qty) && qty > 1)
+                                                            effect.value--;
+                                                        return false;"><ion-icon name="chevron-down-outline"></ion-icon></i></span>
 
                                                 <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
                                                 <span class="qty-plus" onclick="var effect = document.getElementById('qty');
-                                                    var qty = effect.value;
-                                                    if (!isNaN(qty))
-                                                        effect.value++;
-                                                    return false;"><ion-icon name="chevron-up-outline"></ion-icon></span>
+                                                        var qty = effect.value;
+                                                        if (!isNaN(qty))
+                                                            effect.value++;
+                                                        return false;"><ion-icon name="chevron-up-outline"></ion-icon></span>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="amado-btn-group cart-buy-group">
-                                        <input type="hidden" name="postID" value="${sessionScope.product.productId}">
-                                        <input type="hidden" name="customerId" value="${sessionScope.customerId}">
-                                        <button type="submit" name="action" class="amado-btn-custom">
-                                            <span class="btn-icon"><ion-icon name="cart-outline"></ion-icon></span>Add to Cart
-                                        </button>
-                                        <button type="submit" name="action" value="buynow" class="amado-btn-custom" style="background-color:#20d34a;">
-                                            <span class="btn-icon"><ion-icon name="flash-outline"></ion-icon></span>Buy Now
-                                        </button>
-                                    </div>
-                                </form>
-                                <!-- Seller Info Card -->
-                                <div class="seller-info-horizontal">
-                                    <div class="seller-avatar-hz">
-                                        <img src="${sessionScope.product.user.srcImg}" alt="Seller Avatar">
-                                    </div>
-                                    <div class="seller-main-hz">
-                                        <span class="seller-name-hz">${sessionScope.product.user.fullName}</span>
-                                        <div class="seller-rating-hz">
-                                            <ion-icon name="star-outline"></ion-icon> 4.5 <span class="rating-count">(2)</span>
+                                        </div>
+                                        <div class="amado-btn-group cart-buy-group">
+                                            <input type="hidden" name="postID" value="${sessionScope.product.productId}">
+                                            <input type="hidden" name="customerId" value="${sessionScope.customerId}">
+                                            <button type="submit" name="action" class="amado-btn-custom">
+                                                <span class="btn-icon"><ion-icon name="cart-outline"></ion-icon></span>Add to Cart
+                                            </button>
+                                            <button type="submit" name="action" value="buynow" class="amado-btn-custom" style="background-color:#20d34a;">
+                                                <span class="btn-icon"><ion-icon name="flash-outline"></ion-icon></span>Buy Now
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <!-- Seller Info Card -->
+                                    <div class="seller-info-horizontal">
+                                        <div class="seller-avatar-hz">
+                                            <img src="${sessionScope.product.user.srcImg}" alt="Seller Avatar">
+                                        </div>
+                                        <div class="seller-main-hz">
+                                            <span class="seller-name-hz">${sessionScope.product.user.fullName}</span>
+                                            <div class="seller-rating-hz">
+                                                <ion-icon name="star-outline"></ion-icon> 4.5 <span class="rating-count">(2)</span>
+                                            </div>
+                                        </div>
+                                        <div class="seller-contact-hz">
+                                            <form method="post" action="${pageContext.request.contextPath}/UsersServlet">
+                                                <input type="hidden" name="sellerId" value="${sessionScope.product.user.userId}" />
+                                                <input type="hidden" name="productId" value="${sessionScope.product.productId}" />
+                                                <button type="submit" class="amado-btn-custom">Contact</button>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="seller-contact-hz">
-                                        <form method="post" action="${pageContext.request.contextPath}/UsersServlet">
-                                            <input type="hidden" name="sellerId" value="${sessionScope.product.user.userId}" />
-                                            <input type="hidden" name="productId" value="${sessionScope.product.productId}" />
-                                            <button type="submit" class="amado-btn-custom">Contact</button>
-                                        </form>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="product-tabs-container" id="productTabs">
-                        <ul class="product-tabs-nav">
-                            <li class="tab-link active" data-tab="detailTab">Detail</li>
-                            <li class="tab-link" data-tab="commentTab" id="commentTabBtn">Comment</li>
-                        </ul>
-                        <div class="product-tab-content">
-                            <div id="detailTab" class="tab-content active">
-                                <!-- Nội dung chi tiết sản phẩm sẽ thêm sau -->
-                                <p>Product detail content here...</p>
-                            </div>
-                            <div id="commentTab" class="tab-content">
-                                <!-- Nội dung bình luận sẽ thêm sau -->
-                                <p>Comment section here...</p>
-                            </div>
-                        </div>
+                </div> <!-- đóng div.row -->
+            </div> <!-- đóng div.container-fluid -->
+            <div class="product-tabs-container" id="productTabs">
+                <ul class="product-tabs-nav">
+                    <li class="tab-link active" data-tab="detailTab">Detail</li>
+                    <li class="tab-link" data-tab="commentTab" id="commentTabBtn">Comment</li>
+                </ul>
+                <div class="product-tab-content">
+                    <div id="detailTab" class="tab-content active">
+                        <!-- Nội dung chi tiết sản phẩm sẽ thêm sau -->
+                        <p>Product detail content here...</p>
+                    </div>
+                    <div id="commentTab" class="tab-content">
+                        <!-- Nội dung bình luận sẽ thêm sau -->
+                        <p>Comment section here...</p>
                     </div>
                 </div>
             </div>
-            <!-- Product Details Area End -->
-
-            <!-- Tabs for Detail and Comment -->
 
         </div>
-        <!-- ##### Main Content Wrapper End ##### -->
+        <!-- Product Details Area End -->
 
-        <c:import url="/JSP/Home/Footer.jsp" />
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
-        <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
-        <!-- Popper js -->
-        <script src="${pageContext.request.contextPath}/js/lib_js/popper.min.js"></script>
-        <!-- Bootstrap js -->
-        <script src="${pageContext.request.contextPath}/js/lib_js/bootstrap.min.js"></script>
-        <!-- Plugins js -->
-        <script src="${pageContext.request.contextPath}/js/lib_js/plugins.js"></script>
-        <!-- Active js -->
-        <script src="${pageContext.request.contextPath}/js/active.js"></script>
+        <!-- Tabs for Detail and Comment -->
 
-        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-        <script>
+    </div>
+    <!-- ##### Main Content Wrapper End ##### -->
+
+    <c:import url="/JSP/Home/Footer.jsp" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
+    <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
+    <!-- Popper js -->
+    <script src="${pageContext.request.contextPath}/js/lib_js/popper.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="${pageContext.request.contextPath}/js/lib_js/bootstrap.min.js"></script>
+    <!-- Plugins js -->
+    <script src="${pageContext.request.contextPath}/js/lib_js/plugins.js"></script>
+    <!-- Active js -->
+    <script src="${pageContext.request.contextPath}/js/active.js"></script>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script>
                                                 const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
                                                 window.addEventListener("load", function () {
                                                     const preloader = document.getElementById("preloader");
@@ -275,81 +277,81 @@
 
                                                     }
                                                 });
-        </script>
-        <c:if test="${not empty requestScope.messCartAdd}">
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
+    </script>
+    <c:if test="${not empty requestScope.messCartAdd}">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
                                                 window.addEventListener("DOMContentLoaded", function () {
                                                     Swal.fire({
                                                         icon: 'success',
                                                         title: 'Thành công',
-                                                        text: "${fn:escapeXml(messCartAdd)}"
+                                                            text: "${fn:escapeXml(messCartAdd)}"
                                                     });
                                                 });
-            </script>
-            <c:remove var="messCartAdd" scope="request" />
-        </c:if>
-
-                // Gán dữ liệu vào các input hidden
-                document.getElementById("denounceReason").value = reason;
-                document.getElementById("denounceDescription").value = desc;
-
-                // Submit form
-                document.getElementById("denounceForm").submit();
-            }
-
-
-            let selectedReason = "";
-
-            function showPopup() {
-                document.getElementById("popupOverlay").style.display = "flex";
-                document.getElementById("step1").style.display = "block";
-                document.getElementById("step2").style.display = "none";
-            }
-
-            function hidePopup() {
-                document.getElementById("popupOverlay").style.display = "none";
-            }
-
-            function selectReason(el) {
-                selectedReason = el.innerText;
-                document.getElementById("selectedReasonText").innerText = "Reason: " + selectedReason;
-                document.getElementById("denounceReason").value = selectedReason; // ✅ sửa lại chỗ này
-                document.getElementById("step1").style.display = "none";
-                document.getElementById("step2").style.display = "block";
-            }
-
-            document.querySelectorAll('.add-to-cart').forEach(btn => {
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const productId = this.dataset.productid;
-                    const quantityy = document.getElementById("qty").value;
-
-                    fetch('s_addToCart', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: new URLSearchParams({
-                            postID: productId,
-                            quantity: quantityy
-                        })
-                    })
-                            .then(response => {
-                                if (response.ok) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Thêm vào giỏ hàng',
-                                        text: "Thêm vào giỏ hàng thành công",
-                                        confirmButtonText: 'OK'
-                                    });
-                                } else {
-                                    console.error('Lỗi khi thêm giỏ hàng');
-                                }
-                            });
-                });
-            });
         </script>
-    </body>
+        <c:remove var="messCartAdd" scope="request" />
+    </c:if>
+
+    // Gán dữ liệu vào các input hidden
+    document.getElementById("denounceReason").value = reason;
+    document.getElementById("denounceDescription").value = desc;
+
+    // Submit form
+    document.getElementById("denounceForm").submit();
+    }
+
+
+    let selectedReason = "";
+
+    function showPopup() {
+    document.getElementById("popupOverlay").style.display = "flex";
+    document.getElementById("step1").style.display = "block";
+    document.getElementById("step2").style.display = "none";
+    }
+
+    function hidePopup() {
+    document.getElementById("popupOverlay").style.display = "none";
+    }
+
+    function selectReason(el) {
+    selectedReason = el.innerText;
+    document.getElementById("selectedReasonText").innerText = "Reason: " + selectedReason;
+    document.getElementById("denounceReason").value = selectedReason; // ✅ sửa lại chỗ này
+    document.getElementById("step1").style.display = "none";
+    document.getElementById("step2").style.display = "block";
+    }
+
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    const productId = this.dataset.productid;
+    const quantityy = document.getElementById("qty").value;
+
+    fetch('s_addToCart', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+    postID: productId,
+    quantity: quantityy
+    })
+    })
+    .then(response => {
+    if (response.ok) {
+    Swal.fire({
+    icon: 'success',
+    title: 'Thêm vào giỏ hàng',
+    text: "Thêm vào giỏ hàng thành công",
+    confirmButtonText: 'OK'
+    });
+    } else {
+    console.error('Lỗi khi thêm giỏ hàng');
+    }
+    });
+    });
+    });
+</script>
+</body>
 
 </html>

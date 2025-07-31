@@ -96,7 +96,6 @@ public class LoginServlet extends HttpServlet {
     private void processSocialLogin(HttpServletRequest request, HttpServletResponse response,
             String email, String name, String pic)
             throws IOException, ServletException {
-
         Account acc = new Account(email);
 
         if (!new AccountDao().isEmailExist(email)) {
@@ -132,30 +131,6 @@ public class LoginServlet extends HttpServlet {
 
         AccountDao accountDao = new AccountDao();
 
-//    try {
-//        Account acc = accountDao.checkLogin(email.trim(), password.trim());
-//
-//        if (acc != null) {
-//            User user = new UserDao().getUserById(acc.getUserId());
-//
-//            if (user != null) {
-//                // Đăng nhập thành công
-//                request.getSession().setAttribute("cus", user);
-//                request.getSession().setAttribute("user", acc);
-//
-//                // Kiểm tra role
-//                String user_id = acc.getUserId();
-//                boolean isAdmin = accountDao.checkIsAdmin(user_id);
-//
-//                if (isAdmin) {
-//                    request.getRequestDispatcher("StatictisServlet").forward(request, response);
-//                    return;
-//                }
-//
-//                redirectUser(request, response);
-//                return;
-//            }
-//        }
         try {
             // Kiểm tra đăng nhập
             Account acc = accountDao.checkLogin(email.trim(), password.trim()); // hoặc hashedPassword nếu đã hash

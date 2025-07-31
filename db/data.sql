@@ -505,3 +505,102 @@ INSERT INTO category_attribute (category_id, name, input_type, options, is_requi
 INSERT INTO category_attribute (category_id, name, input_type, options, is_required) VALUES 
 (54, 'Genre', 'select', '["Life Skills", "Business", "Programming", "Marketing", "Medicine", "Education", "Other"]', TRUE),
 (54, 'Language', 'text', NULL, FALSE);
+
+-- Following-Follower
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0002', 'CUS0001'), -- John Doe follows John Smitch
+('CUS0003', 'CUS0002'), -- Alice Johnson follows John Doe
+('CUS0004', 'CUS0003'), -- Bob Williams follows Alice Johnson
+('CUS0005', 'CUS0001'), -- Emma Brown follows John Smitch
+('CUS0006', 'CUS0005'), -- Liam Harris follows Emma Brown
+('CUS0007', 'CUS0006'), -- Sophia Davis follows Liam Harris
+('CUS0008', 'CUS0005'), -- Mason Martinez follows Emma Brown
+('CUS0009', 'CUS0002'), -- Olivia Anderson follows John Doe
+('CUS0010', 'CUS0004'), -- James Wilson follows Bob Williams
+('CUS0011', 'CUS0001'), -- Isabella Lee follows John Smitch
+('CUS0012', 'CUS0008'), -- Lucas Scott follows Mason Martinez
+('CUS0013', 'CUS0012'), -- Charlotte Walker follows Lucas Scott
+('CUS0014', 'CUS0006'), -- Henry Adams follows Liam Harris
+('CUS0015', 'CUS0011'); -- Amelia Taylor follows Isabella Lee
+-- CUS0001 (John Smitch) đã có: follower = 3 (CUS0002, CUS0005, CUS0011), following = 0
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0001', 'CUS0002'), -- John Smitch follows John Doe
+('CUS0001', 'CUS0003'), -- John Smitch follows Alice Johnson
+('CUS0001', 'CUS0004'); -- John Smitch follows Bob Williams
+
+-- CUS0002 (John Doe) đã có: follower = 2, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0002', 'CUS0004'),
+('CUS0002', 'CUS0005');
+
+-- CUS0003 (Alice Johnson) đã có: follower = 1, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0003', 'CUS0001'),
+('CUS0003', 'CUS0005'),
+('CUS0010', 'CUS0003'); -- James Wilson follows Alice Johnson
+
+-- CUS0004 (Bob Williams) đã có: follower = 1, following = 0
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0004', 'CUS0001'),
+('CUS0004', 'CUS0002'),
+('CUS0011', 'CUS0004'); -- Isabella follows Bob
+
+-- CUS0005 (Emma Brown) đã có: follower = 2, following = 0
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0005', 'CUS0002'),
+('CUS0005', 'CUS0003');
+
+-- CUS0006 (Liam Harris) đã có: follower = 2, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0006', 'CUS0001'),
+('CUS0006', 'CUS0002');
+
+-- CUS0007 (Sophia Davis) đã có: follower = 0, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0007', 'CUS0001'),
+('CUS0007', 'CUS0002'),
+('CUS0007', 'CUS0003');
+
+-- CUS0008 (Mason Martinez) đã có: follower = 1, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0008', 'CUS0001'),
+('CUS0008', 'CUS0002');
+
+-- CUS0009 (Olivia Anderson) đã có: follower = 0, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0009', 'CUS0001'),
+('CUS0009', 'CUS0005'),
+('CUS0009', 'CUS0003');
+
+-- CUS0010 (James Wilson) đã có: follower = 0, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0010', 'CUS0001'),
+('CUS0010', 'CUS0002');
+
+-- CUS0011 (Isabella Lee) đã có: follower = 0, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0011', 'CUS0002'),
+('CUS0011', 'CUS0003');
+
+-- CUS0012 (Lucas Scott) đã có: follower = 1, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0012', 'CUS0001'),
+('CUS0012', 'CUS0002');
+
+-- CUS0013 (Charlotte Walker) đã có: follower = 0, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0013', 'CUS0001'),
+('CUS0013', 'CUS0002'),
+('CUS0013', 'CUS0003');
+
+-- CUS0014 (Henry Adams) đã có: follower = 0, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0014', 'CUS0001'),
+('CUS0014', 'CUS0002'),
+('CUS0014', 'CUS0003');
+
+-- CUS0015 (Amelia Taylor) đã có: follower = 0, following = 1
+INSERT INTO following_follower (follower_id, following_id) VALUES
+('CUS0015', 'CUS0001'),
+('CUS0015', 'CUS0002'),
+('CUS0015', 'CUS0003');
