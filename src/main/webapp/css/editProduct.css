@@ -1,0 +1,60 @@
+/* css/editProduct.css */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+label {
+  color: #333;
+  margin-bottom: 5px;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#cancelButton {
+  background-color: #e0e0e0;
+}
+
+#cancelButton:hover {
+  background-color: #c0c0c0;
+}
+
+#saveButton {
+  background-color: #3b82f6;
+  color: white;
+}
+
+#saveButton:hover {
+  background-color: #2563eb;
+}
+
+/* Style cho ảnh và nút x */
+.image-item {
+  position: relative;
+  display: inline-block;
+}
+
+.remove-image {
+  font-size: 12px;
+  line-height: 1;
+  width: 16px;
+  height: 16px;
+}
+
+.remove-image:hover {
+  background-color: #ef4444;
+}
