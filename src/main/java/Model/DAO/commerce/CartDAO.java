@@ -49,6 +49,22 @@ public class CartDAO {
         return String.format("%s%04d", prefix, nextId);
     }
 
+    public String getCartIdByUserId(String userId) {
+        String query = "SELECT cart_id FROM Cart WHERE user_id = ?";
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("cart_id");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null; // Không tìm thấy
+    }
+
     public Map<User, List<Product>> getCartGroupedBySeller(String userId) {
         Map<User, List<Product>> groupedCart = new LinkedHashMap<>();
         String sql = "SELECT p.*, ci.quantity AS cQuantity "
@@ -151,11 +167,11 @@ public class CartDAO {
         }
     }
 
-    public void removeItemFromCart(String userId, String productId) {
-        String sql = "DELETE FROM cart_items WHERE cart_id = (SELECT cart_id FROM cart WHERE user_id = ?) AND product_id = ?";
+    public void removeItemFromCart(String cartID, String productId) {
+        String sql = "DELETE FROM cart_items WHERE cart_id = ? AND product_id = ?";
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, userId);
+            ps.setString(1, cartID);
             ps.setString(2, productId);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -259,7 +275,7 @@ public class CartDAO {
                 if (rs.next()) {
                     int cartQty = rs.getInt("cartQty");
                     int productQty = rs.getInt("productQty");
-                    return (cartQty+1) > productQty;
+                    return (cartQty + 1) > productQty;
                 }
             }
         } catch (SQLException e) {
