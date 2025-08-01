@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import Model.DAO.post.ProductImageDao;
 
 public class ProductDao {
 
@@ -23,17 +22,21 @@ public class ProductDao {
     public static List<Product> productList = null;
 
     public String generateProductId() {
-        String sql = "SELECT last_number FROM product_sequence WHERE id = 1";
-        try (Connection con = DBUtils.getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        String sql = "SELECT product_id FROM product ORDER BY product_id DESC LIMIT 1";
+        String prefix = "PRD";
+        int nextId = 1; // Giá trị mặc định nếu bảng trống
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
             if (rs.next()) {
-                int lastNumber = rs.getInt("last_number");
-                return String.format("PRD%04d", lastNumber);
+                String lastId = rs.getString("product_id"); // Lấy user_id lớn nhất
+                int num = Integer.parseInt(lastId.substring(3)); // Cắt bỏ 'US' để lấy số
+                nextId = num + 1; // Tăng giá trị lên 1
             }
         } catch (SQLException e) {
-            System.out.println("Error generating product ID: " + e.getMessage());
+            e.printStackTrace();
         }
-        return null;
+        return String.format("%s%04d", prefix, nextId);
     }
 
     public int generateImageId() {
@@ -420,57 +423,51 @@ public class ProductDao {
     }
 
     public String saveProduct(Product product, List<ProductAttributeValue> attributeValues, List<ProductImage> images, String moderationStatus) throws SQLException {
-        String generatedProductId = null;
         Connection conn = null;
 
         try {
             conn = DBUtils.getConnect();
+            if (conn == null) {
+                throw new SQLException("Failed to establish database connection");
+            }
             conn.setAutoCommit(false);
 
-            // Lưu product
-            String sqlProduct = "INSERT INTO product (user_id, category_id, title, description, price, location, state, status, moderation_status, is_priority, updated_at) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            // Generate product_id first
+            String productId = generateProductId();
+            if (productId == null) {
+                throw new SQLException("Failed to generate product ID");
+            }
+            product.setProductId(productId);
+            LOGGER.info("Generated productId: " + productId);
+
+            // Lưu product với product_id
+            String sqlProduct = "INSERT INTO product (product_id, user_id, category_id, title, description, price, location, state, status, moderation_status, is_priority, created_at, updated_at) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
             try (PreparedStatement ps = conn.prepareStatement(sqlProduct)) {
                 LOGGER.info("Executing SQL: " + sqlProduct);
-                LOGGER.info("Setting parameters: userId=" + product.getUserId() + ", categoryId=" + product.getCategoryId()
+                LOGGER.info("Setting parameters: productId=" + productId + ", userId=" + product.getUserId() + ", categoryId=" + product.getCategoryId()
                         + ", title=" + product.getTitle() + ", description=" + product.getDescription()
                         + ", price=" + product.getPrice() + ", location=" + product.getLocation()
                         + ", state=" + product.getState() + ", status=" + product.getStatus()
                         + ", moderationStatus=" + moderationStatus + ", isPriority=" + product.isIsPriority());
 
-                ps.setString(1, product.getUserId());
-                ps.setInt(2, product.getCategoryId());
-                ps.setString(3, product.getTitle());
-                ps.setString(4, product.getDescription());
-                ps.setInt(5, product.getPrice());
-                ps.setString(6, product.getLocation());
-                ps.setString(7, product.getState());
-                ps.setString(8, product.getStatus());
-                ps.setString(9, moderationStatus); // <--- Đã thêm đúng vị trí
-                ps.setBoolean(10, product.isIsPriority());
+                ps.setString(1, productId);
+                ps.setString(2, product.getUserId());
+                ps.setInt(3, product.getCategoryId());
+                ps.setString(4, product.getTitle());
+                ps.setString(5, product.getDescription());
+                ps.setInt(6, product.getPrice());
+                ps.setString(7, product.getLocation());
+                ps.setString(8, product.getState());
+                ps.setString(9, product.getStatus() != null ? product.getStatus() : "active");
+                ps.setString(10, moderationStatus);
+                ps.setBoolean(11, product.isIsPriority());
 
                 int affectedRows = ps.executeUpdate();
                 if (affectedRows == 0) {
                     throw new SQLException("Creating product failed, no rows affected.");
                 }
-
-                // Lấy product_id từ bảng product
-                String sqlGetId = "SELECT product_id FROM product WHERE user_id = ? AND category_id = ? AND title = ? AND created_at = (SELECT MAX(created_at) FROM product WHERE user_id = ?)";
-                try (PreparedStatement psGetId = conn.prepareStatement(sqlGetId)) {
-                    psGetId.setString(1, product.getUserId());
-                    psGetId.setInt(2, product.getCategoryId());
-                    psGetId.setString(3, product.getTitle());
-                    psGetId.setString(4, product.getUserId());
-                    try (ResultSet rs = psGetId.executeQuery()) {
-                        if (rs.next()) {
-                            generatedProductId = rs.getString("product_id");
-                            product.setProductId(generatedProductId);
-                            LOGGER.info("Retrieved productId: " + generatedProductId);
-                        } else {
-                            throw new SQLException("Failed to retrieve generated product ID.");
-                        }
-                    }
-                }
+                LOGGER.info("Product inserted successfully with ID: " + productId);
             }
 
             // Lưu attribute values
@@ -478,13 +475,15 @@ public class ProductDao {
                 String sqlAttr = "INSERT INTO product_attribute_value (product_id, attr_id, value) VALUES (?, ?, ?)";
                 try (PreparedStatement ps = conn.prepareStatement(sqlAttr)) {
                     for (ProductAttributeValue attrValue : attributeValues) {
-                        ps.setString(1, generatedProductId);
-                        ps.setInt(2, attrValue.getAttributeId());
-                        ps.setString(3, attrValue.getValue());
-                        ps.addBatch();
+                        if (attrValue.getValue() != null && !attrValue.getValue().trim().isEmpty()) {
+                            ps.setString(1, productId);
+                            ps.setInt(2, attrValue.getAttributeId());
+                            ps.setString(3, attrValue.getValue().trim());
+                            ps.addBatch();
+                        }
                     }
-                    ps.executeBatch();
-                    LOGGER.info("Inserted " + attributeValues.size() + " attribute values.");
+                    int[] results = ps.executeBatch();
+                    LOGGER.info("Inserted " + results.length + " attribute values.");
                 }
             }
 
@@ -512,18 +511,34 @@ public class ProductDao {
                 try (PreparedStatement ps = conn.prepareStatement(sqlImage)) {
                     for (int i = 0; i < images.size(); i++) {
                         ProductImage image = images.get(i);
-                        ps.setString(1, generatedProductId);
-                        ps.setString(2, image.getImageUrl());
-                        ps.setBoolean(3, i == 0); // Ảnh đầu tiên là primary
-                        ps.addBatch();
+                        if (image.getImageUrl() != null && !image.getImageUrl().trim().isEmpty()) {
+                            ps.setString(1, productId);
+                            ps.setString(2, image.getImageUrl().trim());
+                            ps.setBoolean(3, i == 0); // Ảnh đầu tiên là primary
+                            ps.addBatch();
+                        }
                     }
-                    ps.executeBatch();
-                    LOGGER.info("Inserted " + images.size() + " images.");
+                    int[] results = ps.executeBatch();
+                    LOGGER.info("Inserted " + results.length + " images.");
                 }
             }
 
+            // Update sequence after successful insert
+            String updateSequenceSql = "UPDATE product_sequence SET last_number = last_number + 1 WHERE id = 1";
+            try (PreparedStatement psUpdateSequence = conn.prepareStatement(updateSequenceSql)) {
+                int affectedRows = psUpdateSequence.executeUpdate();
+                if (affectedRows == 0) {
+                    // If no rows affected, insert new sequence record
+                    String insertSequenceSql = "INSERT INTO product_sequence (id, last_number) VALUES (1, 2)";
+                    try (PreparedStatement psInsertSequence = conn.prepareStatement(insertSequenceSql)) {
+                        psInsertSequence.executeUpdate();
+                    }
+                }
+                LOGGER.info("Sequence updated successfully");
+            }
+
             conn.commit();
-            return generatedProductId;
+            return productId;
         } catch (SQLException e) {
             if (conn != null) {
                 try {

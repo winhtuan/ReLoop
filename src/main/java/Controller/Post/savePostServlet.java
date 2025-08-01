@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package Controller.Post;
 
 import Model.DAO.post.ProductDao;
@@ -46,7 +42,6 @@ public class savePostServlet extends HttpServlet {
             return;
         }
         String userId = acc.getUserId(); // Giả sử Account có getUserId()
-        LOGGER.info("User ID from session: " + userId);
 
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = request.getReader()) {
@@ -56,8 +51,23 @@ public class savePostServlet extends HttpServlet {
             }
         }
         String jsonData = sb.toString();
-        LOGGER.info("Received JSON data: " + jsonData);
-        Map<String, Object> data = GSON.fromJson(jsonData, Map.class);
+        
+        if (jsonData == null || jsonData.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\":false,\"message\":\"No data received\"}");
+            return;
+        }
+        
+        Map<String, Object> data;
+        try {
+            data = GSON.fromJson(jsonData, Map.class);
+        } catch (Exception e) {
+            LOGGER.severe("Failed to parse JSON: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\":false,\"message\":\"Invalid JSON format\"}");
+            return;
+        }
+        
         if (data == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"success\":false,\"message\":\"Invalid JSON data\"}");
@@ -68,34 +78,80 @@ public class savePostServlet extends HttpServlet {
         product.setUserId(userId);
         Object categoryIdObj = data.get("categoryId");
         if (categoryIdObj != null) {
-            String categoryIdStr = String.valueOf(categoryIdObj).split("\\.")[0]; // Lấy phần nguyên
-            product.setCategoryId(Integer.parseInt(categoryIdStr)); // Chuyển sang Integer
+            try {
+                String categoryIdStr = String.valueOf(categoryIdObj).split("\\.")[0]; // Lấy phần nguyên
+                product.setCategoryId(Integer.parseInt(categoryIdStr)); // Chuyển sang Integer
+            } catch (NumberFormatException e) {
+                LOGGER.severe("Invalid categoryId format: " + categoryIdObj);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"success\":false,\"message\":\"Invalid category ID format\"}");
+                return;
+            }
         } else {
             LOGGER.warning("categoryId is null");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\":false,\"message\":\"Category ID is required\"}");
+            return;
         }
-        product.setTitle((String) data.get("productTitle"));
+        String title = (String) data.get("productTitle");
+        if (title == null || title.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\":false,\"message\":\"Title is required\"}");
+            return;
+        }
+        product.setTitle(title.trim());
         Object priceObj = data.get("productPrice");
         if (priceObj != null) {
-            if (priceObj instanceof Number) {
-                // Nếu là số (Double, Integer), ép kiểu về int
-                product.setPrice(((Number) priceObj).intValue());
-            } else if (priceObj instanceof String) {
-                // Nếu là String, parse sang int
-                try {
+            try {
+                if (priceObj instanceof Number) {
+                    // Nếu là số (Double, Integer), ép kiểu về int
+                    product.setPrice(((Number) priceObj).intValue());
+                } else if (priceObj instanceof String) {
+                    // Nếu là String, parse sang int
                     product.setPrice(Integer.parseInt((String) priceObj));
-                } catch (NumberFormatException e) {
-                    LOGGER.warning("Cannot parse productPrice: " + priceObj);
+                } else {
+                    LOGGER.warning("productPrice is of unknown type: " + priceObj.getClass().getName());
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().write("{\"success\":false,\"message\":\"Invalid price format\"}");
+                    return;
                 }
-            } else {
-                LOGGER.warning("productPrice is of unknown type: " + priceObj.getClass().getName());
+            } catch (NumberFormatException e) {
+                LOGGER.severe("Cannot parse productPrice: " + priceObj);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"success\":false,\"message\":\"Invalid price format\"}");
+                return;
             }
         } else {
             LOGGER.warning("productPrice is null");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\":false,\"message\":\"Price is required\"}");
+            return;
         }
 
-        product.setDescription((String) data.get("productDescription"));
-        product.setLocation((String) data.get("productLocation"));
-        product.setState((String) data.get("productState"));
+        String description = (String) data.get("productDescription");
+        String location = (String) data.get("productLocation");
+        String state = (String) data.get("productState");
+        
+        if (description == null || description.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\":false,\"message\":\"Description is required\"}");
+            return;
+        }
+        if (location == null || location.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\":false,\"message\":\"Location is required\"}");
+            return;
+        }
+        if (state == null || state.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"success\":false,\"message\":\"State is required\"}");
+            return;
+        }
+        
+        product.setDescription(description.trim());
+        product.setLocation(location.trim());
+        product.setState(state.trim());
+        
         // Set status based on moderation_status
         String moderationStatus = null;
         if (data.containsKey("moderation_status")) {
@@ -106,7 +162,7 @@ public class savePostServlet extends HttpServlet {
         if (moderationStatus == null) {
             moderationStatus = "pending";
         }
-        System.out.println(moderationStatus);
+        LOGGER.info("Moderation status: " + moderationStatus);
         product.setIsPriority(false);
 
         List<ProductAttributeValue> attributeValues = new ArrayList<>();
@@ -126,8 +182,6 @@ public class savePostServlet extends HttpServlet {
                     }
                 }
             }
-        } else {
-            LOGGER.warning("attributeValuesMap is null");
         }
 
         List<ProductImage> images = new ArrayList<>();
@@ -140,19 +194,39 @@ public class savePostServlet extends HttpServlet {
                 image.setPrimary(i == 0);
                 images.add(image);
             }
-        } else {
-            LOGGER.warning("imageUrls is null");
         }
 
         try {
+            LOGGER.info("Moderation status: " + moderationStatus);
+            
+            // Validate moderation status
+            if (moderationStatus != null && !moderationStatus.matches("^(pending|approved|rejected|blocked|warn)$")) {
+                LOGGER.warning("Invalid moderation status: " + moderationStatus + ", setting to 'pending'");
+                moderationStatus = "pending";
+            }
+            
             String productId = productDAO.saveProduct(product, attributeValues, images, moderationStatus);
-            LOGGER.info("Product saved with ID: " + productId);
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("{\"success\":true,\"message\":\"Ad posted successfully\",\"productId\":\"" + productId + "\"}");
         } catch (SQLException e) {
             LOGGER.severe("SQL Error: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Provide more specific error messages
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("moderation_status")) {
+                errorMessage = "Invalid moderation status. Please try again.";
+            } else if (errorMessage.contains("Data truncated")) {
+                errorMessage = "Invalid data format. Please check your input.";
+            }
+            
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"success\":false,\"message\":\"Failed to save product: " + e.getMessage() + "\"}");
+            response.getWriter().write("{\"success\":false,\"message\":\"Database error: " + errorMessage + "\"}");
+        } catch (Exception e) {
+            LOGGER.severe("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"success\":false,\"message\":\"An unexpected error occurred: " + e.getMessage() + "\"}");
         }
     }
 

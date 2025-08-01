@@ -16,6 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const submitButton = document.getElementById("submitPostBtn");
     submitButton.classList.add("hidden");
 
+    // AI Moderation variables
+    let titleModerationStatus = null;
+    let descriptionModerationStatus = null;
+    let isModerating = false;
+    let titleModerationTimeout = null;
+    let descriptionModerationTimeout = null;
+
     if (!window.categoryTree) {
         console.error("window.categoryTree is undefined or not loaded!");
     }
@@ -119,7 +126,169 @@ document.addEventListener("DOMContentLoaded", function () {
         formFields.innerHTML += remainingFields;
 
         formFields.classList.remove("hidden");
+
+        // Add AI moderation event listeners after fields are loaded
+        setupAIModeration();
     }
+
+    // AI Moderation functions
+    function setupAIModeration() {
+        const titleField = document.getElementById("productTitle");
+        const descriptionField = document.getElementById("productDescription");
+
+        if (titleField) {
+            titleField.addEventListener("blur", function() {
+                const text = this.value.trim();
+                if (text.length > 0) {
+                    // Clear any existing timeout
+                    if (titleModerationTimeout) {
+                        clearTimeout(titleModerationTimeout);
+                    }
+                    // Debounce moderation for 500ms
+                    titleModerationTimeout = setTimeout(() => {
+                        moderateField("title", text, titleField);
+                    }, 500);
+                } else {
+                    // Clear status if field is empty
+                    window.clearModerationStatus(titleField);
+                    titleModerationStatus = null;
+                }
+            });
+
+            // Clear status when user starts typing again
+            titleField.addEventListener("input", function() {
+                if (titleModerationStatus !== null) {
+                    window.clearModerationStatus(titleField);
+                    titleModerationStatus = null;
+                }
+                // Clear any pending moderation timeout
+                if (titleModerationTimeout) {
+                    clearTimeout(titleModerationTimeout);
+                    titleModerationTimeout = null;
+                }
+            });
+        }
+
+        if (descriptionField) {
+            descriptionField.addEventListener("blur", function() {
+                const text = this.value.trim();
+                if (text.length > 0) {
+                    // Clear any existing timeout
+                    if (descriptionModerationTimeout) {
+                        clearTimeout(descriptionModerationTimeout);
+                    }
+                    // Debounce moderation for 500ms
+                    descriptionModerationTimeout = setTimeout(() => {
+                        moderateField("description", text, descriptionField);
+                    }, 500);
+                } else {
+                    // Clear status if field is empty
+                    window.clearModerationStatus(descriptionField);
+                    descriptionModerationStatus = null;
+                }
+            });
+
+            // Clear status when user starts typing again
+            descriptionField.addEventListener("input", function() {
+                if (descriptionModerationStatus !== null) {
+                    window.clearModerationStatus(descriptionField);
+                    descriptionModerationStatus = null;
+                }
+                // Clear any pending moderation timeout
+                if (descriptionModerationTimeout) {
+                    clearTimeout(descriptionModerationTimeout);
+                    descriptionModerationTimeout = null;
+                }
+            });
+        }
+    }
+
+    // Sử dụng hàm từ Hive.js
+    async function moderateField(fieldType, text, fieldElement) {
+        if (isModerating) {
+            console.log("Moderation already in progress, skipping...");
+            return;
+        }
+
+        // Check if text has changed since last moderation
+        const currentText = fieldElement.value.trim();
+        if (currentText !== text) {
+            console.log("Text changed during moderation, skipping...");
+            return;
+        }
+
+        isModerating = true;
+
+        // Update moderation status variables
+        await window.moderateField(fieldType, text, fieldElement, (status) => {
+            if (fieldType === "title") {
+                titleModerationStatus = status;
+            } else {
+                descriptionModerationStatus = status;
+            }
+            
+            // Update submit button state based on moderation results
+            updateSubmitButtonState();
+        });
+
+        isModerating = false;
+    }
+
+    // Function to check if moderation is required before submit
+    function checkModerationBeforeSubmit() {
+        const titleField = document.getElementById("productTitle");
+        const descriptionField = document.getElementById("productDescription");
+        
+        if (titleField && titleField.value.trim().length > 0 && titleModerationStatus === null) {
+            alert("Please wait for title moderation to complete or click outside the title field.");
+            return false;
+        }
+        
+        if (descriptionField && descriptionField.value.trim().length > 0 && descriptionModerationStatus === null) {
+            alert("Please wait for description moderation to complete or click outside the description field.");
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Update submit button state based on moderation results
+    function updateSubmitButtonState() {
+        const submitBtn = document.getElementById('submitPostBtn');
+        if (!submitBtn) return;
+        
+        // Check if any field has high confidence unsafe content (rejected)
+        const hasRejectedContent = titleModerationStatus === "rejected" || 
+                                 descriptionModerationStatus === "rejected";
+        
+        // Check if any field has low confidence unsafe content (warn)
+        const hasWarnContent = titleModerationStatus === "warn" || 
+                             descriptionModerationStatus === "warn";
+        
+        if (hasRejectedContent) {
+            // Disable submit button for rejected content
+            submitBtn.disabled = true;
+            submitBtn.style.background = '#dc3545';
+            submitBtn.style.color = '#fff';
+            submitBtn.style.borderColor = '#dc3545';
+            submitBtn.title = 'Cannot submit: High confidence inappropriate content detected';
+        } else if (hasWarnContent) {
+            // Allow submit but with warning styling
+            submitBtn.disabled = false;
+            submitBtn.style.background = '#ffc107';
+            submitBtn.style.color = '#000';
+            submitBtn.style.borderColor = '#ffc107';
+            submitBtn.title = 'Warning: Some potentially inappropriate content detected. Review before submitting.';
+        } else {
+            // Normal state
+            submitBtn.disabled = false;
+            submitBtn.style.background = '';
+            submitBtn.style.color = '';
+            submitBtn.style.borderColor = '';
+            submitBtn.title = '';
+        }
+    }
+
 
     function getStateOptions(categoryId) {
         let optionsHtml = '';
@@ -190,20 +359,32 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("file", f);
         }
         try {
-            const res = await fetch("/ReLoop/api/files", {method: "POST", body: formData});
+    
+            const res = await fetch("/ReLoop/api/files", {
+                method: "POST", 
+                body: formData
+            });
 
+
+            
             if (!res.ok) {
                 const errTxt = await res.text();
+                console.error('FilesServlet error response:', errTxt);
                 throw new Error(`HTTP ${res.status}: ${errTxt}`);
             }
 
-            const {uploaded} = await res.json();
+            const responseData = await res.json();
+
+            
+            const {uploaded} = responseData;
             if (!(Array.isArray(uploaded) && uploaded.length)) {
                 console.warn("No images returned", uploaded);
                 return [];
             }
 
-            return uploaded.map(img => img.shareLink);
+            const imageUrls = uploaded.map(img => img.shareLink);
+
+            return imageUrls;
         } catch (err) {
             console.error("Image upload failed", err);
             alert("Image upload failed, please try again.");
@@ -211,9 +392,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Form submit handler
-    form.addEventListener("submit", async function (e) {
-        e.preventDefault();
+    // Form submit handler - Modified to work with AI moderation
+    form.addEventListener("submit", function (e) {
+        // Check if AI moderation is still processing
+        if (window.isAIModerationProcessing) {
+            console.warn('⚠️ AI moderation still processing, blocking submit');
+            e.preventDefault();
+            alert('Please wait for image moderation to complete.');
+            return false;
+        }
+
+        // Check if AI moderation failed
+        if (window.aiModerationFailed) {
+            console.warn('Form submission blocked due to AI moderation failure');
+            e.preventDefault();
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+            return false;
+        }
+
+        // Use async IIFE to handle async operations
+        (async () => {
         // Always get the latest selectedCategoryId
         selectedCategoryId = categoryInput.value || selectedCategoryId;
         if (!selectedCategoryId) {
@@ -236,39 +436,142 @@ document.addEventListener("DOMContentLoaded", function () {
         let moderationStatusInput = form.querySelector('input[name="moderation_status"]');
         let moderationStatus = moderationStatusInput ? moderationStatusInput.value : undefined;
 
+        // Validate required fields
+        const requiredFields = ['productState', 'productPrice', 'productTitle', 'productDescription', 'productLocation'];
+        const missingFields = requiredFields.filter(field => !formData.get(field) || formData.get(field).trim() === '');
+        
+        if (missingFields.length > 0) {
+            alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+            return;
+        }
+        // --- AI Moderation: Check if content is safe ---
+        const title = formData.get('productTitle').trim();
+        const description = formData.get('productDescription').trim();
+
+        // Check if moderation has been performed
+        if (titleModerationStatus === "unsafe") {
+            alert("Your ad title contains inappropriate content. Please revise.");
+            return;
+        }
+
+        if (descriptionModerationStatus === "unsafe") {
+            alert("Your ad description contains inappropriate content. Please revise.");
+            return;
+        }
+
+        // If moderation hasn't been performed yet, perform it now
+        if (titleModerationStatus === null || descriptionModerationStatus === null) {
+            try {
+                const [titleResult, descResult] = await Promise.all([
+                    moderateText(title),
+                    moderateText(description)
+                ]);
+
+                if (isUnsafe(titleResult)) {
+                    alert("Your ad title contains inappropriate content. Please revise.");
+                    return;
+                }
+
+                if (isUnsafe(descResult)) {
+                    alert("Your ad description contains inappropriate content. Please revise.");
+                    return;
+                }
+            } catch (err) {
+                console.error("Hive text moderation failed:", err);
+                alert("Could not verify content safety. Please try again later.");
+                return;
+            }
+        }
+
+        // Check moderation status before submitting
+        if (titleModerationStatus === "rejected" || descriptionModerationStatus === "rejected") {
+            alert("Cannot submit: High confidence inappropriate content detected. Please revise your text.");
+            return false;
+        }
+        
+        if (titleModerationStatus === "unsafe" || descriptionModerationStatus === "unsafe") {
+            alert("Cannot submit: Inappropriate content detected. Please revise your text.");
+            return false;
+        }
+
         // Build payload
         let payload = {
             categoryId: parseInt(selectedCategoryId),
             productState: formData.get('productState'),
-            productPrice: formData.get('productPrice'),
-            productTitle: formData.get('productTitle'),
-            productDescription: formData.get('productDescription'),
-            productLocation: formData.get('productLocation'),
+            productPrice: parseFloat(formData.get('productPrice')) || 0,
+            productTitle: formData.get('productTitle').trim(),
+            productDescription: formData.get('productDescription').trim(),
+            productLocation: formData.get('productLocation').trim(),
             attributeValues: attributeValues,
             imageUrls: imageUrls
         };
+        
+        // Validate payload
+        if (!payload.categoryId || isNaN(payload.categoryId)) {
+            alert('Please select a valid category');
+            return;
+        }
+        if (!payload.productPrice || payload.productPrice <= 0) {
+            alert('Please enter a valid price');
+            return;
+        }
+        if (!payload.productTitle || payload.productTitle.length < 3) {
+            alert('Please enter a valid title (at least 3 characters)');
+            return;
+        }
+        if (!payload.productDescription || payload.productDescription.length < 10) {
+            alert('Please enter a valid description (at least 10 characters)');
+            return;
+        }
+        if (!payload.productLocation || payload.productLocation.trim() === '') {
+            alert('Please enter a valid location');
+            return;
+        }
+        if (!payload.productState || payload.productState.trim() === '') {
+            alert('Please select a valid state');
+            return;
+        }
+        
         if (moderationStatus) {
             payload.moderation_status = moderationStatus;
         }
+        
 
-        fetch(window.contextPath + '/savePostServlet', {
-            method: 'POST',
-            credentials: 'include',
-            body: JSON.stringify(payload),
-            headers: {'Content-Type': 'application/json'}
-        }).then(response => {
-            if (!response.ok)
-                throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-            return response.json();
-        }).then(data => {
+
+        try {
+            const response = await fetch('/ReLoop/savePostServlet', {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify(payload),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+                }
+            });
+            
+
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server error response:', errorText);
+                throw new Error(`HTTP ${response.status} - ${errorText}`);
+            }
+            
+            const data = await response.json();
+
+            
             if (data && (data.success === true || data.success === "true" || data.status === "success")) {
                 alert('Ad posted successfully!');
-                window.location.href = window.contextPath + '/home';
+                window.location.href = '/ReLoop/home';
             } else {
-                alert(data && data.message ? data.message : 'Failed to post ad');
+                const errorMessage = data && data.message ? data.message : 'Failed to post ad';
+                console.error('Server returned error:', errorMessage);
+                alert(errorMessage);
             }
-        }).catch(error => {
+        } catch (error) {
+            console.error('Error posting ad:', error);
             alert('An error occurred while posting the ad. Please check the server log.');
-        });
+        }
+        })();
     });
 });

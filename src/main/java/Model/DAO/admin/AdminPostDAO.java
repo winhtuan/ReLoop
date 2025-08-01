@@ -15,7 +15,7 @@ public class AdminPostDAO {
 
     public List<Product> approvalPost() {
         String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
-                + "FROM reloop_v2.product "
+                + "FROM reloop_v3.product "
                 + "WHERE  moderation_status IN ('pending', 'warn')";
         List<Product> list = new ArrayList<>();
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -37,7 +37,7 @@ public class AdminPostDAO {
     }
     public List<Product> allPost() {
         String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
-                + "FROM reloop_v2.product "
+                + "FROM reloop_v3.product "
                 + "WHERE moderation_status = 'approved'";
         List<Product> list = new ArrayList<>();
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -58,7 +58,7 @@ public class AdminPostDAO {
         return list;
     }
     public List<ProductImage> image(String productId) {
-        String sql = "SELECT image_url FROM reloop_v2.product_images WHERE product_id = ?";
+        String sql = "SELECT image_url FROM reloop_v3.product_images WHERE product_id = ?";
         List<ProductImage> list = new ArrayList<>();
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -80,7 +80,7 @@ public class AdminPostDAO {
     }
 
     public void deleteProductById(String productId) {
-        String sql = "DELETE FROM reloop_v2.product WHERE product_id = ?";
+        String sql = "DELETE FROM reloop_v3.product WHERE product_id = ?";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, productId);
             ps.executeUpdate();
@@ -91,7 +91,7 @@ public class AdminPostDAO {
 
     public List<Product> getRejectPost() {
         String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
-                + "FROM reloop_v2.product "
+                + "FROM reloop_v3.product "
                 + "WHERE moderation_status = 'rejected'";
         List<Product> list = new ArrayList<>();
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -114,7 +114,7 @@ public class AdminPostDAO {
 
     public List<Product> getapprovalList() {
         String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
-                + "FROM reloop_v2.product "
+                + "FROM reloop_v3.product "
                 + "WHERE moderation_status = 'approved'";
         List<Product> list = new ArrayList<>();
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -136,7 +136,7 @@ public class AdminPostDAO {
     }
 
     public void rejectPostById(String productId) {
-        String sql = "UPDATE reloop_v2.product "
+        String sql = "UPDATE reloop_v3.product "
                 + "SET moderation_status = 'rejected' "
                 + "WHERE product_id = ? ";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -148,7 +148,7 @@ public class AdminPostDAO {
     }
 
     public void pendingPostById(String productId) {
-        String sql = "UPDATE reloop_v2.product "
+        String sql = "UPDATE reloop_v3.product "
                 + "SET moderation_status = 'pending' "
                 + "WHERE product_id = ? ";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -160,7 +160,7 @@ public class AdminPostDAO {
     }
 
     public void approvePostById(String productId) {
-        String sql = "UPDATE reloop_v2.product "
+        String sql = "UPDATE reloop_v3.product "
                 + "SET moderation_status = 'approved' "
                 + "WHERE product_id = ? ";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -172,7 +172,7 @@ public class AdminPostDAO {
     }
 
     public void blockedpostbyid(String productId) {
-        String sql = "UPDATE reloop_v2.product "
+        String sql = "UPDATE reloop_v3.product "
                 + "SET moderation_status = 'blocked' "
                 + "WHERE product_id = ? ";
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -185,7 +185,7 @@ public class AdminPostDAO {
 
     public List<Product> getblockList() {
         String sql = "SELECT product_id, user_id, title, description, price, moderation_status "
-                + "FROM reloop_v2.product "
+                + "FROM reloop_v3.product "
                 + "WHERE moderation_status = 'blocked'";
         List<Product> list = new ArrayList<>();
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -207,7 +207,7 @@ public class AdminPostDAO {
     }
 
     public int getTotalUsers() {
-        String sql = "SELECT COUNT(*) AS total FROM reloop_v2.users";
+        String sql = "SELECT COUNT(*) AS total FROM reloop_v3.users";
         int total = 0;
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -223,7 +223,7 @@ public class AdminPostDAO {
     }
 
     public int getTotalProducts() {
-        String sql = "SELECT COUNT(*) AS total FROM reloop_v2.product";
+        String sql = "SELECT COUNT(*) AS total FROM reloop_v3.product";
         int total = 0;
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -239,7 +239,7 @@ public class AdminPostDAO {
     }
 
     public int getTodayTotalProducts() {
-        String sql = "SELECT COUNT(*) AS total FROM reloop_v2.product WHERE DATE(created_at) = CURDATE()";
+        String sql = "SELECT COUNT(*) AS total FROM reloop_v3.product WHERE DATE(created_at) = CURDATE()";
         int total = 0;
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -256,7 +256,7 @@ public class AdminPostDAO {
 
     public String getUserEmailByUserId(String userId) {
         String email = null;
-        String sql = "SELECT email FROM reloop_v2.users WHERE user_id = ?";
+        String sql = "SELECT email FROM reloop_v3.users WHERE user_id = ?";
 
         try (Connection conn = DBUtils.getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
