@@ -16,13 +16,29 @@
                     <div class="card-body text-center px-5 py-5">
                         <h3 class="font-bold mb-3" style="color: #242424; font-size:2rem;">Free</h3>
                         <p class="mb-4" style="color:#6d6d6d; font-size:1.1rem;">Basic experience, free forever</p>
-                        <ul class="list-unstyled mb-5 text-left mx-auto" style="font-size:1.07rem; max-width:320px;">
-                            <li><ion-icon name="checkmark-circle-outline"></ion-icon> Unlimited posting</li>
-                            <li><ion-icon name="checkmark-circle-outline"></ion-icon> Chat with buyers/sellers</li>
-                            <li><ion-icon name="close-circle-outline"></ion-icon> Priority listing display</li>
-                            <li><ion-icon name="close-circle-outline"></ion-icon> Auto-renew listings</li>
-                            <li><ion-icon name="close-circle-outline"></ion-icon> View followers</li>
+                        <ul class="text-left text-gray-700 space-y-2 text-sm mx-auto max-w-xs mb-6">
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="checkmark-circle-outline" class="text-green-500 mt-0.5"></ion-icon>
+                             <span>Boost product visibility with homepage spotlight</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="checkmark-circle-outline" class="text-green-500 mt-0.5"></ion-icon>
+                            <span>Instant messaging with buyers and sellers</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="close-circle-outline" class="text-red-400 mt-0.5"></ion-icon>
+                            <span>No priority display on homepage or search</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="close-circle-outline" class="text-red-400 mt-0.5"></ion-icon>
+                            <span>Manual renewal required every 7 days</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="close-circle-outline" class="text-red-400 mt-0.5"></ion-icon>
+                            <span>Follower list not available</span>
+                            </li>
                         </ul>
+
                         <c:choose>
                             <c:when test="${cus.isPremium}">
                                 <!-- Nếu là Premium, hiển thị thông báo và vô hiệu hóa nút -->
@@ -51,13 +67,29 @@
                         </div>
 
                         <p class="mb-4" style="color:#242424; font-size:1.1rem;">Upgrade your experience, maximize results</p>
-                        <ul class="list-unstyled mb-5 text-left mx-auto" style="font-size:1.07rem; max-width:320px;">
-                            <li><ion-icon name="checkmark-circle-outline"></ion-icon> Unlimited posting</li>
-                            <li><ion-icon name="checkmark-circle-outline"></ion-icon> Chat with buyers/sellers</li>
-                            <li><ion-icon name="checkmark-circle-outline"></ion-icon> Priority listing display</li>
-                            <li><ion-icon name="checkmark-circle-outline"></ion-icon> Auto-renew listings</li>
-                            <li><ion-icon name="checkmark-circle-outline"></ion-icon> View followers</li>
+                        <ul class="text-left text-gray-700 space-y-2 text-sm mb-6">
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="checkmark-circle-outline" class="text-green-500 mt-0.5"></ion-icon>
+                             <span>Boost product visibility with homepage spotlight</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="checkmark-circle-outline" class="text-green-500 mt-0.5"></ion-icon>
+                            <span>Instant messaging with buyers and sellers</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="checkmark-circle-outline" class="text-green-500 mt-0.5"></ion-icon>
+                            <span>Priority display on homepage and search</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="checkmark-circle-outline" class="text-green-500 mt-0.5"></ion-icon>
+                            <span>Auto-renew listings every 7 days</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                            <ion-icon name="checkmark-circle-outline" class="text-green-500 mt-0.5"></ion-icon>
+                            <span>See who follows your shop</span>
+                            </li>
                         </ul>
+
 
                         <form action="createQR" method="post" style="width: 100%;">
                             <input type="hidden" name="paidService_id" value="PRO0001" />
