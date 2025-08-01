@@ -32,8 +32,21 @@ public class CreateWithrawQR extends HttpServlet {
         Connection conn = DBUtils.getConnect();
         WithdrawalRequestDAO dao = new WithdrawalRequestDAO(conn);
         String withdrawalIdStr = request.getParameter("withdrawalId");
-        dao.rejectRequestById(Integer.parseInt(withdrawalIdStr));
-        request.getRequestDispatcher("/WithdrawServlet").forward(request, response);
+        
+        // Kiểm tra null và empty trước khi parse
+        if (withdrawalIdStr == null || withdrawalIdStr.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: withdrawalId parameter is required");
+            return;
+        }
+        
+        try {
+            dao.rejectRequestById(Integer.parseInt(withdrawalIdStr));
+            request.getRequestDispatcher("/WithdrawServlet").forward(request, response);
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: Invalid withdrawalId format");
+        }
     }
 
     @Override
@@ -49,14 +62,33 @@ public class CreateWithrawQR extends HttpServlet {
         }
 
         JSONObject json = new JSONObject(sb.toString());
-        String withdrawalId = json.getString("withdrawalId");
+        String withdrawalId = json.optString("withdrawalId", null);
 
-        String bankCode = json.getString("bankCode");
-        String accountNumber = json.getString("accountNumber");
-        String accountName = json.getString("accountName");
-        String amount = json.getString("amount");
-        String addInfo = json.getString("addInfo");
-        String userID = json.getString("userID");
+        String bankCode = json.optString("bankCode", "");
+        String accountNumber = json.optString("accountNumber", "");
+        String accountName = json.optString("accountName", "");
+        String amount = json.optString("amount", null);
+        String addInfo = json.optString("addInfo", "");
+        String userID = json.optString("userID", null);
+        
+        // Kiểm tra các tham số bắt buộc
+        if (withdrawalId == null || withdrawalId.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: withdrawalId is required");
+            return;
+        }
+        
+        if (amount == null || amount.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: amount is required");
+            return;
+        }
+        
+        if (userID == null || userID.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: userID is required");
+            return;
+        }
 
         // Tạo QR link
         String encodedAddInfo = URLEncoder.encode(addInfo, "UTF-8");
@@ -68,7 +100,14 @@ public class CreateWithrawQR extends HttpServlet {
         );
         //Update balance
         Connection conn = DBUtils.getConnect();
-        int amountint = Integer.parseInt(amount);
+        int amountint;
+        try {
+            amountint = Integer.parseInt(amount);
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: Invalid amount format");
+            return;
+        }
         int balanceBefore = new UserDao().getUserBalance(conn, userID);
         int balanceAfter = balanceBefore - amountint;
         try {
@@ -94,7 +133,13 @@ public class CreateWithrawQR extends HttpServlet {
         TransactionDAO logDAO = new TransactionDAO();
         logDAO.logTransaction(log);
         WithdrawalRequestDAO dao = new WithdrawalRequestDAO(conn);
-        dao.approveRequestById(Integer.parseInt(withdrawalId));
+        try {
+            dao.approveRequestById(Integer.parseInt(withdrawalId));
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Error: Invalid withdrawalId format");
+            return;
+        }
 
         // Trả về HTML modal
         response.setContentType("text/html");
@@ -103,29 +148,17 @@ public class CreateWithrawQR extends HttpServlet {
     }
 
     private String buildQrModalHtml(String qrLink) {
-        return "<!DOCTYPE html>"
-                + "<html lang='en'>"
-                + "<head>"
-                + "  <meta charset='UTF-8'>"
-                + "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-                + "  <style>"
-                + "    .modal { display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
-                + "      background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }"
-                + "    .modal-content { background: #fff; padding: 20px; border-radius: 10px;"
-                + "      text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.2); }"
-                + "    .modal-content img { max-width: 300px; height: auto; }"
-                + "    .close-btn { margin-top: 10px; padding: 6px 12px; border: none; background: #f44336;"
-                + "      color: white; border-radius: 5px; cursor: pointer; }"
-                + "  </style>"
-                + "</head>"
-                + "<body>"
-                + "  <div class='modal' id='qrModal'>"
-                + "    <div class='modal-content'>"
-                + "      <img src='" + qrLink + "' alt='QR Code' />"
-                + "      <br><button class='close-btn' onclick='closeModal('qrModal')'>Đóng</button>"
-                + "    </div>"
+        return "<div class='modal' id='qrModal'>"
+                + "  <div class='modal-content'>"
+                + "    <h3 style='margin-bottom: 15px; font-size: 18px; font-weight: bold;'>QR Code</h3>"
+                + "    <img src='" + qrLink + "' alt='QR Code' style='max-width: 300px; height: auto; display: block; margin: 0 auto;' />"
+                + "    <br><button class='close-btn' style='margin-top: 10px; padding: 8px 16px; border: none; background: #f44336; color: white; border-radius: 5px; cursor: pointer; font-size: 14px;'>Close</button>"
                 + "  </div>"
-                + "</body>"
-                + "</html>";
+                + "</div>"
+                + "<style>"
+                + "  .modal { display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999; }"
+                + "  .modal-content { background: #fff; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.2); max-width: 90%; }"
+                + "  .close-btn:hover { background: #d32f2f !important; }"
+                + "</style>";
     }
 }

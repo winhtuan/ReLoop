@@ -4,8 +4,11 @@
  */
 package Controller.Admin;
 
+import Model.DAO.admin.AdminDAO;
 import Model.DAO.admin.AdminPostDAO;
+import Model.DAO.post.CategoryStats;
 import Model.entity.auth.User;
+import Model.entity.pay.MonthRevenue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  *
@@ -36,26 +40,35 @@ public class StatictisServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             AdminPostDAO dao = new AdminPostDAO();
-            
+            AdminDAO admin = new AdminDAO();
             int totalUsers = dao.getTotalUsers();
             int totalProducts = dao.getTotalProducts();
             int todayProducts = dao.getTodayTotalProducts();
+            double revenue = admin.totalRevenue();
+
+            // Thống kê thêm
+            List<CategoryStats> topCategories = admin.getTop6CategoryProductCounts();
+            List<MonthRevenue> monthlyRevenue = admin.getMonthlyRevenue();
 
             // Truyền dữ liệu sang JSP
             request.setAttribute("totalUsers", totalUsers);
             request.setAttribute("totalProducts", totalProducts);
             request.setAttribute("todayProducts", todayProducts);
+            request.setAttribute("revenue", revenue);                      
+            request.setAttribute("topCategories", topCategories);          
+            request.setAttribute("monthlyRevenue", monthlyRevenue);        
+
             HttpSession session = request.getSession(false);
-            if(session != null){
+            if (session != null) {
                 User user = (User) session.getAttribute("cus");
-                if(user.getFullName() != null && user.getPhoneNumber() != null && user.getAddress() != null){
+                if (user.getFullName() != null && user.getPhoneNumber() != null && user.getAddress() != null) {
                     request.getRequestDispatcher("/JSP/Admin/dashboard.jsp").forward(request, response);
-                }else{
+                } else {
                     request.getRequestDispatcher("s_userProfile").forward(request, response);
                 }
-            }else{
+            } else {
                 request.getRequestDispatcher("/JSP/Admin/JoinIn.jsp").forward(request, response);
-            }        
+            }
         }
     }
 

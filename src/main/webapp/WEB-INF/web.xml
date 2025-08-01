@@ -18,10 +18,6 @@
         <servlet-class>Controller.Paid.GetBanksServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GoogleVision</servlet-name>
-        <servlet-class>Controller.AICensor.GoogleVision</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Hive</servlet-name>
         <servlet-class>Controller.AICensor.Hive</servlet-class>
     </servlet>
@@ -50,12 +46,8 @@
         <url-pattern>/GetBanksServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GoogleVision</servlet-name>
-        <url-pattern>/googlevision</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>Hive</servlet-name>
-        <url-pattern>/hive</url-pattern>
+        <url-pattern>/textModerate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>WithdrawServlet</servlet-name>
@@ -154,14 +146,6 @@
         <url-pattern>/s_cartBuy</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>s_cancelOrder</servlet-name>
-        <servlet-class>Controller.s_cancelOrder</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>s_cancelOrder</servlet-name>
-        <url-pattern>/s_cancelOrder</url-pattern>
-    </servlet-mapping>
-    <servlet>
         <servlet-name>s_addToCart</servlet-name>
         <servlet-class>Controller.s_addToCart</servlet-class>
     </servlet>
@@ -196,14 +180,6 @@
         <url-pattern>/SaveFeedbackServlet</url-pattern>
     </servlet-mapping>
     <!-- Payment -->
-    <servlet>
-        <servlet-name>Payment</servlet-name>
-        <servlet-class>Controller.Paid.Payment</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Payment</servlet-name>
-        <url-pattern>/pay</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>Premium</servlet-name>
         <servlet-class>Controller.Paid.Premium</servlet-class>
@@ -292,14 +268,6 @@
     </servlet-mapping>
     <!-- Other -->
     <servlet>
-        <servlet-name>s_driver</servlet-name>
-        <servlet-class>Controller.s_driver</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>s_driver</servlet-name>
-        <url-pattern>/s_driver</url-pattern>
-    </servlet-mapping>
-    <servlet>
         <servlet-name>callLogin</servlet-name>
         <servlet-class>Controller.callLogin</servlet-class>
     </servlet>
@@ -307,4 +275,5 @@
         <servlet-name>callLogin</servlet-name>
         <url-pattern>/callLogin</url-pattern>
     </servlet-mapping>
+
 </web-app>

@@ -3,16 +3,15 @@ package Service;
 import Model.DAO.commerce.OrderDao;
 import Model.DAO.commerce.OrderItemDAO;
 import Model.DAO.pay.PaidServiceDAO;
-import Model.DAO.pay.PaymentDao;
 import Model.entity.commerce.OrderItem;
 import Model.entity.commerce.OrderResult;
 import Model.entity.pay.PaidService;
 import Model.entity.pay.Voucher;
 import Utils.AppConfig;
 import jakarta.servlet.http.HttpServletRequest;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vn.payos.PayOS;
@@ -20,6 +19,8 @@ import vn.payos.type.CheckoutResponseData;
 import vn.payos.type.PaymentData;
 
 public class PayService {
+
+    private static final Logger LOGGER = Logger.getLogger(PayService.class.getName());
 
     public String createPayOSPaymentLink(String orderId, int amount, String description)
             throws Exception {
@@ -95,21 +96,46 @@ public class PayService {
                 voucher != null ? voucher.getVoucherId() : null, voucherDiscount, shipFee);
 
         if (createdOrder) {
-            for (OrderItem item : orderItems) {
-                item.setOrderId(mainOrderId);
-                new OrderItemDAO().insert(item);
-            }
+            LOGGER.info("📦 Order created successfully: " + mainOrderId);
+            
             try {
-                new PaymentDao().createPayment(new PaymentDao().generatePaymentId(), mainOrderId, grandTotal, "pending");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+                // Sử dụng AsyncPaymentService để tạo payment với timeout
+                Boolean paymentCreated = AsyncPaymentService.waitForPaymentCreation(mainOrderId, grandTotal);
+                
+                if (!paymentCreated) {
+                    LOGGER.warning("❌ Payment creation failed for order: " + mainOrderId + ", deleting order");
+                    // Nếu payment tạo thất bại, xóa order đã tạo
+                    orderDao.deleteOrder(mainOrderId);
+                    return null;
+                }
+                
+                LOGGER.info("💳 Payment created successfully for order: " + mainOrderId);
+                
+                // Payment tạo thành công, tiếp tục tạo order items
+                for (OrderItem item : orderItems) {
+                    item.setOrderId(mainOrderId);
+                    new OrderItemDAO().insert(item);
+                }
+                
+                LOGGER.info("✅ Order items created successfully for order: " + mainOrderId);
+                return new OrderResult(mainOrderId, grandTotal);
+                
+            } catch (TimeoutException e) {
+                LOGGER.severe("⏰ Payment creation timeout for order: " + mainOrderId);
+                // Xóa order nếu timeout
+                orderDao.deleteOrder(mainOrderId);
+                return null;
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "💥 Error during payment creation for order: " + mainOrderId, e);
+                // Xóa order nếu có lỗi
+                orderDao.deleteOrder(mainOrderId);
                 return null;
             }
-            return new OrderResult(mainOrderId, grandTotal);
         }
         return null;
     }
 
+    // Async method cho paid service order
     public OrderResult createPaidServiceOrder(String buyerId, String paidServiceId) {
         PaidService premium = new PaidServiceDAO().getPaidServiceById(paidServiceId);
         if (premium == null) {
@@ -121,13 +147,31 @@ public class PayService {
         boolean created = new OrderDao().createOrder(orderId, buyerId, amount, "pending", null, null, null, 0, 0);
 
         if (created) {
+            LOGGER.info("📦 Paid service order created successfully: " + orderId);
+            
             try {
-                new PaymentDao().createPayment(new PaymentDao().generatePaymentId(), orderId, amount, "pending");
-            } catch (SQLException ex) {
-                Logger.getLogger(PayService.class.getName()).log(Level.SEVERE, null, ex);
+                // Sử dụng AsyncPaymentService để tạo payment với timeout
+                Boolean paymentCreated = AsyncPaymentService.waitForPaymentCreation(orderId, amount);
+                
+                if (!paymentCreated) {
+                    LOGGER.warning("❌ Payment creation failed for paid service order: " + orderId + ", deleting order");
+                    // Nếu payment tạo thất bại, xóa order đã tạo
+                    new OrderDao().deleteOrder(orderId);
+                    return null;
+                }
+                
+                LOGGER.info("💳 Payment created successfully for paid service order: " + orderId);
+                return new OrderResult(orderId, amount);
+                
+            } catch (TimeoutException e) {
+                LOGGER.severe("⏰ Payment creation timeout for paid service order: " + orderId);
+                new OrderDao().deleteOrder(orderId);
+                return null;
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "💥 Error during payment creation for paid service order: " + orderId, e);
+                new OrderDao().deleteOrder(orderId);
                 return null;
             }
-            return new OrderResult(orderId, amount);
         }
         return null;
     }

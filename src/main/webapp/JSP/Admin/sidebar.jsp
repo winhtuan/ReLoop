@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -157,10 +157,6 @@
                         <ul class="dropdown-menu">
                             <li class="nav-item">
                                 <a class="nav-link dropdown-title">Revenue</a>
-                            </li>
-                            <li class="nav-item">
-                                <!--<a href="${pageContext.request.contextPath}/" class="nav-link dropdown-link">Total Revenue</a>-->
-                                <a href="#" class="nav-link dropdown-link">Total Revenue</a>
                             </li>
                             <li class="nav-item">
                                 <a href="${pageContext.request.contextPath}/WithdrawServlet" class="nav-link dropdown-link">Withdrawal Request</a>

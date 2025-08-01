@@ -1,6 +1,6 @@
 -- Tạo database và chọn
-CREATE DATABASE reloop_v2;
-USE reloop_v2;
+CREATE DATABASE reloop_v3;
+USE reloop_v3;
 SET SQL_SAFE_UPDATES = 0;
 
 -- 1. users
@@ -134,6 +134,8 @@ CREATE TABLE product (
     CONSTRAINT FK_product_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT FK_product_category FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
 );
+ALTER TABLE product
+MODIFY moderation_status ENUM('pending', 'approved', 'rejected', 'blocked', 'warn') NOT NULL DEFAULT 'pending';
 alter table product add column state varchar(50);
 alter table product add column quantity int;
 
@@ -158,24 +160,6 @@ ALTER TABLE orders
 MODIFY COLUMN status ENUM('pending', 'paid', 'shipping', 'delivered', 'cancelled', 'refunded', 'received');
 
 CREATE INDEX idx_orders_user_id ON orders(user_id);
-
-SELECT o.*, u.FullName
-FROM orders o
-JOIN users u ON o.user_id = u.user_id
-WHERE o.status = 'received';
-
-UPDATE orders
-SET status = 'pending'
-WHERE status = 'received';
-
-UPDATE feedback
-SET rating = 4
-WHERE feedback_id = 'FDB0002';
-
-select * from feedback;
-select * from orders;
-select * from order_items;
-select * from product;
 
 -- 13. conversation
 CREATE TABLE conversation (
@@ -233,7 +217,6 @@ CREATE TABLE cart_items (
     CONSTRAINT FK_cart_items_cart FOREIGN KEY (cart_id) REFERENCES cart(cart_id) ON DELETE CASCADE,
     CONSTRAINT FK_cart_items_product FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
-alter table cart_items add column price int;
 CREATE INDEX idx_cart_items_cart_id ON cart_items(cart_id);
 
 -- 18. order_items
@@ -363,6 +346,27 @@ CREATE TABLE WithdrawalRequest (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE following_follower (
+    follower_id CHAR(7) NOT NULL,
+    following_id CHAR(7) NOT NULL,
+    followed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, following_id),
+    CONSTRAINT FK_following_follower_follower FOREIGN KEY (follower_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT FK_following_follower_following FOREIGN KEY (following_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+UPDATE orders
+SET status = 'pending'
+WHERE status = 'received';
+
+UPDATE product
+SET moderation_status = 'approved'
+WHERE moderation_status = 'pending';
+
+UPDATE feedback
+SET rating = 4
+WHERE feedback_id = 'FDB0002';

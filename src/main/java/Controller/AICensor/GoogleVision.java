@@ -7,9 +7,11 @@ import java.net.URL;
 import java.util.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import org.json.*;
 
+@WebServlet("/googlevision")
 @MultipartConfig
 public class GoogleVision extends HttpServlet {
 
@@ -22,6 +24,20 @@ public class GoogleVision extends HttpServlet {
     private static final List<String> DRUG_KEYWORDS = Arrays.asList(
         "drug", "drugs", "narcotic", "marijuana", "cannabis", "cocaine", "heroin", "methamphetamine", "amphetamine", "opioid", "opiate", "psychedelic", "hallucinogen", "ecstasy", "mdma", "lsd", "syringe", "needle", "bong", "pipe"
     );
+
+    private boolean hasHighConfidence(List<String> labels, double threshold) {
+        for (String label : labels) {
+            int idx = label.indexOf("score:");
+            if (idx != -1) {
+                try {
+                    String scorePart = label.substring(idx + 6).replace(")", "").trim();
+                    double score = Double.parseDouble(scorePart);
+                    if (score >= threshold) return true;
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+        return false;
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -60,7 +76,6 @@ public class GoogleVision extends HttpServlet {
             JSONObject postData = new JSONObject();
             postData.put("requests", requests);
 
-            // Append api_key to url
             String fullApiUrl = apiUrl + "?key=" + apiKey;
             URL url = new URL(fullApiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -82,8 +97,9 @@ public class GoogleVision extends HttpServlet {
             conn.disconnect();
 
             if (status >= 400) {
-                response.setStatus(status);
+                response.setStatus(500);
                 result.put("error", "Vision API error: " + sb.toString());
+                result.put("httpStatus", status);
                 response.getWriter().write(result.toString());
                 return;
             }
@@ -145,17 +161,23 @@ public class GoogleVision extends HttpServlet {
                 isUnsafe = true; reasons.add("Possible drug-related content detected");
             }
 
+            boolean hasHighScoreWeapon = hasHighConfidence(weaponLabels, 0.8);
+            boolean hasHighScoreDrug = hasHighConfidence(drugEntities, 0.8);
+            if (hasHighScoreWeapon) reasons.add("Weapon confidence >= 0.8");
+            if (hasHighScoreDrug) reasons.add("Drug confidence >= 0.8");
+
             result.put("safeSearch", safeSearch != null ? safeSearch : JSONObject.NULL);
             result.put("weaponLabels", weaponLabels);
             result.put("drugEntities", drugEntities);
-            result.put("isUnsafe", isUnsafe);
+            result.put("isUnsafe", isUnsafe || hasHighScoreWeapon || hasHighScoreDrug);
             result.put("reasons", reasons);
 
             response.getWriter().write(result.toString());
 
         } catch (Exception ex) {
             response.setStatus(500);
-            result.put("error", ex.getMessage());
+            result.put("error", "AI moderation failed: " + ex.getMessage());
+            result.put("details", ex.toString());
             response.getWriter().write(result.toString());
         }
     }

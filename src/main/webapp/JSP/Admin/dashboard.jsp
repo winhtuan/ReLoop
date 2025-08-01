@@ -183,7 +183,7 @@
                     </div>
                     <div class="task-text">
                         <h3>Revenue</h3>
-                        <p>$12K</p> <%-- hoặc ${revenue} nếu có biến truyền --%>
+                        <p>$${revenue}</p> <%-- hoặc ${revenue} nếu có biến truyền --%>
                     </div>
                 </div>
 
@@ -206,46 +206,52 @@
 
                     <script>
                         const ctxArea = document.getElementById('areaChart').getContext('2d');
-
                         const dataArea = {
-                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                            datasets: [{
-                                    label: 'L??t truy c?p',
-                                    data: [30, 50, 40, 60, 70, 90],
-                                    fill: true, // Bi?u ?? mi?n
-                                    backgroundColor: 'rgba(75, 192, 192, 0.3)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    tension: 0.4
+                        labels: [
+                        <c:forEach var="m" items="${monthlyRevenue}" varStatus="i">
+                        'Month ${m.month}'<c:if test="${!i.last}">,</c:if>
+                        </c:forEach>
+                        ],
+                                datasets: [{
+                                label: 'Monthly Revenue',
+                                        data: [
+                        <c:forEach var="m" items="${monthlyRevenue}" varStatus="i">
+                            ${m.total}<c:if test="${!i.last}">,</c:if>
+                        </c:forEach>
+                                        ],
+                                        fill: true, // Bi?u ?? mi?n
+                                        backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        tension: 0.4
                                 }]
-                        };
-
+                        }
+                        ;
                         const configArea = {
-                            type: 'line',
-                            data: dataArea,
-                            options: {
+                        type: 'line',
+                                data: dataArea,
+                                options: {
                                 responsive: true,
-                                plugins: {
-                                    title: {
+                                        plugins: {
+                                        title: {
                                         display: true,
-                                        text: 'Bi?u ?? mi?n (Area Chart)'
-                                    },
-                                    legend: {
-                                        position: 'top'
-                                    },
-                                    tooltip: {
-                                        enabled: true,
-                                        intersect: false,
-                                        mode: 'index'
-                                    }
-                                },
-                                scales: {
-                                    y: {
+                                                text: 'Monthly Revenue Chart'
+                                        },
+                                                legend: {
+                                                position: 'top'
+                                                },
+                                                tooltip: {
+                                                enabled: true,
+                                                        intersect: false,
+                                                        mode: 'index'
+                                                }
+                                        },
+                                        scales: {
+                                        y: {
                                         beginAtZero: true
-                                    }
+                                        }
+                                        }
                                 }
-                            }
                         };
-
                         new Chart(ctxArea, configArea);
                     </script>
 
@@ -255,42 +261,50 @@
                     <canvas id="myPieChart" width="400" height="400"></canvas>
 
                     <script>
+                        const labels = [
+                        <c:forEach var="cat" items="${topCategories}" varStatus="i">
+                        '<c:out value="${cat.categoryName}"/>'<c:if test="${!i.last}">,</c:if>
+                        </c:forEach>
+                        ];
+                        const dataValues = [
+                        <c:forEach var="cat" items="${topCategories}" varStatus="i">
+                            ${cat.totalProducts}<c:if test="${!i.last}">,</c:if>
+                        </c:forEach>
+                        ];
                         const ctx = document.getElementById('myPieChart').getContext('2d');
-
                         const data1 = {
-                            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
-                            datasets: [{
-                                    label: 'T? l? ph?n tr?m',
-                                    data: [30, 20, 15, 25, 10],
-                                    backgroundColor: [
-                                        'rgba(255, 99, 132, 0.6)',
-                                        'rgba(54, 162, 235, 0.6)',
-                                        'rgba(255, 206, 86, 0.6)',
-                                        'rgba(75, 192, 192, 0.6)',
-                                        'rgba(153, 102, 255, 0.6)'
-                                    ],
-                                    borderColor: 'white',
-                                    borderWidth: 2
+                        labels: labels,
+                                datasets: [{
+                                label: 'Product Distribution by Category',
+                                        data: dataValues,
+                                        backgroundColor: [
+                                                'rgba(255, 99, 132, 0.6)',
+                                                'rgba(54, 162, 235, 0.6)',
+                                                'rgba(255, 206, 86, 0.6)',
+                                                'rgba(75, 192, 192, 0.6)',
+                                                'rgba(153, 102, 255, 0.6)',
+                                                'rgba(255, 159, 64, 0.6)'
+                                        ],
+                                        borderColor: 'white',
+                                        borderWidth: 2
                                 }]
                         };
-
                         const config1 = {
-                            type: 'pie',
-                            data: data1,
-                            options: {
+                        type: 'pie',
+                                data: data1,
+                                options: {
                                 responsive: true,
-                                plugins: {
-                                    legend: {
+                                        plugins: {
+                                        legend: {
                                         position: 'bottom',
-                                    },
-                                    title: {
-                                        display: true,
-                                        text: 'Bi?u ?? hình tròn minh h?a d? li?u'
-                                    }
-                                }
-                            },
+                                        },
+                                                title: {
+                                                display: true,
+                                                        text: 'Product Distribution by Category'
+                                                }
+                                        }
+                                },
                         };
-
                         new Chart(ctx, config1);
                     </script>
                 </div>

@@ -4,6 +4,8 @@
  */
 package Controller.Supporter;
 
+import Model.DAO.admin.AdminDAO;
+import Model.DAO.admin.AdminPostDAO;
 import Model.DAO.auth.UserDao;
 import Model.DAO.conversation.ConversationDAO;
 import Model.entity.auth.Account;
@@ -47,6 +49,12 @@ public class SupporterServlet extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
+                AdminPostDAO dao = new AdminPostDAO();
+                AdminDAO admin = new AdminDAO();
+                int totalUsers = dao.getTotalUsers();
+                int totalProducts = dao.getTotalProducts();
+                int todayProducts = dao.getTodayTotalProducts();
+                double revenue = admin.totalRevenue();
 
                 // Lấy thông tin Customer hiện tại
                 User user = new UserDao().getUserById(currentUser.getUserId());
@@ -60,6 +68,11 @@ public class SupporterServlet extends HttpServlet {
 
                 request.setAttribute("cus", user);
                 request.setAttribute("userList", users);
+
+                request.setAttribute("totalUsers", totalUsers);
+                request.setAttribute("totalProducts", totalProducts);
+                request.setAttribute("todayProducts", todayProducts);
+                request.setAttribute("revenue", revenue);
                 request.getRequestDispatcher("/JSP/Supporter/supporterDB.jsp").forward(request, response);
             } else {
                 request.getRequestDispatcher("s_userProfile").forward(request, response);

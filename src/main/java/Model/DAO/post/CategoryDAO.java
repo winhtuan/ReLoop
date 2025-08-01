@@ -2,6 +2,7 @@ package Model.DAO.post;
 
 import java.util.Collections;
 import Model.entity.post.Category;
+import Model.entity.post.CategoryAttribute;
 import Utils.DBUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -238,4 +239,30 @@ public class CategoryDAO {
         return categories;
     }
 
+    // Phương thức mới để lấy các thuộc tính có input_type = 'select' cho danh mục
+    public List<CategoryAttribute> getSelectAttributesByCategoryId(int categoryId) {
+        List<CategoryAttribute> attributes = new ArrayList<>();
+        String sql = "SELECT attr_id, category_id, name, input_type, options, is_required "
+                + "FROM category_attribute "
+                + "WHERE category_id = ? AND input_type = 'select'";
+
+        try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    CategoryAttribute attr = new CategoryAttribute();
+                    attr.setAttributeId(rs.getInt("attr_id"));
+                    attr.setCategoryId(rs.getInt("category_id"));
+                    attr.setName(rs.getString("name"));
+                    attr.setInputType(rs.getString("input_type"));
+                    attr.setOptions(rs.getString("options"));
+                    attr.setRequired(rs.getBoolean("is_required"));
+                    attributes.add(attr);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return attributes;
+    }
 }
