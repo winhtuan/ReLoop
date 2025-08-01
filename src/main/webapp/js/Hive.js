@@ -405,7 +405,7 @@ async function moderateField(fieldType, text, fieldElement, statusCallback) {
         } else {
             console.log("Content is safe");
             showModerationStatus(fieldElement, "✅ Content is safe", "safe");
-            if (statusCallback) statusCallback("safe");
+            if (statusCallback) statusCallback("approved");
         }
     } catch (error) {
         console.error("Moderation failed for", fieldType, ":", error);

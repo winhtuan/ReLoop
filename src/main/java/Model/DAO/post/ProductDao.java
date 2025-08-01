@@ -439,6 +439,19 @@ public class ProductDao {
             }
             product.setProductId(productId);
             LOGGER.info("Generated productId: " + productId);
+            
+            // Validate and sanitize moderation status before any database operations
+            if (moderationStatus == null || moderationStatus.trim().isEmpty()) {
+                moderationStatus = "pending";
+            } else {
+                moderationStatus = moderationStatus.trim();
+                // Only allow valid enum values
+                if (!moderationStatus.matches("^(pending|approved|rejected|blocked|warn)$")) {
+                    LOGGER.warning("Invalid moderation status received: '" + moderationStatus + "', setting to 'pending'");
+                    moderationStatus = "pending";
+                }
+            }
+            LOGGER.info("Final moderation status: " + moderationStatus);
 
             // Lưu product với product_id
             String sqlProduct = "INSERT INTO product (product_id, user_id, category_id, title, description, price, location, state, status, moderation_status, is_priority, created_at, updated_at) "
@@ -460,7 +473,14 @@ public class ProductDao {
                 ps.setString(7, product.getLocation());
                 ps.setString(8, product.getState());
                 ps.setString(9, product.getStatus() != null ? product.getStatus() : "active");
-                ps.setString(10, moderationStatus);
+                // Ensure moderationStatus is not null and is a valid enum value
+                String finalModerationStatus = (moderationStatus != null && !moderationStatus.trim().isEmpty()) 
+                    ? moderationStatus.trim() : "pending";
+                if (!finalModerationStatus.matches("^(pending|approved|rejected|blocked|warn)$")) {
+                    LOGGER.warning("Invalid moderation status in DAO: '" + finalModerationStatus + "', using 'pending'");
+                    finalModerationStatus = "pending";
+                }
+                ps.setString(10, finalModerationStatus);
                 ps.setBoolean(11, product.isIsPriority());
 
                 int affectedRows = ps.executeUpdate();

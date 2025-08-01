@@ -51,13 +51,13 @@ public class savePostServlet extends HttpServlet {
             }
         }
         String jsonData = sb.toString();
-        
+
         if (jsonData == null || jsonData.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"success\":false,\"message\":\"No data received\"}");
             return;
         }
-        
+
         Map<String, Object> data;
         try {
             data = GSON.fromJson(jsonData, Map.class);
@@ -67,7 +67,7 @@ public class savePostServlet extends HttpServlet {
             response.getWriter().write("{\"success\":false,\"message\":\"Invalid JSON format\"}");
             return;
         }
-        
+
         if (data == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"success\":false,\"message\":\"Invalid JSON data\"}");
@@ -131,7 +131,7 @@ public class savePostServlet extends HttpServlet {
         String description = (String) data.get("productDescription");
         String location = (String) data.get("productLocation");
         String state = (String) data.get("productState");
-        
+
         if (description == null || description.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"success\":false,\"message\":\"Description is required\"}");
@@ -147,19 +147,18 @@ public class savePostServlet extends HttpServlet {
             response.getWriter().write("{\"success\":false,\"message\":\"State is required\"}");
             return;
         }
-        
+
         product.setDescription(description.trim());
         product.setLocation(location.trim());
         product.setState(state.trim());
-        
+
         // Set status based on moderation_status
         String moderationStatus = null;
         if (data.containsKey("moderation_status")) {
-            moderationStatus = (String) data.get("moderation_status");
+            moderationStatus = ((String) data.get("moderation_status")).trim().toLowerCase();
         } else if (request.getParameter("moderation_status") != null) {
-            moderationStatus = request.getParameter("moderation_status");
-        }
-        if (moderationStatus == null) {
+            moderationStatus = request.getParameter("moderation_status").trim().toLowerCase();
+        } else {
             moderationStatus = "pending";
         }
         LOGGER.info("Moderation status: " + moderationStatus);
@@ -198,20 +197,20 @@ public class savePostServlet extends HttpServlet {
 
         try {
             LOGGER.info("Moderation status: " + moderationStatus);
-            
+
             // Validate moderation status
-            if (moderationStatus != null && !moderationStatus.matches("^(pending|approved|rejected|blocked|warn)$")) {
+            if (!moderationStatus.matches("^(pending|approved|rejected|blocked|warn)$")) {
                 LOGGER.warning("Invalid moderation status: " + moderationStatus + ", setting to 'pending'");
                 moderationStatus = "pending";
             }
-            
+
             String productId = productDAO.saveProduct(product, attributeValues, images, moderationStatus);
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("{\"success\":true,\"message\":\"Ad posted successfully\",\"productId\":\"" + productId + "\"}");
         } catch (SQLException e) {
             LOGGER.severe("SQL Error: " + e.getMessage());
             e.printStackTrace();
-            
+
             // Provide more specific error messages
             String errorMessage = e.getMessage();
             if (errorMessage.contains("moderation_status")) {
@@ -219,7 +218,7 @@ public class savePostServlet extends HttpServlet {
             } else if (errorMessage.contains("Data truncated")) {
                 errorMessage = "Invalid data format. Please check your input.";
             }
-            
+
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"success\":false,\"message\":\"Database error: " + errorMessage + "\"}");
         } catch (Exception e) {
