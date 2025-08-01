@@ -193,6 +193,18 @@ INSERT INTO product_images (img_id, product_id, image_url, is_primary) VALUES
 (92, 'PRD0092', 'https://cdn.chotot.com/ZJeA_Im5bN4BRFLHeEelvw9-Nt-hBo7wEV-5t_isMOI/preset:listing/plain/7361119749a7f8d1f4cada0e11c556f3-2934953585880782823.jpg', 1),
 (93, 'PRD0093', 'https://cdn.chotot.com/u9JWJfweGkiOAqrx75zqH4imGuyUHvuTJ-jSmWylMQM/preset:listing/plain/c92e664a68d316eaeca0636fa58698a7-2935212509139521063.jpg', 1);
 
+INSERT INTO conversation (conversation_id, sender_id, receiver_id, product_id) VALUES
+('CON0001', 'CUS0001', 'CUS0002', 'PRD0001'),
+('CON0002', 'CUS0002', 'CUS0003', 'PRD0002'),
+('CON0003', 'CUS0003', 'CUS0001', 'PRD0003');
+
+INSERT INTO cart_items (cart_id, product_id, quantity, price)
+VALUES 
+('CRT0001', 'PRD0001', 2, 1500000),
+('CRT0001', 'PRD0002', 1, 800000),
+('CRT0002', 'PRD0003', 3, 2500000),
+('CRT0002', 'PRD0004', 1, 2000000);
+
 INSERT INTO WithdrawalRequest (user_id, amount, bank_code, account_number, account_name, add_info, status)
 VALUES
 ('CUS0001', 500000, 'vietinbank', '113366668888', 'John Smitch', 'Withdraw for hosting fee', 'PENDING'),

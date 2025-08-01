@@ -166,3 +166,68 @@ END;
 //
 
 DELIMITER ;
+DELIMITER $$
+
+CREATE PROCEDURE GiveDailyVoucherToPremiumUsers()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE uid CHAR(7);
+    DECLARE voucher_id CHAR(7);
+    DECLARE voucherCode VARCHAR(255);
+
+    -- Con trỏ để duyệt các user premium
+    DECLARE premium_users CURSOR FOR
+        SELECT user_id FROM users WHERE is_premium = 1;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN premium_users;
+
+    loop_users: LOOP
+        FETCH premium_users INTO uid;
+
+        IF done THEN
+            LEAVE loop_users;
+        END IF;
+
+        -- Kiểm tra xem user đã có voucher hôm nay chưa
+        IF NOT EXISTS (
+            SELECT 1 FROM user_vouchers 
+            WHERE user_id = uid AND DATE(assigned_at) = CURDATE()
+        ) THEN
+            -- Tạo mã voucher và id
+            SET voucher_id = CONCAT('VOU', LPAD(FLOOR(RAND() * 1000000), 4, '0'));
+            SET voucherCode = CONCAT('VOUCHER-', uid, '-', DATE_FORMAT(NOW(), '%Y%m%d'));
+
+            -- Thêm vào bảng vouchers
+            INSERT INTO vouchers (
+                voucher_id, code, description, discount_value,
+                start_date, end_date, usage_limit, is_active
+            ) VALUES (
+                voucher_id, voucherCode, 'Daily voucher for premium user', 10000,
+                NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), 1, 1
+            );
+
+            -- Gán voucher cho user
+            INSERT INTO user_vouchers (
+                user_voucher_id, user_id, voucher_id, assigned_at, is_used
+            ) VALUES (
+                CONCAT('UVU', LPAD(FLOOR(RAND() * 1000000), 4, '0')),
+                uid,
+                voucher_id,
+                NOW(),
+                0
+            );
+        END IF;
+    END LOOP;
+
+    CLOSE premium_users;
+END$$
+
+DELIMITER ;
+-- Tạo sự kiện để gọi stored procedure mỗi ngày lúc 00:00
+CREATE EVENT give_daily_voucher_event
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_DATE + INTERVAL 1 DAY
+DO
+    CALL GiveDailyVoucherToPremiumUsers();

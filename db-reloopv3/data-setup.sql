@@ -125,23 +125,6 @@ INSERT INTO PaidService (paid_id, service_name, price, description, usage_time) 
 ('PRO0001', 'Premium', 5000, 'Access to premium features and content.', 30),
 ('PRO0002', 'Priority Post', 2000, 'Priority placement for your posts in listings.', 1);
 
-INSERT INTO conversation (conversation_id, sender_id, receiver_id, product_id) VALUES
-('CON0001', 'CUS0001', 'CUS0002', 'PRD0001'),
-('CON0002', 'CUS0002', 'CUS0003', 'PRD0002'),
-('CON0003', 'CUS0003', 'CUS0001', 'PRD0003');
-
-INSERT INTO cart (cart_id, user_id)
-VALUES
-('CRT0001', 'CUS0002'),
- ('CRT0002', 'CUS0001');
-
-INSERT INTO cart_items (cart_id, product_id, quantity, price)
-VALUES 
-('CRT0001', 'PRD0001', 2, 1500000),
-('CRT0001', 'PRD0002', 1, 800000),
-('CRT0002', 'PRD0003', 3, 2500000),
-('CRT0002', 'PRD0004', 1, 2000000);
-
 INSERT INTO vouchers (voucher_id, code, description, discount_value, min_order_amount, start_date, end_date, usage_limit, used_count, is_active) VALUES 
 ('VOU0001', 'SUMMER2025', 'Giảm 10k cho đơn hàng từ 100K, áp dụng toàn hệ thống.', 10000.00, 100000.00, '2025-06-01 00:00:00', '2025-06-30 23:59:59', 100, 0, 1),
 ('VOU0002', 'FREESHIP', 'Miễn phí vận chuyển cho đơn từ 120K, chỉ dùng 1 lần/người.', 35000.00, 120000.00, '2025-06-10 00:00:00', '2025-07-10 23:59:59', 50, 10, 1),
@@ -604,3 +587,8 @@ INSERT INTO following_follower (follower_id, following_id) VALUES
 ('CUS0015', 'CUS0001'),
 ('CUS0015', 'CUS0002'),
 ('CUS0015', 'CUS0003');
+
+INSERT INTO cart (cart_id, user_id)
+VALUES
+('CRT0001', 'CUS0002'),
+ ('CRT0002', 'CUS0001');
