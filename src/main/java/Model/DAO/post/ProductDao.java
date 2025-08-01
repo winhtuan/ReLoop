@@ -29,14 +29,23 @@ public class ProductDao {
         try (Connection conn = DBUtils.getConnect(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
-                String lastId = rs.getString("product_id"); // Lấy user_id lớn nhất
-                int num = Integer.parseInt(lastId.substring(3)); // Cắt bỏ 'US' để lấy số
+                String lastId = rs.getString("product_id"); // Lấy product_id lớn nhất
+                int num = Integer.parseInt(lastId.substring(3)); // Cắt bỏ 'PRD' để lấy số
                 nextId = num + 1; // Tăng giá trị lên 1
             }
         } catch (SQLException e) {
+            LOGGER.severe("Error generating product ID: " + e.getMessage());
             e.printStackTrace();
         }
-        return String.format("%s%04d", prefix, nextId);
+        
+        // Validate the generated ID format
+        String generatedId = String.format("%s%04d", prefix, nextId);
+        if (!generatedId.matches("^PRD\\d{4}$")) {
+            LOGGER.severe("Invalid product ID format generated: " + generatedId);
+            throw new RuntimeException("Invalid product ID format generated");
+        }
+        
+        return generatedId;
     }
 
     public int generateImageId() {
@@ -431,6 +440,9 @@ public class ProductDao {
                 throw new SQLException("Failed to establish database connection");
             }
             conn.setAutoCommit(false);
+            
+            // Set transaction isolation level to prevent dirty reads
+            conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
             // Generate product_id first
             String productId = generateProductId();
@@ -488,10 +500,36 @@ public class ProductDao {
                     throw new SQLException("Creating product failed, no rows affected.");
                 }
                 LOGGER.info("Product inserted successfully with ID: " + productId);
+                
+                // Verify the product was actually inserted
+                String verifySql = "SELECT COUNT(*) FROM product WHERE product_id = ?";
+                try (PreparedStatement verifyPs = conn.prepareStatement(verifySql)) {
+                    verifyPs.setString(1, productId);
+                    ResultSet rs = verifyPs.executeQuery();
+                    if (rs.next() && rs.getInt(1) == 0) {
+                        throw new SQLException("Product verification failed - product not found after insertion");
+                    }
+                    LOGGER.info("Product verification successful");
+                }
             }
 
             // Lưu attribute values
             if (attributeValues != null && !attributeValues.isEmpty()) {
+                // Validate that all attr_id values exist in category_attribute table
+                String validateAttrSql = "SELECT COUNT(*) FROM category_attribute WHERE attr_id = ?";
+                try (PreparedStatement validatePs = conn.prepareStatement(validateAttrSql)) {
+                    for (ProductAttributeValue attrValue : attributeValues) {
+                        if (attrValue.getValue() != null && !attrValue.getValue().trim().isEmpty()) {
+                            validatePs.setInt(1, attrValue.getAttributeId());
+                            ResultSet rs = validatePs.executeQuery();
+                            if (rs.next() && rs.getInt(1) == 0) {
+                                LOGGER.warning("Invalid attr_id: " + attrValue.getAttributeId() + ", skipping...");
+                                continue;
+                            }
+                        }
+                    }
+                }
+                
                 String sqlAttr = "INSERT INTO product_attribute_value (product_id, attr_id, value) VALUES (?, ?, ?)";
                 try (PreparedStatement ps = conn.prepareStatement(sqlAttr)) {
                     for (ProductAttributeValue attrValue : attributeValues) {
@@ -504,6 +542,17 @@ public class ProductDao {
                     }
                     int[] results = ps.executeBatch();
                     LOGGER.info("Inserted " + results.length + " attribute values.");
+                    
+                    // Verify attribute values were inserted
+                    String verifyAttrSql = "SELECT COUNT(*) FROM product_attribute_value WHERE product_id = ?";
+                    try (PreparedStatement verifyAttrPs = conn.prepareStatement(verifyAttrSql)) {
+                        verifyAttrPs.setString(1, productId);
+                        ResultSet rs = verifyAttrPs.executeQuery();
+                        if (rs.next()) {
+                            int count = rs.getInt(1);
+                            LOGGER.info("Verified " + count + " attribute values for product " + productId);
+                        }
+                    }
                 }
             }
 
@@ -568,8 +617,19 @@ public class ProductDao {
                     LOGGER.severe("Rollback failed: " + rollbackEx.getMessage());
                 }
             }
-            LOGGER.severe("SQL Error: " + e.getMessage());
-            throw e;
+            
+            // Provide more specific error messages
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("FK_attr_value_product")) {
+                errorMessage = "Foreign key constraint violation: Product ID not found in product table. This may be due to a transaction issue.";
+            } else if (errorMessage.contains("FK_attr_value_attr")) {
+                errorMessage = "Foreign key constraint violation: Attribute ID not found in category_attribute table.";
+            } else if (errorMessage.contains("Cannot add or update a child row")) {
+                errorMessage = "Database constraint violation: Cannot insert attribute values. Please check if the product was created successfully.";
+            }
+            
+            LOGGER.severe("SQL Error: " + errorMessage);
+            throw new SQLException(errorMessage, e);
         } finally {
             if (conn != null) {
                 try {
