@@ -40,7 +40,7 @@ public class AccountDao {
                 String hashedPassword = rs.getString("password");
                 if (BCrypt.checkpw(password, hashedPassword)) {
 
-                    Date regisDate = rs.getDate("regisDate"); // ✅ Không cần chuyển sang LocalDate
+                    Date regisDate = rs.getDate("regisDate");
 
                     return new Account(
                             rs.getString("acc_id"),

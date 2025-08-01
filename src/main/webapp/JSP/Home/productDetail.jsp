@@ -96,7 +96,7 @@
                                             <span class="rating-score">4.5</span>
                                         </div>
                                         <div class="review">
-                                            <a href="#commentTab" class="review-link">Write A Review</a>
+                                            <a href="#commentTab" class="review-link">View A feedback</a>
                                         </div>
                                     </div>
                                     <!-- Availability -->
@@ -164,194 +164,214 @@
             </div> <!-- đóng div.container-fluid -->
             <div class="product-tabs-container" id="productTabs">
                 <ul class="product-tabs-nav">
-                    <li class="tab-link active" data-tab="detailTab">Detail</li>
-                    <li class="tab-link" data-tab="commentTab" id="commentTabBtn">Comment</li>
+                    <li class="tab-link active" data-tab="commentTab" id="commentTabBtn">Comment</li>
                 </ul>
                 <div class="product-tab-content">
-                    <div id="detailTab" class="tab-content active">
-                        <!-- Nội dung chi tiết sản phẩm sẽ thêm sau -->
-                        <p>Product detail content here...</p>
-                    </div>
                     <div id="commentTab" class="tab-content">
-                        <!-- Nội dung bình luận sẽ thêm sau -->
-                        <p>Comment section here...</p>
+                        <div class="feedback-section" id="customer-reviews">
+                            <div class="container-fluid">
+                                <h4 class="feedback-title"><i class="fas fa-comments"></i> Customer Reviews</h4>
+                                <c:if test="${not empty errorMessage}">
+                                    <p class="error-message">${errorMessage}</p>
+                                </c:if>
+                                <c:if test="${not empty feedbackList}">
+                                    <div class="feedback-container">
+                                        <c:forEach var="feedback" items="${feedbackList}">
+                                            <div class="feedback-card">
+                                                <div class="feedback-rating">
+                                                    <c:forEach begin="1" end="${feedback.rating}">
+                                                        <ion-icon name="star" aria-hidden="true"></ion-icon>
+                                                        </c:forEach>
+                                                        <c:if test="${feedback.rating < 5}">
+                                                            <c:forEach begin="${feedback.rating + 1}" end="5">
+                                                            <ion-icon name="star-outline" aria-hidden="true"></ion-icon>
+                                                            </c:forEach>
+                                                        </c:if>
+                                                </div>
+                                                <p class="feedback-comment">${feedback.comment}</p>
+                                                <p class="feedback-author">By ${feedback.fullName} on <fmt:formatDate value="${feedback.createdAt}" pattern="dd/MM/yyyy HH:mm" /></p>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </c:if>
+                                <c:if test="${empty feedbackList}">
+                                    <p class="no-feedback">No reviews yet.</p>
+                                </c:if>
+
+                            </div>
+                        </div>
                     </div>
+
                 </div>
+
             </div>
+            <!-- ##### Main Content Wrapper End ##### -->
 
-        </div>
-        <!-- Product Details Area End -->
+            <c:import url="/JSP/Home/Footer.jsp" />
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
+            <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
+            <!-- Popper js -->
+            <script src="${pageContext.request.contextPath}/js/lib_js/popper.min.js"></script>
+            <!-- Bootstrap js -->
+            <script src="${pageContext.request.contextPath}/js/lib_js/bootstrap.min.js"></script>
+            <!-- Plugins js -->
+            <script src="${pageContext.request.contextPath}/js/lib_js/plugins.js"></script>
+            <!-- Active js -->
+            <script src="${pageContext.request.contextPath}/js/active.js"></script>
 
-        <!-- Tabs for Detail and Comment -->
+            <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+            <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+            <script>
+                                                            const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
+                                                            window.addEventListener("load", function () {
+                                                                const preloader = document.getElementById("preloader");
+                                                                preloader.style.opacity = "0";
+                                                                preloader.style.pointerEvents = "none";
+                                                                setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
+                                                            });
 
-    </div>
-    <!-- ##### Main Content Wrapper End ##### -->
+                                                            // Xử lý click vào "Review" để trượt xuống Customer Reviews
+                                                            document.addEventListener("DOMContentLoaded", function () {
+                                                                const reviewLink = document.querySelector(".scroll-to-reviews");
+                                                                const feedbackSection = document.getElementById("customer-reviews");
 
-    <c:import url="/JSP/Home/Footer.jsp" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
-    <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
-    <!-- Popper js -->
-    <script src="${pageContext.request.contextPath}/js/lib_js/popper.min.js"></script>
-    <!-- Bootstrap js -->
-    <script src="${pageContext.request.contextPath}/js/lib_js/bootstrap.min.js"></script>
-    <!-- Plugins js -->
-    <script src="${pageContext.request.contextPath}/js/lib_js/plugins.js"></script>
-    <!-- Active js -->
-    <script src="${pageContext.request.contextPath}/js/active.js"></script>
+                                                                if (reviewLink && feedbackSection) {
+                                                                    reviewLink.addEventListener("click", function (e) {
+                                                                        e.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+                                                                        feedbackSection.scrollIntoView({behavior: "smooth"}); // Trượt mượt mà đến section
+                                                                    });
+                                                                }
 
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script>
-                                                const contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1));
-                                                window.addEventListener("load", function () {
-                                                    const preloader = document.getElementById("preloader");
-                                                    preloader.style.opacity = "0";
-                                                    preloader.style.pointerEvents = "none";
-                                                    setTimeout(() => preloader.style.display = "none", 500); // Ẩn hẳn sau fade out
-                                                });
+                                                                // Tạo sao động dựa trên trung bình rating
+                                                                const ratingElement = document.getElementById("product-rating");
+                                                                const averageRatingSpan = document.querySelector(".average-rating");
+                                                                let averageRating = parseFloat(averageRatingSpan.getAttribute("data-rating")) || 0;
+                                                                console.log("Average Rating:", averageRating); // Debug
 
-                                                // Xử lý click vào "Review" để trượt xuống Customer Reviews
-                                                document.addEventListener("DOMContentLoaded", function () {
-                                                    const reviewLink = document.querySelector(".scroll-to-reviews");
-                                                    const feedbackSection = document.getElementById("customer-reviews");
+                                                                if (ratingElement) {
+                                                                    for (let i = 0; i < 5; i++) {
+                                                                        const starWrapper = document.createElement("span");
+                                                                        starWrapper.className = "star-wrapper";
+                                                                        starWrapper.style.position = "relative";
+                                                                        starWrapper.style.display = "inline-block";
+                                                                        starWrapper.style.width = "20px";
+                                                                        starWrapper.style.height = "20px";
+                                                                        starWrapper.style.marginRight = "2px";
 
-                                                    if (reviewLink && feedbackSection) {
-                                                        reviewLink.addEventListener("click", function (e) {
-                                                            e.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
-                                                            feedbackSection.scrollIntoView({behavior: "smooth"}); // Trượt mượt mà đến section
-                                                        });
-                                                    }
+                                                                        // Tạo sao nền (star-outline)
+                                                                        const starOutline = document.createElement("ion-icon");
+                                                                        starOutline.setAttribute("name", "star-outline");
+                                                                        starOutline.setAttribute("aria-hidden", "true");
+                                                                        starOutline.style.color = "#ddd"; // Màu nền xám
+                                                                        starOutline.style.fontSize = "20px";
+                                                                        starOutline.style.position = "absolute";
+                                                                        starOutline.style.top = "0";
+                                                                        starOutline.style.left = "0";
 
-                                                    // Tạo sao động dựa trên trung bình rating
-                                                    const ratingElement = document.getElementById("product-rating");
-                                                    const averageRatingSpan = document.querySelector(".average-rating");
-                                                    let averageRating = parseFloat(averageRatingSpan.getAttribute("data-rating")) || 0;
-                                                    console.log("Average Rating:", averageRating); // Debug
+                                                                        // Tạo sao lấp đầy
+                                                                        const starFillWrapper = document.createElement("span");
+                                                                        starFillWrapper.className = "star-fill-wrapper";
+                                                                        starFillWrapper.style.position = "absolute";
+                                                                        starFillWrapper.style.top = "0";
+                                                                        starFillWrapper.style.left = "0";
+                                                                        starFillWrapper.style.overflow = "hidden";
+                                                                        starFillWrapper.style.width = (averageRating - i > 0 ? Math.min(1, averageRating - i) * 100 : 0) + "%";
+                                                                        starFillWrapper.style.height = "100%";
 
-                                                    if (ratingElement) {
-                                                        for (let i = 0; i < 5; i++) {
-                                                            const starWrapper = document.createElement("span");
-                                                            starWrapper.className = "star-wrapper";
-                                                            starWrapper.style.position = "relative";
-                                                            starWrapper.style.display = "inline-block";
-                                                            starWrapper.style.width = "20px";
-                                                            starWrapper.style.height = "20px";
-                                                            starWrapper.style.marginRight = "2px";
+                                                                        const starFill = document.createElement("ion-icon");
+                                                                        starFill.setAttribute("name", "star");
+                                                                        starFill.setAttribute("aria-hidden", "true");
+                                                                        starFill.style.color = "#f39c12"; // Màu cam giống Shopee
+                                                                        starFill.style.fontSize = "20px";
+                                                                        starFill.style.position = "absolute";
+                                                                        starFill.style.top = "0";
+                                                                        starFill.style.left = "0";
 
-                                                            // Tạo sao nền (star-outline)
-                                                            const starOutline = document.createElement("ion-icon");
-                                                            starOutline.setAttribute("name", "star-outline");
-                                                            starOutline.setAttribute("aria-hidden", "true");
-                                                            starOutline.style.color = "#ddd"; // Màu nền xám
-                                                            starOutline.style.fontSize = "20px";
-                                                            starOutline.style.position = "absolute";
-                                                            starOutline.style.top = "0";
-                                                            starOutline.style.left = "0";
+                                                                        starFillWrapper.appendChild(starFill);
+                                                                        starWrapper.appendChild(starOutline);
+                                                                        starWrapper.appendChild(starFillWrapper);
+                                                                        ratingElement.insertBefore(starWrapper, averageRatingSpan);
+                                                                    }
+                                                                    averageRatingSpan.style.display = "none"; // Ẩn span chứa dữ liệu
 
-                                                            // Tạo sao lấp đầy
-                                                            const starFillWrapper = document.createElement("span");
-                                                            starFillWrapper.className = "star-fill-wrapper";
-                                                            starFillWrapper.style.position = "absolute";
-                                                            starFillWrapper.style.top = "0";
-                                                            starFillWrapper.style.left = "0";
-                                                            starFillWrapper.style.overflow = "hidden";
-                                                            starFillWrapper.style.width = (averageRating - i > 0 ? Math.min(1, averageRating - i) * 100 : 0) + "%";
-                                                            starFillWrapper.style.height = "100%";
+                                                                }
+                                                            });
+            </script>
+            <c:if test="${not empty requestScope.messCartAdd}">
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                                                            window.addEventListener("DOMContentLoaded", function () {
+                                                                Swal.fire({
+                                                                    icon: 'success',
+                                                                    title: 'Thành công',
+                                                                    text: "${fn:escapeXml(messCartAdd)}"
+                                                                });
+                                                            });
+                </script>
+                <c:remove var="messCartAdd" scope="request" />
+            </c:if>
 
-                                                            const starFill = document.createElement("ion-icon");
-                                                            starFill.setAttribute("name", "star");
-                                                            starFill.setAttribute("aria-hidden", "true");
-                                                            starFill.style.color = "#f39c12"; // Màu cam giống Shopee
-                                                            starFill.style.fontSize = "20px";
-                                                            starFill.style.position = "absolute";
-                                                            starFill.style.top = "0";
-                                                            starFill.style.left = "0";
+            // Gán dữ liệu vào các input hidden
+            document.getElementById("denounceReason").value = reason;
+            document.getElementById("denounceDescription").value = desc;
 
-                                                            starFillWrapper.appendChild(starFill);
-                                                            starWrapper.appendChild(starOutline);
-                                                            starWrapper.appendChild(starFillWrapper);
-                                                            ratingElement.insertBefore(starWrapper, averageRatingSpan);
-                                                        }
-                                                        averageRatingSpan.style.display = "none"; // Ẩn span chứa dữ liệu
+            // Submit form
+            document.getElementById("denounceForm").submit();
+            }
 
-                                                    }
-                                                });
-    </script>
-    <c:if test="${not empty requestScope.messCartAdd}">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-                                                window.addEventListener("DOMContentLoaded", function () {
-                                                    Swal.fire({
-                                                        icon: 'success',
-                                                        title: 'Thành công',
-                                                            text: "${fn:escapeXml(messCartAdd)}"
-                                                    });
-                                                });
+
+            let selectedReason = "";
+
+            function showPopup() {
+            document.getElementById("popupOverlay").style.display = "flex";
+            document.getElementById("step1").style.display = "block";
+            document.getElementById("step2").style.display = "none";
+            }
+
+            function hidePopup() {
+            document.getElementById("popupOverlay").style.display = "none";
+            }
+
+            function selectReason(el) {
+            selectedReason = el.innerText;
+            document.getElementById("selectedReasonText").innerText = "Reason: " + selectedReason;
+            document.getElementById("denounceReason").value = selectedReason; // ✅ sửa lại chỗ này
+            document.getElementById("step1").style.display = "none";
+            document.getElementById("step2").style.display = "block";
+            }
+
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const productId = this.dataset.productid;
+            const quantityy = document.getElementById("qty").value;
+
+            fetch('s_addToCart', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+            postID: productId,
+            quantity: quantityy
+            })
+            })
+            .then(response => {
+            if (response.ok) {
+            Swal.fire({
+            icon: 'success',
+            title: 'Thêm vào giỏ hàng',
+            text: "Thêm vào giỏ hàng thành công",
+            confirmButtonText: 'OK'
+            });
+            } else {
+            console.error('Lỗi khi thêm giỏ hàng');
+            }
+            });
+            });
+            });
         </script>
-        <c:remove var="messCartAdd" scope="request" />
-    </c:if>
-
-    // Gán dữ liệu vào các input hidden
-    document.getElementById("denounceReason").value = reason;
-    document.getElementById("denounceDescription").value = desc;
-
-    // Submit form
-    document.getElementById("denounceForm").submit();
-    }
-
-
-    let selectedReason = "";
-
-    function showPopup() {
-    document.getElementById("popupOverlay").style.display = "flex";
-    document.getElementById("step1").style.display = "block";
-    document.getElementById("step2").style.display = "none";
-    }
-
-    function hidePopup() {
-    document.getElementById("popupOverlay").style.display = "none";
-    }
-
-    function selectReason(el) {
-    selectedReason = el.innerText;
-    document.getElementById("selectedReasonText").innerText = "Reason: " + selectedReason;
-    document.getElementById("denounceReason").value = selectedReason; // ✅ sửa lại chỗ này
-    document.getElementById("step1").style.display = "none";
-    document.getElementById("step2").style.display = "block";
-    }
-
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-    btn.addEventListener('click', function (e) {
-    e.preventDefault();
-    const productId = this.dataset.productid;
-    const quantityy = document.getElementById("qty").value;
-
-    fetch('s_addToCart', {
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: new URLSearchParams({
-    postID: productId,
-    quantity: quantityy
-    })
-    })
-    .then(response => {
-    if (response.ok) {
-    Swal.fire({
-    icon: 'success',
-    title: 'Thêm vào giỏ hàng',
-    text: "Thêm vào giỏ hàng thành công",
-    confirmButtonText: 'OK'
-    });
-    } else {
-    console.error('Lỗi khi thêm giỏ hàng');
-    }
-    });
-    });
-    });
-</script>
 </body>
 
 </html>
